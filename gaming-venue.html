@@ -1,0 +1,3248 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>باثيون - متجر الألعاب الإلكترونية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-deep: #080a0e;
+  --bg-dark: #0d1117;
+  --bg-card: #131720;
+  --bg-panel: #1a1f2e;
+  --accent: #e8232a;
+  --accent-dark: #b71c22;
+  --accent-glow: rgba(232,35,42,0.2);
+  --text-primary: #f0f2f5;
+  --text-secondary: #8a8f9e;
+  --text-muted: #4a4f60;
+  --border: rgba(255,255,255,0.07);
+  --green: #00c97b;
+  --blue: #3d8bff;
+  --gold: #f5a623;
+  --purple: #9b59b6;
+}
+body { font-family:'Cairo',sans-serif; background:var(--bg-deep); color:var(--text-primary); min-height:100vh; overflow-x:hidden; font-size:14px; }
+
+/* ── FONT SIZE SCALES ── */
+body.fs-small  { font-size:12px; }
+body.fs-medium { font-size:14px; }
+body.fs-large  { font-size:17px; }
+
+body.fs-small  .game-title  { font-size:11px; }
+body.fs-medium .game-title  { font-size:13px; }
+body.fs-large  .game-title  { font-size:16px; }
+
+body.fs-small  .game-genre, body.fs-small  .game-platform, body.fs-small .rating-count { font-size:10px; }
+body.fs-large  .game-genre, body.fs-large  .game-platform, body.fs-large .rating-count { font-size:13px; }
+
+body.fs-small  .price  { font-size:13px; }
+body.fs-medium .price  { font-size:15px; }
+body.fs-large  .price  { font-size:18px; }
+
+body.fs-small  .nav-link  { font-size:11px; }
+body.fs-large  .nav-link  { font-size:15px; }
+
+body.fs-small  .hero-title { font-size:30px; }
+body.fs-large  .hero-title { font-size:50px; }
+
+body.fs-small  .modal-title { font-size:15px; }
+body.fs-large  .modal-title { font-size:22px; }
+
+/* ── FONT SIZE SWITCHER ── */
+.fs-switcher { display:flex; align-items:center; gap:3px; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:3px; }
+.fs-btn { border:none; background:transparent; color:var(--text-muted); cursor:pointer; border-radius:5px; padding:4px 8px; transition:all 0.18s; line-height:1; font-family:'Cairo',sans-serif; font-weight:700; }
+.fs-btn:hover { color:var(--text-primary); background:rgba(255,255,255,0.08); }
+.fs-btn.active { background:rgba(232,35,42,0.15); color:var(--accent); }
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+
+/* NAVBAR */
+.navbar { position:fixed; top:0; left:0; right:0; height:60px; background:rgba(8,10,14,0.97); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 28px; gap:20px; z-index:200; }
+.logo { font-family:'Orbitron',sans-serif; font-size:19px; font-weight:900; color:var(--text-primary); letter-spacing:2px; display:flex; align-items:center; gap:8px; cursor:pointer; white-space:nowrap; }
+.logo span { color:var(--accent); }
+.nav-links { display:flex; gap:2px; flex:1; }
+.nav-link { padding:7px 16px; border-radius:6px; color:var(--text-secondary); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+.nav-link:hover { color:var(--text-primary); background:rgba(255,255,255,0.05); }
+.nav-link.active { color:var(--accent); background:rgba(232,35,42,0.1); }
+.nav-search-wrap { position:relative; }
+.nav-search { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:8px 36px 8px 14px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:13px; width:210px; outline:none; transition:all 0.2s; }
+.nav-search:focus { border-color:rgba(232,35,42,0.4); width:250px; }
+.nav-search::placeholder { color:var(--text-muted); }
+.search-ico { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--text-muted); pointer-events:none; }
+.nav-actions { display:flex; align-items:center; gap:10px; }
+.cart-btn { position:relative; background:rgba(232,35,42,0.1); border:1px solid rgba(232,35,42,0.2); border-radius:10px; padding:8px 16px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:8px; }
+.cart-btn:hover { background:rgba(232,35,42,0.2); }
+.cart-count { background:var(--accent); color:#fff; border-radius:50%; width:18px; height:18px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; }
+.admin-btn { background:linear-gradient(135deg,#ff6b6b,var(--accent-dark)); color:#fff; border:none; border-radius:8px; padding:8px 16px; font-family:'Cairo',sans-serif; font-size:12px; font-weight:700; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:6px; }
+.admin-btn:hover { opacity:0.9; transform:translateY(-1px); box-shadow:0 4px 16px var(--accent-glow); }
+
+/* HERO */
+.hero { margin-top:60px; background:linear-gradient(135deg,#0d1117 0%,#0f1520 50%,#0d1117 100%); border-bottom:1px solid var(--border); padding:56px 36px; position:relative; overflow:hidden; display:flex; align-items:center; gap:56px; }
+.hero::before { content:''; position:absolute; top:-50%; right:-5%; width:600px; height:600px; background:radial-gradient(circle,rgba(232,35,42,0.07) 0%,transparent 70%); pointer-events:none; }
+.hero-text { flex:1; position:relative; z-index:1; }
+.hero-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(232,35,42,0.12); border:1px solid rgba(232,35,42,0.25); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:600; color:var(--accent); margin-bottom:18px; }
+.hero-title { font-family:'Orbitron',sans-serif; font-size:40px; font-weight:900; line-height:1.15; margin-bottom:14px; }
+.hero-title span { color:var(--accent); }
+.hero-sub { font-size:14px; color:var(--text-secondary); margin-bottom:28px; line-height:1.75; max-width:420px; }
+.hero-btns { display:flex; gap:12px; flex-wrap:wrap; }
+.btn-primary { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:12px 26px; font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.btn-primary:hover { background:var(--accent-dark); transform:translateY(-2px); box-shadow:0 8px 24px var(--accent-glow); }
+.btn-outline { background:transparent; color:var(--text-primary); border:1px solid rgba(255,255,255,0.15); border-radius:10px; padding:12px 26px; font-family:'Cairo',sans-serif; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.btn-outline:hover { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.25); }
+.hero-stats { display:flex; gap:28px; margin-top:36px; padding-top:28px; border-top:1px solid var(--border); }
+.hero-stat-num { font-family:'Orbitron',sans-serif; font-size:22px; font-weight:700; }
+.hero-stat-label { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.hero-featured { flex-shrink:0; width:300px; position:relative; z-index:1; }
+.featured-card { background:var(--bg-card); border:1px solid rgba(255,255,255,0.08); border-radius:16px; overflow:hidden; cursor:pointer; transition:all 0.3s; }
+.featured-card:hover { transform:translateY(-4px); box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+.featured-img { height:180px; display:flex; align-items:center; justify-content:center; font-size:72px; position:relative; }
+.featured-img::after { content:'مميز'; position:absolute; top:12px; right:12px; background:var(--gold); color:#000; font-family:'Cairo',sans-serif; font-size:11px; font-weight:700; padding:3px 10px; border-radius:6px; }
+.featured-body { padding:16px; }
+.featured-title { font-size:16px; font-weight:700; margin-bottom:6px; }
+.featured-genre { font-size:12px; color:var(--text-muted); margin-bottom:12px; }
+.featured-price-row { display:flex; align-items:center; justify-content:space-between; }
+.featured-price { font-family:'Orbitron',sans-serif; font-size:20px; font-weight:700; color:var(--accent); }
+.featured-old-price { font-size:13px; color:var(--text-muted); text-decoration:line-through; margin-right:8px; }
+
+/* LAYOUT */
+.main-layout { display:grid; grid-template-columns:230px 1fr; }
+
+/* SIDEBAR */
+.sidebar { background:var(--bg-dark); border-left:1px solid var(--border); padding:24px 0; position:sticky; top:60px; height:calc(100vh - 60px); overflow-y:auto; }
+.sidebar-section { margin-bottom:24px; padding:0 16px; }
+.sidebar-section-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+.filter-option { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; border-radius:8px; cursor:pointer; transition:all 0.2s; margin-bottom:2px; color:var(--text-secondary); font-size:13px; font-weight:500; }
+.filter-option:hover { background:rgba(255,255,255,0.04); color:var(--text-primary); }
+.filter-option.active { background:rgba(232,35,42,0.1); color:var(--accent); }
+.filter-count { font-size:11px; color:var(--text-muted); background:rgba(255,255,255,0.05); padding:2px 7px; border-radius:10px; }
+.platform-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:6px; }
+.platform-chip { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:6px; padding:7px 6px; font-size:11px; font-weight:600; color:var(--text-secondary); cursor:pointer; text-align:center; transition:all 0.2s; }
+.platform-chip:hover { border-color:rgba(255,255,255,0.15); color:var(--text-primary); }
+.platform-chip.active { background:rgba(61,139,255,0.1); border-color:rgba(61,139,255,0.3); color:var(--blue); }
+.sidebar-divider { border:none; border-top:1px solid var(--border); margin:4px 16px 20px; }
+.price-input { width:100%; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:6px; padding:7px 10px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:12px; outline:none; text-align:center; margin-top:8px; }
+
+/* CONTENT */
+.content { padding:28px 28px 40px; background:var(--bg-deep); }
+.promo-banner { background:linear-gradient(135deg,rgba(232,35,42,0.1),rgba(245,166,35,0.07)); border:1px solid rgba(232,35,42,0.18); border-radius:12px; padding:16px 22px; display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; gap:16px; }
+.promo-text { font-size:14px; font-weight:700; }
+.promo-sub { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+.promo-code { background:rgba(245,166,35,0.1); border:1px dashed rgba(245,166,35,0.4); border-radius:8px; padding:8px 16px; font-family:'Orbitron',sans-serif; font-size:14px; font-weight:700; color:var(--gold); letter-spacing:2px; cursor:pointer; transition:background 0.2s; }
+.promo-code:hover { background:rgba(245,166,35,0.18); }
+.content-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
+.content-title { font-size:20px; font-weight:700; }
+.content-count { font-size:12px; color:var(--text-muted); margin-top:2px; }
+.sort-select { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:8px 14px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:13px; outline:none; cursor:pointer; }
+.view-toggle { display:flex; gap:4px; }
+.view-btn { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:6px; padding:7px 10px; color:var(--text-muted); cursor:pointer; transition:all 0.2s; font-size:14px; }
+.view-btn.active { background:rgba(232,35,42,0.1); border-color:rgba(232,35,42,0.3); color:var(--accent); }
+
+/* GAMES GRID */
+.games-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(185px,1fr)); gap:16px; }
+.games-grid.list-view { grid-template-columns:1fr; }
+.game-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; transition:all 0.25s; position:relative; display:flex; flex-direction:column; }
+.game-card:hover { transform:translateY(-4px); border-color:rgba(255,255,255,0.12); box-shadow:0 16px 48px rgba(0,0,0,0.4); }
+.game-card.lv { flex-direction:row; align-items:center; }
+.game-img { aspect-ratio:460/215; display:flex; align-items:center; justify-content:center; font-size:46px; position:relative; flex-shrink:0; overflow:hidden; }
+.game-card.lv .game-img { width:80px; aspect-ratio:1; font-size:30px; }
+.game-badges { position:absolute; top:8px; right:8px; display:flex; flex-direction:column; gap:4px; }
+.badge { padding:3px 9px; border-radius:5px; font-size:10px; font-weight:700; }
+.badge-top { background:var(--gold); color:#000; }
+.badge-new { background:var(--green); color:#000; }
+.badge-hot { background:var(--accent); color:#fff; }
+.badge-sale { background:var(--purple); color:#fff; }
+.wishlist-btn { position:absolute; top:8px; left:8px; width:28px; height:28px; background:rgba(0,0,0,0.5); border:1px solid rgba(255,255,255,0.1); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; transition:all 0.2s; opacity:0; }
+.game-card:hover .wishlist-btn, .wishlist-btn.on { opacity:1; }
+.wishlist-btn:hover { background:rgba(232,35,42,0.3); }
+.game-body { padding:12px; display:flex; flex-direction:column; gap:5px; flex:1; }
+.game-card.lv .game-body { flex-direction:row; align-items:center; padding:14px; }
+.game-genre { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
+.game-card.lv .game-genre { display:none; }
+.game-title { font-size:13px; font-weight:700; line-height:1.3; color:var(--text-primary); flex:1; }
+.game-card.lv .game-title { font-size:14px; }
+.game-platform { font-size:11px; color:var(--text-secondary); }
+.game-card.lv .game-platform { min-width:80px; }
+.game-rating { display:flex; align-items:center; gap:4px; font-size:12px; }
+.game-card.lv .game-rating { min-width:90px; }
+.stars { color:var(--gold); }
+.rating-count { color:var(--text-muted); font-size:11px; }
+.game-price-row { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:9px; border-top:1px solid var(--border); }
+.game-card.lv .game-price-row { border:none; padding:0; margin:0; min-width:150px; }
+.price-wrap { display:flex; align-items:baseline; gap:5px; }
+.price { font-family:'Orbitron',sans-serif; font-size:15px; font-weight:700; color:var(--accent); }
+.price-old { font-size:11px; color:var(--text-muted); text-decoration:line-through; }
+.price-free { font-size:13px; font-weight:700; color:var(--green); }
+.add-cart-btn { background:rgba(232,35,42,0.12); border:1px solid rgba(232,35,42,0.28); color:var(--accent); border-radius:7px; padding:6px 11px; font-family:'Cairo',sans-serif; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s; white-space:nowrap; }
+.add-cart-btn:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+.add-cart-btn.added { background:rgba(0,201,123,0.12); border-color:rgba(0,201,123,0.28); color:var(--green); }
+
+/* CART PANEL */
+.cart-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:300; display:none; backdrop-filter:blur(4px); }
+.cart-overlay.active { display:block; }
+.cart-panel { position:fixed; top:0; left:0; width:390px; height:100vh; background:var(--bg-panel); border-right:1px solid rgba(255,255,255,0.08); z-index:301; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+.cart-panel.active { transform:translateX(0); }
+.cart-header { display:flex; align-items:center; justify-content:space-between; padding:22px 22px 18px; border-bottom:1px solid var(--border); }
+.cart-header-title { font-size:17px; font-weight:700; }
+.cart-close { width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:15px; transition:all 0.2s; }
+.cart-close:hover { color:var(--text-primary); background:rgba(255,255,255,0.1); }
+.cart-items { flex:1; overflow-y:auto; padding:18px 20px; display:flex; flex-direction:column; gap:12px; }
+.cart-item { display:flex; gap:12px; padding:14px; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; position:relative; }
+.cart-item-img { width:54px; height:54px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
+.cart-item-info { flex:1; }
+.cart-item-title { font-size:13px; font-weight:700; margin-bottom:4px; }
+.cart-item-platform { font-size:11px; color:var(--text-muted); margin-bottom:6px; }
+.cart-item-price { font-family:'Orbitron',sans-serif; font-size:13px; font-weight:700; color:var(--accent); }
+.cart-item-remove { position:absolute; top:9px; left:9px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-size:15px; transition:color 0.2s; }
+.cart-item-remove:hover { color:var(--accent); }
+.cart-empty { display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; color:var(--text-muted); gap:10px; font-size:13px; }
+.cart-empty-icon { font-size:48px; opacity:0.25; }
+.cart-footer { padding:18px 20px; border-top:1px solid var(--border); }
+.cart-subtotal { display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px; color:var(--text-secondary); }
+.cart-total { display:flex; justify-content:space-between; margin-bottom:16px; font-size:17px; font-weight:700; }
+.cart-total-price { font-family:'Orbitron',sans-serif; color:var(--accent); }
+.checkout-btn { width:100%; background:var(--accent); color:#fff; border:none; border-radius:10px; padding:13px; font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.checkout-btn:hover { background:var(--accent-dark); transform:translateY(-1px); box-shadow:0 8px 24px var(--accent-glow); }
+
+/* MODALS */
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:400; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+.modal-overlay.active { display:flex; }
+.modal { background:var(--bg-panel); border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:28px; width:380px; animation:slideUp 0.3s ease; }
+@keyframes slideUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.modal-title { font-size:18px; font-weight:700; margin-bottom:6px; }
+.modal-sub { font-size:13px; color:var(--text-secondary); margin-bottom:20px; }
+.modal-input { width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:11px 14px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:14px; outline:none; margin-bottom:11px; transition:border-color 0.2s; }
+.modal-input:focus { border-color:rgba(232,35,42,0.5); }
+.modal-actions { display:flex; gap:10px; margin-top:6px; }
+.modal-btn-primary { flex:1; background:var(--accent); color:#fff; border:none; border-radius:8px; padding:12px; font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:background 0.2s; }
+.modal-btn-primary:hover { background:var(--accent-dark); }
+.modal-btn-secondary { flex:1; background:transparent; color:var(--text-secondary); border:1px solid var(--border); border-radius:8px; padding:12px; font-family:'Cairo',sans-serif; font-size:14px; cursor:pointer; transition:all 0.2s; }
+.modal-btn-secondary:hover { color:var(--text-primary); background:rgba(255,255,255,0.05); }
+.pass-error { color:var(--accent); font-size:12px; margin:-6px 0 10px; display:none; }
+
+/* ADMIN */
+.admin-panel { width:540px; max-height:86vh; overflow-y:auto; }
+.admin-section { margin-bottom:20px; }
+.admin-section-title { font-size:12px; font-weight:700; color:var(--accent); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; border-bottom:1px solid var(--border); padding-bottom:8px; }
+.admin-item { display:flex; justify-content:space-between; align-items:center; padding:11px 13px; background:rgba(255,255,255,0.02); border-radius:8px; margin-bottom:6px; border:1px solid var(--border); }
+.admin-label { font-size:13px; color:var(--text-secondary); font-weight:500; }
+.admin-input-small { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:6px; padding:6px 10px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:12px; text-align:center; outline:none; width:88px; }
+.admin-input-wide { width:150px; text-align:right; }
+.admin-btn-small { background:rgba(61,139,255,0.14); color:var(--blue); border:1px solid rgba(61,139,255,0.25); border-radius:6px; padding:6px 13px; font-family:'Cairo',sans-serif; font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.admin-btn-small:hover { background:rgba(61,139,255,0.24); }
+.admin-status { font-size:11px; padding:5px 12px; border-radius:6px; background:rgba(0,201,123,0.12); color:var(--green); border:1px solid rgba(0,201,123,0.25); }
+.admin-toggle { width:42px; height:24px; background:rgba(255,255,255,0.1); border:1px solid var(--border); border-radius:12px; cursor:pointer; position:relative; transition:all 0.3s; }
+.admin-toggle.on { background:var(--green); border-color:var(--green); }
+.admin-toggle-thumb { position:absolute; top:2px; right:2px; width:18px; height:18px; background:#fff; border-radius:50%; transition:right 0.3s; }
+.admin-toggle.on .admin-toggle-thumb { right:20px; }
+.admin-danger { background:rgba(232,35,42,0.12); color:var(--accent); border:1px solid rgba(232,35,42,0.25); }
+.admin-danger:hover { background:rgba(232,35,42,0.22); }
+
+/* PRODUCT MODAL */
+.product-modal { width:580px; padding:0; overflow:hidden; }
+.product-modal-img { aspect-ratio:460/215; width:100%; display:flex; align-items:center; justify-content:center; font-size:80px; border-bottom:1px solid var(--border); overflow:hidden; }
+.product-modal-body { padding:26px; }
+.pm-genre { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+.pm-title { font-size:22px; font-weight:700; margin-bottom:8px; }
+.pm-desc { font-size:13px; color:var(--text-secondary); line-height:1.7; margin-bottom:18px; }
+.pm-meta { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px; }
+.pm-meta-label { font-size:11px; color:var(--text-muted); margin-bottom:3px; text-transform:uppercase; }
+.pm-meta-val { font-size:13px; font-weight:600; }
+.pm-footer { display:flex; align-items:center; justify-content:space-between; padding-top:18px; border-top:1px solid var(--border); }
+.pm-price { font-family:'Orbitron',sans-serif; font-size:26px; font-weight:700; color:var(--accent); }
+.pm-old { font-size:14px; color:var(--text-muted); text-decoration:line-through; margin-right:10px; }
+
+/* CHECKOUT */
+.checkout-modal { width:450px; }
+.chk-step { font-size:12px; font-weight:700; color:var(--text-secondary); text-transform:uppercase; letter-spacing:1px; margin:14px 0 10px; }
+.chk-item { display:flex; justify-content:space-between; font-size:13px; color:var(--text-secondary); padding:5px 0; }
+.chk-total { display:flex; justify-content:space-between; font-size:17px; font-weight:700; padding-top:10px; border-top:1px solid var(--border); margin:6px 0 16px; }
+.chk-total-price { font-family:'Orbitron',sans-serif; color:var(--accent); }
+.pay-methods { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+.pay-method { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:10px; text-align:center; cursor:pointer; font-size:12px; font-weight:600; color:var(--text-secondary); transition:all 0.2s; }
+.pay-method:hover { border-color:rgba(255,255,255,0.14); color:var(--text-primary); }
+.pay-method.active { background:rgba(232,35,42,0.1); border-color:rgba(232,35,42,0.3); color:var(--accent); }
+
+/* NOTIFICATION */
+.notification { position:fixed; top:68px; left:50%; transform:translateX(-50%) translateY(-14px); background:var(--bg-panel); border:1px solid rgba(0,201,123,0.35); border-radius:10px; padding:11px 24px; font-size:13px; font-weight:600; color:var(--green); z-index:500; opacity:0; transition:all 0.3s; white-space:nowrap; pointer-events:none; }
+.notification.show { opacity:1; transform:translateX(-50%) translateY(0); }
+.notification.err { border-color:rgba(232,35,42,0.35); color:var(--accent); }
+
+/* FOOTER */
+.site-footer { background:var(--bg-dark); border-top:1px solid var(--border); padding:48px 40px 28px; }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:36px; }
+.footer-logo-text { font-family:'Orbitron',sans-serif; font-size:17px; font-weight:900; color:var(--accent); margin-bottom:12px; }
+.footer-desc { font-size:13px; color:var(--text-muted); line-height:1.7; max-width:220px; }
+.footer-col-title { font-size:12px; font-weight:700; color:var(--text-primary); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.5px; }
+.footer-link { display:block; font-size:13px; color:var(--text-muted); margin-bottom:8px; cursor:pointer; transition:color 0.2s; }
+.footer-link:hover { color:var(--text-primary); }
+.footer-bottom { display:flex; justify-content:space-between; align-items:center; padding-top:22px; border-top:1px solid var(--border); font-size:12px; color:var(--text-muted); }
+
+/* HOME PREVIEW */
+.home-section { padding:28px 36px 0; }
+.home-section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.home-section-title { font-size:20px; font-weight:700; }
+.home-section-sub { font-size:13px; color:var(--text-muted); margin-top:3px; }
+
+/* Announcement ticker */
+.ticker-wrap { background:linear-gradient(90deg,rgba(232,35,42,0.1),rgba(232,35,42,0.05),rgba(232,35,42,0.1)); border-bottom:1px solid rgba(232,35,42,0.13); height:36px; display:flex; align-items:center; overflow:hidden; }
+.ticker-label { background:var(--accent); color:#fff; font-size:11px; font-weight:700; padding:0 16px; white-space:nowrap; height:100%; display:flex; align-items:center; letter-spacing:1px; flex-shrink:0; z-index:1; }
+.ticker-outer { overflow:hidden; flex:1; }
+.ticker-track { display:flex; animation:tickerScroll 28s linear infinite; width:max-content; }
+.ticker-track:hover { animation-play-state:paused; }
+.ticker-item { white-space:nowrap; font-size:12px; font-weight:600; color:var(--text-secondary); padding:0 36px; display:flex; align-items:center; gap:8px; }
+.ticker-item b { color:var(--gold); }
+@keyframes tickerScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+/* Category strip */
+.categories-strip { padding:28px 36px 0; }
+.categories-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:10px; }
+.cat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:16px 8px 12px; text-align:center; cursor:pointer; transition:all 0.22s; position:relative; overflow:hidden; }
+.cat-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,0.4); }
+.cat-card .cat-icon { font-size:26px; display:block; margin-bottom:7px; }
+.cat-card .cat-name { font-size:11px; font-weight:700; color:var(--text-primary); }
+.cat-card .cat-count { font-size:10px; color:var(--text-muted); margin-top:2px; }
+
+/* Slider */
+.slider-wrap { margin:28px 36px 0; position:relative; overflow:hidden; border-radius:14px; border:1px solid var(--border); }
+.slider-track { display:flex; transition:transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+.slide { min-width:100%; height:210px; position:relative; cursor:pointer; flex-shrink:0; display:flex; align-items:center; padding:36px; }
+.slide-bg-layer { position:absolute; inset:0; background-size:cover; background-position:center; }
+.slide-ov { position:absolute; inset:0; background:linear-gradient(90deg,rgba(0,0,0,0.82) 0%,rgba(0,0,0,0.35) 55%,transparent 100%); }
+.slide-content { position:relative; z-index:2; }
+.slide-badge { display:inline-block; background:var(--accent); color:#fff; font-size:10px; font-weight:700; padding:3px 10px; border-radius:4px; letter-spacing:1px; margin-bottom:10px; }
+.slide-title { font-family:'Orbitron',sans-serif; font-size:20px; font-weight:900; color:#fff; margin-bottom:5px; }
+.slide-desc { font-size:12px; color:rgba(255,255,255,0.65); margin-bottom:14px; max-width:320px; line-height:1.5; }
+.slide-price-row { display:flex; align-items:center; gap:10px; }
+.slide-price { font-family:'Orbitron',sans-serif; font-size:18px; font-weight:700; color:var(--gold); }
+.slide-old { font-size:12px; color:rgba(255,255,255,0.45); text-decoration:line-through; }
+.slider-btn { position:absolute; top:50%; transform:translateY(-50%); z-index:10; background:rgba(0,0,0,0.55); border:1px solid rgba(255,255,255,0.12); border-radius:50%; width:34px; height:34px; color:#fff; cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+.slider-btn:hover { background:rgba(232,35,42,0.55); border-color:var(--accent); }
+.slider-prev { left:12px; }
+.slider-next { right:12px; }
+.slider-dots { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); display:flex; gap:5px; z-index:10; }
+.slider-dot { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,0.3); cursor:pointer; transition:all 0.2s; }
+.slider-dot.active { background:#fff; width:18px; border-radius:3px; }
+
+/* Flash sale */
+.flash-banner { margin:28px 36px 0; background:linear-gradient(135deg,#1a0005,#25000c); border:1px solid rgba(232,35,42,0.22); border-radius:14px; padding:20px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px; position:relative; overflow:hidden; }
+.flash-banner::after { content:''; position:absolute; top:-60px; right:10%; width:280px; height:280px; background:radial-gradient(circle,rgba(232,35,42,0.1),transparent 65%); pointer-events:none; }
+.flash-left { display:flex; align-items:center; gap:16px; }
+.flash-emoji { font-size:36px; }
+.flash-title { font-size:18px; font-weight:900; }
+.flash-sub { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+.flash-countdown { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+.cd-block { background:rgba(0,0,0,0.45); border:1px solid rgba(232,35,42,0.2); border-radius:8px; padding:7px 12px; text-align:center; min-width:52px; }
+.cd-num { font-family:'Orbitron',sans-serif; font-size:20px; font-weight:700; color:var(--accent); line-height:1; }
+.cd-lbl { font-size:9px; color:var(--text-muted); margin-top:3px; }
+.cd-sep { font-size:18px; font-weight:700; color:var(--accent); opacity:0.5; }
+
+/* Trust badges */
+.trust-strip { margin:28px 36px 0; display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.trust-card { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.trust-icon { font-size:24px; flex-shrink:0; }
+.trust-title { font-size:12px; font-weight:700; }
+.trust-sub { font-size:11px; color:var(--text-muted); margin-top:1px; }
+
+/* Newsletter */
+.newsletter-strip { margin:28px 36px 0; background:linear-gradient(135deg,#0f1520,#131b28); border:1px solid var(--border); border-radius:14px; padding:24px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+.nl-title { font-size:17px; font-weight:700; margin-bottom:4px; }
+.nl-sub { font-size:13px; color:var(--text-secondary); }
+.nl-form { display:flex; gap:8px; flex-shrink:0; }
+.nl-input { background:rgba(255,255,255,0.06); border:1px solid var(--border); border-radius:8px; padding:10px 16px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:13px; width:230px; outline:none; transition:border-color 0.2s; }
+.nl-input:focus { border-color:rgba(232,35,42,0.4); }
+.nl-input::placeholder { color:var(--text-muted); }
+
+/* Partners */
+.partners-strip { margin:28px 36px 0; }
+.partners-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1.5px; text-align:center; margin-bottom:14px; }
+.partners-logos { display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap; }
+.partner-logo { background:var(--bg-card); border:1px solid var(--border); border-radius:8px; padding:9px 18px; font-size:12px; font-weight:700; color:var(--text-muted); transition:all 0.2s; cursor:pointer; }
+.partner-logo:hover { color:var(--text-primary); border-color:rgba(255,255,255,0.14); transform:translateY(-2px); }
+
+.home-bottom-pad { height:48px; }
+
+/* ═══════════════════════════════
+   CINEMATIC HERO BANNER
+═══════════════════════════════ */
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  overflow: hidden;
+  background: #000;
+  /* margin-top handled by layout fixes section */
+}
+@media (max-width:600px){ .hero-banner{ height:300px; } }
+
+/* Slides container */
+.hb-track {
+  display: flex;
+  height: 100%;
+  transition: transform 0.85s cubic-bezier(0.77,0,0.175,1);
+}
+.hb-slide {
+  min-width: 100%;
+  height: 100%;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+/* Background image / gradient */
+.hb-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.06);
+  transition: transform 8s ease;
+  will-change: transform;
+}
+.hb-slide.active .hb-bg { transform: scale(1); }
+
+/* Overlays */
+.hb-overlay-dark {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    rgba(0,0,0,0.92) 0%,
+    rgba(0,0,0,0.6)  42%,
+    rgba(0,0,0,0.15) 70%,
+    transparent      100%
+  );
+  z-index: 1;
+}
+.hb-overlay-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 160px;
+  background: linear-gradient(to top, rgba(8,10,14,1) 0%, transparent 100%);
+  z-index: 2;
+}
+/* Animated colored glow from game color */
+.hb-glow {
+  position: absolute;
+  bottom: -40px; right: -60px;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0;
+  transition: opacity 1.2s ease 0.3s;
+  z-index: 1;
+  pointer-events: none;
+}
+.hb-slide.active .hb-glow { opacity: 0.22; }
+
+/* Content */
+.hb-content {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  padding: 0 72px;
+  gap: 48px;
+}
+@media(max-width:600px){ .hb-content{ padding:0 20px; gap:16px; flex-direction:column; align-items:flex-start; justify-content:flex-end; padding-bottom:32px; } }
+
+.hb-text {
+  flex: 1;
+  max-width: 540px;
+  transform: translateX(40px);
+  opacity: 0;
+  transition: transform 0.9s cubic-bezier(0.22,1,0.36,1) 0.2s,
+              opacity   0.9s ease 0.2s;
+}
+.hb-slide.active .hb-text { transform: translateX(0); opacity: 1; }
+
+.hb-tags { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+.hb-tag {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(4px);
+}
+.hb-tag.accent { background: rgba(232,35,42,0.35); border-color: rgba(232,35,42,0.6); color: #fff; }
+.hb-tag.gold   { background: rgba(245,166,35,0.25); border-color: rgba(245,166,35,0.5); color: var(--gold); }
+
+.hb-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 46px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.08;
+  margin-bottom: 14px;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.6);
+  letter-spacing: -1px;
+}
+@media(max-width:600px){ .hb-title{ font-size:26px; } }
+
+.hb-desc {
+  font-size: 15px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.7;
+  margin-bottom: 28px;
+  max-width: 420px;
+}
+@media(max-width:600px){ .hb-desc{ font-size:13px; margin-bottom:18px; } }
+
+.hb-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.hb-btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 13px 28px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.22s;
+  box-shadow: 0 4px 20px rgba(232,35,42,0.45);
+}
+.hb-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,35,42,0.55); }
+.hb-btn-secondary {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 10px;
+  padding: 13px 24px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s;
+  backdrop-filter: blur(4px);
+}
+.hb-btn-secondary:hover { background: rgba(255,255,255,0.18); }
+
+.hb-price-badge {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 8px 16px;
+  backdrop-filter: blur(8px);
+}
+.hb-price { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 700; color: var(--gold); }
+.hb-old-price { font-size: 14px; color: rgba(255,255,255,0.4); text-decoration: line-through; }
+.hb-free { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; color: var(--green); }
+
+/* Right: game cover art box */
+.hb-cover {
+  width: 220px;
+  aspect-ratio: 460/215;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.12);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+  flex-shrink: 0;
+  transform: translateX(-30px) rotateY(8deg);
+  opacity: 0;
+  transition: transform 0.9s cubic-bezier(0.22,1,0.36,1) 0.45s,
+              opacity   0.9s ease 0.45s;
+  position: relative;
+}
+.hb-slide.active .hb-cover { transform: translateX(0) rotateY(0deg); opacity: 1; }
+@media(max-width:600px){ .hb-cover{ display:none; } }
+
+.hb-cover-inner {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 64px;
+}
+.hb-cover img { width:100%; height:100%; object-fit:cover; }
+
+.hb-cover-shine {
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  transition: left 1.2s ease 0.8s;
+}
+.hb-slide.active .hb-cover-shine { left: 150%; }
+
+/* Rating row */
+.hb-rating {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 16px;
+  font-size: 13px;
+}
+.hb-stars { color: var(--gold); letter-spacing: 1px; font-size: 14px; }
+.hb-rating-count { color: rgba(255,255,255,0.5); font-size: 12px; }
+
+/* Navigation */
+.hb-nav {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  z-index: 10;
+  background: rgba(0,0,0,0.45);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #fff;
+  font-size: 16px;
+  transition: all 0.2s;
+  backdrop-filter: blur(4px);
+}
+.hb-nav:hover { background: rgba(232,35,42,0.5); border-color: var(--accent); transform: translateY(-50%) scale(1.08); }
+.hb-prev { left: 20px; }
+.hb-next { right: 20px; }
+@media(max-width:600px){ .hb-prev{left:8px;} .hb-next{right:8px;} .hb-nav{width:34px;height:34px;font-size:13px;} }
+
+/* Dots */
+.hb-dots {
+  position: absolute;
+  bottom: 22px; left: 50%;
+  transform: translateX(-50%);
+  display: flex; gap: 6px;
+  z-index: 10;
+}
+.hb-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+}
+.hb-dot.active { background: #fff; width: 22px; border-radius: 4px; }
+
+/* Progress bar */
+.hb-progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: var(--accent);
+  z-index: 10;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* Slide counter */
+.hb-counter {
+  position: absolute;
+  top: 20px; right: 20px;
+  z-index: 10;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 5px 14px;
+  backdrop-filter: blur(4px);
+}
+.hb-counter span { color: #fff; }
+
+/* Thumbnails strip */
+.hb-thumbs {
+  position: absolute;
+  bottom: 44px; right: 24px;
+  z-index: 10;
+  display: flex;
+  gap: 8px;
+}
+@media(max-width:600px){ .hb-thumbs{ display:none; } }
+.hb-thumb {
+  width: 56px; height: 36px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.1);
+  cursor: pointer;
+  transition: all 0.2s;
+  opacity: 0.5;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.hb-thumb.active { border-color: var(--accent); opacity: 1; }
+.hb-thumb:hover { opacity: 0.85; }
+.hb-thumb img { width:100%; height:100%; object-fit:cover; }
+
+/* ===== DELIVERY NOTIFICATION SYSTEM ===== */
+.notif-bell-wrap { position: relative; }
+.notif-bell-btn {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 7px 12px;
+  color: var(--text-primary);
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  display: flex; align-items: center;
+}
+.notif-bell-btn:hover { background: rgba(255,255,255,0.1); }
+.notif-bell-badge {
+  position: absolute;
+  top: -4px; left: -4px;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  display: none;
+}
+.notif-bell-badge.has-new { display: flex; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+
+.notif-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: 340px;
+  background: var(--bg-panel);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  z-index: 210;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  animation: slideUp 0.2s ease;
+  overflow: hidden;
+  display: none;
+}
+.notif-dropdown.open { display: block; }
+@media(max-width:600px){ .notif-dropdown{ width:calc(100vw - 24px); left:auto; right:0; } }
+
+.notif-dropdown-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.notif-dropdown-title { font-size: 14px; font-weight: 700; }
+.notif-mark-all { font-size: 11px; color: var(--accent); cursor: pointer; font-weight: 600; }
+.notif-mark-all:hover { text-decoration: underline; }
+
+.notif-list { max-height: 420px; overflow-y: auto; }
+
+.notif-item {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+}
+.notif-item:hover { background: rgba(255,255,255,0.03); }
+.notif-item.unread { background: rgba(0,201,123,0.04); }
+.notif-item.unread::before {
+  content: '';
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--green);
+  border-radius: 2px 0 0 2px;
+}
+.notif-item-icon { font-size: 24px; flex-shrink: 0; }
+.notif-item-title { font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.notif-item-sub { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.notif-item-time { font-size: 10px; color: var(--text-muted); margin-top: 4px; }
+.notif-empty { text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 13px; }
+.notif-empty-icon { font-size: 36px; margin-bottom: 8px; opacity: 0.3; }
+
+/* Delivery detail modal */
+.delivery-detail-modal {
+  width: min(500px, calc(100vw - 24px));
+  padding: 0;
+  overflow: hidden;
+}
+.delivery-detail-header {
+  background: linear-gradient(135deg, rgba(0,201,123,0.12), rgba(0,201,123,0.06));
+  border-bottom: 1px solid rgba(0,201,123,0.2);
+  padding: 20px 24px;
+}
+.delivery-detail-title { font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+.delivery-detail-sub { font-size: 13px; color: var(--text-muted); }
+.delivery-detail-body { padding: 22px 24px; }
+.delivery-code-box {
+  background: rgba(0,201,123,0.06);
+  border: 1px solid rgba(0,201,123,0.2);
+  border-radius: 10px;
+  padding: 16px;
+  margin: 14px 0;
+  position: relative;
+}
+.delivery-code-label { font-size: 11px; font-weight: 700; color: var(--green); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.delivery-code-value {
+  font-family: 'Orbitron', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 2px;
+  word-break: break-all;
+  line-height: 1.6;
+}
+.copy-code-btn {
+  margin-top: 10px;
+  background: rgba(0,201,123,0.12);
+  border: 1px solid rgba(0,201,123,0.25);
+  color: var(--green);
+  border-radius: 7px;
+  padding: 7px 16px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.copy-code-btn:hover { background: rgba(0,201,123,0.2); }
+.delivery-msg-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  margin-bottom: 14px;
+}
+.rating-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.rating-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 14px;
+}
+
+/* Summary bar */
+.rating-summary {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 18px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.rating-big-num {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.rating-big-stars {
+  color: var(--gold);
+  font-size: 18px;
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.rating-big-count { font-size: 12px; color: var(--text-muted); }
+.rating-bars { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.rating-bar-row { display: flex; align-items: center; gap: 8px; font-size: 11px; }
+.rating-bar-label { color: var(--text-muted); width: 20px; text-align: left; flex-shrink: 0; }
+.rating-bar-track { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.rating-bar-fill { height: 100%; background: var(--gold); border-radius: 3px; transition: width 0.4s; }
+.rating-bar-pct { color: var(--text-muted); width: 28px; text-align: right; flex-shrink: 0; }
+
+/* Star input */
+.star-input-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.star-input-title { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text-primary); }
+.star-input-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.star-btn {
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform 0.15s;
+  color: rgba(255,255,255,0.2);
+  background: none;
+  border: none;
+  padding: 2px;
+  line-height: 1;
+}
+.star-btn:hover, .star-btn.hovered, .star-btn.selected { color: var(--gold); transform: scale(1.15); }
+.star-input-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  padding: 0 2px;
+}
+.star-selected-label {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  min-height: 20px;
+  margin-bottom: 10px;
+}
+.rating-comment {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 10px 12px;
+  color: var(--text-primary);
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  resize: vertical;
+  min-height: 72px;
+  outline: none;
+  transition: border-color 0.2s;
+  margin-bottom: 10px;
+}
+.rating-comment:focus { border-color: rgba(232,35,42,0.4); }
+.rating-comment::placeholder { color: var(--text-muted); }
+.submit-rating-btn {
+  width: 100%;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  padding: 11px;
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.submit-rating-btn:hover { filter: brightness(1.1); }
+.submit-rating-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Review list */
+.review-item {
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+.review-item:last-child { border-bottom: none; }
+.review-header { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+.review-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.review-name { font-size: 13px; font-weight: 700; }
+.review-stars { color: var(--gold); font-size: 13px; letter-spacing: 1px; }
+.review-date { font-size: 11px; color: var(--text-muted); margin-right: auto; }
+.review-comment { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.review-my-badge {
+  font-size: 10px;
+  background: rgba(232,35,42,0.12);
+  color: var(--accent);
+  border: 1px solid rgba(232,35,42,0.25);
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-weight: 700;
+}
+.reviews-list { max-height: 280px; overflow-y: auto; }
+.user-btn { display:flex; align-items:center; gap:8px; background:rgba(61,139,255,0.1); border:1px solid rgba(61,139,255,0.2); border-radius:10px; padding:7px 14px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; }
+.user-btn:hover { background:rgba(61,139,255,0.18); }
+.user-avatar { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-dark)); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; color:#fff; flex-shrink:0; }
+
+/* User dropdown */
+.user-dropdown { position:absolute; top:calc(100% + 8px); left:0; width:240px; background:var(--bg-panel); border:1px solid rgba(255,255,255,0.1); border-radius:12px; padding:6px; z-index:300; box-shadow:0 16px 48px rgba(0,0,0,0.5); animation:slideUp 0.2s ease; }
+.user-dropdown-header { padding:12px 14px; border-bottom:1px solid var(--border); margin-bottom:4px; }
+.user-dropdown-name { font-size:14px; font-weight:700; }
+.user-dropdown-email { font-size:11px; color:var(--text-muted); margin-top:2px; }
+.user-dropdown-item { display:flex; align-items:center; gap:10px; padding:9px 14px; border-radius:8px; cursor:pointer; font-size:13px; color:var(--text-secondary); transition:all 0.15s; }
+.user-dropdown-item:hover { background:rgba(255,255,255,0.05); color:var(--text-primary); }
+.user-dropdown-item.danger:hover { background:rgba(232,35,42,0.1); color:var(--accent); }
+.user-dropdown-sep { border:none; border-top:1px solid var(--border); margin:4px 0; }
+.user-wrap { position:relative; }
+
+/* Auth modal */
+.auth-modal { width:420px; padding:0; overflow:hidden; }
+.auth-tabs { display:flex; border-bottom:1px solid var(--border); }
+.auth-tab { flex:1; padding:16px; text-align:center; font-size:14px; font-weight:700; cursor:pointer; color:var(--text-muted); transition:all 0.2s; border-bottom:2px solid transparent; margin-bottom:-1px; }
+.auth-tab.active { color:var(--accent); border-color:var(--accent); }
+.auth-body { padding:24px; }
+.auth-input-group { margin-bottom:14px; }
+.auth-label { font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:5px; display:block; }
+.auth-input { width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:11px 14px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:14px; outline:none; transition:border-color 0.2s; }
+.auth-input:focus { border-color:rgba(232,35,42,0.45); }
+.auth-input::placeholder { color:var(--text-muted); }
+.auth-error { font-size:12px; color:var(--accent); margin-bottom:10px; display:none; padding:8px 12px; background:rgba(232,35,42,0.08); border-radius:6px; border:1px solid rgba(232,35,42,0.2); }
+.auth-btn { width:100%; background:var(--accent); color:#fff; border:none; border-radius:8px; padding:12px; font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s; margin-top:4px; }
+.auth-btn:hover { background:var(--accent-dark); }
+.auth-divider { display:flex; align-items:center; gap:10px; margin:16px 0; color:var(--text-muted); font-size:12px; }
+.auth-divider::before,.auth-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* Profile modal */
+.profile-modal { width:480px; max-height:88vh; overflow-y:auto; padding:0; }
+.profile-header { background:linear-gradient(135deg,#0d1117,#131720); padding:24px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:16px; }
+.profile-avatar-big { width:60px; height:60px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-dark)); display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:900; color:#fff; flex-shrink:0; border:3px solid rgba(232,35,42,0.3); }
+.profile-name-big { font-size:18px; font-weight:700; }
+.profile-email-big { font-size:12px; color:var(--text-muted); margin-top:3px; }
+.profile-joined { font-size:11px; color:var(--text-muted); margin-top:4px; }
+.profile-body { padding:20px 24px; }
+.profile-section { margin-bottom:20px; }
+.profile-section-title { font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+.order-card { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:8px; }
+.order-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.order-id { font-size:12px; font-weight:700; color:var(--text-muted); font-family:'Orbitron',sans-serif; }
+.order-date { font-size:11px; color:var(--text-muted); }
+.order-status { font-size:11px; font-weight:700; padding:3px 10px; border-radius:5px; }
+.order-status.active { background:rgba(0,201,123,0.12); color:var(--green); border:1px solid rgba(0,201,123,0.25); }
+.order-status.pending { background:rgba(245,166,35,0.12); color:var(--gold); border:1px solid rgba(245,166,35,0.25); }
+.order-status.cancelled { background:rgba(232,35,42,0.1); color:var(--accent); border:1px solid rgba(232,35,42,0.2); }
+.order-items { display:flex; flex-direction:column; gap:5px; }
+.order-item-row { display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); }
+.order-total { display:flex; justify-content:space-between; font-size:13px; font-weight:700; padding-top:8px; border-top:1px solid var(--border); margin-top:8px; }
+.order-total-price { font-family:'Orbitron',sans-serif; color:var(--accent); }
+@media (max-width: 900px) {
+  /* Navbar */
+  .navbar { padding: 0 16px; gap: 10px; }
+  .nav-links { display: none; }
+  .nav-search { width: 160px; }
+  .nav-search:focus { width: 190px; }
+
+  /* Hero */
+  .hero { padding: 36px 20px; gap: 28px; flex-direction: column; }
+  .hero-title { font-size: 28px; }
+  .hero-featured { width: 100%; max-width: 420px; }
+  .hero-stats { gap: 18px; }
+  .hero-stat-num { font-size: 18px; }
+
+  /* Layout */
+  .main-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+
+  /* Content */
+  .content { padding: 20px 16px 32px; }
+  .categories-strip, .home-section, .flash-banner,
+  .trust-strip, .newsletter-strip, .partners-strip,
+  .slider-wrap { margin-left: 16px; margin-right: 16px; }
+  .categories-grid { grid-template-columns: repeat(4,1fr); }
+  .trust-strip { grid-template-columns: repeat(2,1fr); }
+  .newsletter-strip { flex-direction: column; gap: 16px; }
+  .nl-form { width: 100%; }
+  .nl-input { flex: 1; width: auto; }
+
+  /* Cards grid */
+  .games-grid { grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 12px; }
+
+  /* Footer */
+  .site-footer { padding: 32px 20px 20px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — MOBILE (≤600px)
+═══════════════════════════════════════ */
+@media (max-width: 600px) {
+  /* Navbar */
+  .navbar { height: 54px; padding: 0 12px; gap: 8px; }
+  .logo { font-size: 15px; letter-spacing: 1px; }
+  .nav-search-wrap { display: none; }
+  .fs-switcher { display: none; }
+  .cart-btn { padding: 7px 10px; font-size: 12px; gap: 5px; }
+  .admin-btn { padding: 7px 10px; font-size: 11px; gap: 4px; }
+  .user-btn { padding: 6px 9px; font-size: 12px; }
+  .user-btn span#userNavLabel { display: none; }
+  .nav-actions { gap: 6px; }
+
+  /* Ticker */
+  .ticker-label { padding: 0 10px; font-size: 10px; }
+  .ticker-item { font-size: 11px; padding: 0 22px; }
+
+  /* Hero */
+  .hero { padding: 24px 14px; flex-direction: column; gap: 20px; }
+  .hero-badge { font-size: 11px; padding: 3px 10px; }
+  .hero-title { font-size: 22px; line-height: 1.2; }
+  .hero-sub { font-size: 12px; margin-bottom: 18px; }
+  .hero-btns { gap: 8px; }
+  .btn-primary, .btn-outline { padding: 10px 18px; font-size: 13px; }
+  .hero-stats { gap: 14px; padding-top: 20px; margin-top: 20px; flex-wrap: wrap; }
+  .hero-stat-num { font-size: 16px; }
+  .hero-stat-label { font-size: 10px; }
+  .hero-featured { width: 100%; }
+  .featured-img { height: 140px; font-size: 52px; }
+  .featured-title { font-size: 14px; }
+  .featured-price { font-size: 16px; }
+
+  /* Sections spacing */
+  .categories-strip, .home-section, .flash-banner,
+  .trust-strip, .newsletter-strip, .partners-strip,
+  .slider-wrap { margin: 18px 12px 0; }
+  .home-section { padding: 18px 12px 0; }
+
+  /* Categories */
+  .categories-grid { grid-template-columns: repeat(4,1fr); gap: 7px; }
+  .cat-card { padding: 11px 5px 9px; border-radius: 9px; }
+  .cat-card .cat-icon { font-size: 20px; margin-bottom: 5px; }
+  .cat-card .cat-name { font-size: 9px; }
+  .cat-card .cat-count { display: none; }
+
+  /* Slider */
+  .slide { height: 160px; padding: 20px 16px; }
+  .slide-title { font-size: 15px; }
+  .slide-desc { display: none; }
+  .slide-price { font-size: 15px; }
+  .slider-btn { width: 28px; height: 28px; font-size: 11px; }
+
+  /* Flash banner */
+  .flash-banner { padding: 14px 16px; flex-direction: column; gap: 12px; align-items: flex-start; }
+  .flash-title { font-size: 15px; }
+  .flash-sub { font-size: 11px; }
+  .flash-countdown { flex-wrap: wrap; gap: 6px; }
+  .cd-block { min-width: 44px; padding: 6px 8px; }
+  .cd-num { font-size: 16px; }
+  .cd-lbl { font-size: 8px; }
+
+  /* Trust */
+  .trust-strip { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .trust-card { padding: 11px 12px; gap: 9px; }
+  .trust-icon { font-size: 20px; }
+  .trust-title { font-size: 11px; }
+  .trust-sub { font-size: 10px; }
+
+  /* Newsletter */
+  .newsletter-strip { padding: 18px 16px; }
+  .nl-title { font-size: 14px; }
+  .nl-sub { font-size: 12px; }
+  .nl-form { flex-direction: column; width: 100%; }
+  .nl-input { width: 100%; }
+
+  /* Section headers */
+  .home-section-header { flex-wrap: wrap; gap: 8px; }
+  .home-section-title { font-size: 16px; }
+
+  /* Games grid — 2 columns on mobile */
+  .games-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
+  .game-card.lv { flex-direction: column; }
+  .game-card.lv .game-img { width: 100%; aspect-ratio: 460/215; }
+  .game-body { padding: 10px; gap: 4px; }
+  .game-title { font-size: 12px; }
+  .game-genre { font-size: 10px; }
+  .game-platform { font-size: 10px; }
+  .price { font-size: 13px; }
+  .price-old { font-size: 10px; }
+  .add-cart-btn { padding: 5px 8px; font-size: 10px; }
+
+  /* Cart panel */
+  .cart-panel { width: 100%; }
+
+  /* Modals */
+  .modal { width: calc(100vw - 24px); padding: 20px 16px; }
+  .product-modal { width: calc(100vw - 24px); }
+  .product-modal-body { padding: 16px; }
+  .pm-title { font-size: 17px; }
+  .pm-meta { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pm-footer { flex-direction: column; gap: 10px; align-items: flex-start; }
+  .pm-price { font-size: 20px; }
+  .checkout-modal { width: calc(100vw - 24px); }
+  .pay-methods { grid-template-columns: 1fr 1fr; }
+
+  /* Auth modals */
+  .auth-modal { width: calc(100vw - 24px); }
+  .profile-modal { width: calc(100vw - 24px); }
+
+  /* Content header */
+  .content-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .content-title { font-size: 16px; }
+
+  /* Promo banner */
+  .promo-banner { flex-direction: column; gap: 10px; align-items: flex-start; padding: 13px 16px; }
+  .promo-code { font-size: 13px; padding: 7px 12px; align-self: flex-start; }
+
+  /* Sort & view */
+  .sort-select { font-size: 12px; padding: 7px 10px; }
+
+  /* Footer */
+  .site-footer { padding: 24px 14px 16px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+  .footer-desc { max-width: 100%; }
+  .footer-bottom { flex-direction: column; gap: 6px; text-align: center; }
+
+  /* Partners */
+  .partners-logos { gap: 6px; }
+  .partner-logo { padding: 7px 12px; font-size: 11px; }
+
+  /* Store page — sidebar toggle */
+  .main-layout { grid-template-columns: 1fr; }
+
+  /* User dropdown */
+  .user-dropdown { left: auto; right: 0; width: 200px; }
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE — SMALL MOBILE (≤380px)
+═══════════════════════════════════════ */
+@media (max-width: 380px) {
+  .games-grid { grid-template-columns: repeat(2,1fr); gap: 8px; }
+  .navbar { padding: 0 10px; gap: 6px; }
+  .logo { font-size: 13px; }
+  .hero-title { font-size: 19px; }
+  .categories-grid { grid-template-columns: repeat(4,1fr); gap: 5px; }
+  .cat-card .cat-icon { font-size: 17px; }
+}
+
+/* ═══════════════════════════════════════
+   MOBILE SIDEBAR TOGGLE BUTTON
+═══════════════════════════════════════ */
+.mobile-filter-btn {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: var(--text-primary);
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  gap: 6px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .mobile-filter-btn { display: flex; }
+  .sidebar.mobile-open {
+    display: block;
+    position: fixed;
+    top: 60px; left: 0; right: 0; bottom: 0;
+    z-index: 150;
+    overflow-y: auto;
+    border-left: none;
+    border-top: 1px solid var(--border);
+  }
+  .sidebar-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 149;
+    backdrop-filter: blur(2px);
+  }
+  .sidebar-backdrop.show { display: block; }
+}
+
+
+/* ══════════════════════════════════════════
+   LAYOUT FIXES — z-index hierarchy
+   navbar:           200
+   mobileSearch:     190
+   sidebarBackdrop:  149
+   sidebar.mob-open: 150
+   user-dropdown:    210
+   cart-overlay:     300
+   cart-panel:       301
+   modal-overlay:    400
+   notification:     500
+══════════════════════════════════════════ */
+
+/* ─── Z-INDEX LAYER SYSTEM ─── */
+.navbar           { z-index: 200 !important; }
+.user-wrap        { z-index: 210; }
+.user-dropdown    { z-index: 210; }
+#mobileSearchBar  { z-index: 190; }
+.sidebar-backdrop { z-index: 149; }
+.cart-overlay     { z-index: 300; }
+.cart-panel       { z-index: 301; }
+.modal-overlay    { z-index: 400; }
+.notification     { z-index: 500; }
+#siteFooter       { position: relative; z-index: 1; }
+
+/* ─── PAGE TOP OFFSETS ─── */
+/* homePage: hero-banner gets margin-top = navbar height */
+.hero-banner      { margin-top: 60px; }
+/* storePage: push below navbar */
+#storePage        { padding-top: 60px; }
+/* homePage: no extra padding */
+#homePage         { padding-top: 0; }
+
+/* ─── SIDEBAR ─── */
+.sidebar          { top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+.sidebar.mobile-open { top: 60px; }
+
+/* ─── MODALS ─── */
+.modal            { max-height: calc(100vh - 32px); overflow-y: auto; }
+.product-modal {
+  width: min(600px, calc(100vw - 24px));
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding: 0;
+}
+.auth-modal       { width: min(420px, calc(100vw - 24px)); }
+.profile-modal    { width: min(480px, calc(100vw - 24px)); max-height: calc(100vh - 32px); overflow-y: auto; }
+.checkout-modal   { width: min(450px, calc(100vw - 24px)); }
+.modal-overlay    { align-items: center; padding: 16px; }
+
+/* ─── GAME CARD ─── */
+.game-img    { overflow: hidden; position: relative; }
+.game-badges { pointer-events: none; }
+
+/* ─── SIDEBAR FILTER OPTIONS ─── */
+.filter-option { overflow: hidden; }
+.filter-option > span:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+/* ─── NAV ─── */
+.nav-search-wrap { min-width: 0; flex-shrink: 1; }
+
+/* ─── CONTENT SPACING ─── */
+.categories-strip          { padding: 24px 36px 0; }
+.home-section              { padding: 28px 36px 0; }
+.home-section:last-of-type { padding-bottom: 36px; }
+.slider-wrap,
+.flash-banner,
+.trust-strip,
+.newsletter-strip,
+.partners-strip            { margin: 24px 36px 0; }
+.content .promo-banner     { margin-bottom: 22px; }
+
+/* ─── TICKER FIX ─── */
+.ticker-wrap   { position: relative; z-index: 2; }
+.ticker-outer  { overflow: hidden; flex: 1; }
+
+/* ─── PROMO BANNER ─── */
+#promoBanner { position: relative; z-index: 2; }
+
+/* ─── CART PANEL ─── */
+.cart-panel { top: 0; }
+
+/* ─── HERO BANNER NAV BUTTONS ─── */
+.hb-prev { left: 16px; }
+.hb-next { right: 16px; }
+
+/* ─── STAR RATING IN MODAL ─── */
+.rating-section { position: relative; z-index: 1; }
+#pmStarRow .star-btn { position: relative; z-index: 1; }
+
+/* ════════════════════════════════════
+   RESPONSIVE OVERRIDES
+════════════════════════════════════ */
+@media (max-width: 600px) {
+  /* Mobile: navbar is 54px */
+  .hero-banner    { margin-top: 54px; }
+  #storePage      { padding-top: 100px; } /* 54px navbar + 46px search bar */
+  .sidebar        { top: 54px; height: calc(100vh - 54px); }
+  #mobileSearchBar { top: 54px; }
+  .sidebar.mobile-open { top: 54px; }
+
+  .categories-strip,
+  .home-section   { padding-left: 14px; padding-right: 14px; }
+  .slider-wrap,
+  .flash-banner,
+  .trust-strip,
+  .newsletter-strip,
+  .partners-strip { margin-left: 12px; margin-right: 12px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="notification" id="notification"></div>
+
+<!-- CART -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <div class="cart-header-title">🛒 سلة الشراء</div>
+    <button class="cart-close" onclick="closeCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-subtotal"><span>المجموع</span><span id="cartSubtotal">$0</span></div>
+    <div class="cart-subtotal"><span>رسوم الخدمة</span><span>$0.00</span></div>
+    <div class="cart-total"><span>الإجمالي</span><span class="cart-total-price" id="cartTotal">$0</span></div>
+    <button class="checkout-btn" onclick="openCheckout()">إتمام الشراء →</button>
+  </div>
+</div>
+
+<!-- PASSWORD MODAL -->
+<div class="modal-overlay" id="passwordModal" onclick="closeModal('passwordModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">🔐 لوحة التحكم</div>
+    <div class="modal-sub">أدخل كلمة المرور للدخول</div>
+    <input class="modal-input" type="password" id="adminPwdInput" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')verifyPwd()">
+    <div class="pass-error" id="pwdError">❌ كلمة المرور غير صحيحة</div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" onclick="verifyPwd()">دخول</button>
+      <button class="modal-btn-secondary" onclick="closeModal('passwordModal')">إلغاء</button>
+    </div>
+    <div style="margin-top:13px;padding-top:13px;border-top:1px solid var(--border);">
+      <button class="modal-btn-secondary" style="width:100%;font-size:12px;" onclick="closeModal('passwordModal');openChangePwd()">🔑 تغيير كلمة المرور</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="changePwdModal" onclick="closeModal('changePwdModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-title">🔑 تغيير كلمة المرور</div>
+    <div class="modal-sub">أدخل كلمة المرور الحالية والجديدة</div>
+    <input class="modal-input" type="password" id="curPwd" placeholder="كلمة المرور الحالية">
+    <input class="modal-input" type="password" id="newPwd" placeholder="كلمة المرور الجديدة">
+    <input class="modal-input" type="password" id="cfmPwd" placeholder="تأكيد كلمة المرور الجديدة">
+    <div class="pass-error" id="changePwdError"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" onclick="doChangePwd()">حفظ</button>
+      <button class="modal-btn-secondary" onclick="closeModal('changePwdModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal-overlay" id="adminModal" onclick="closeModal('adminModal')">
+  <div class="modal admin-panel" onclick="event.stopPropagation()">
+    <div class="modal-title">⚙️ لوحة التحكم الإدارية</div>
+    <div class="modal-sub">إدارة متجر الألعاب الإلكترونية</div>
+
+    <div class="admin-section">
+      <div class="admin-section-title">🏷️ إعدادات المتجر</div>
+      <div class="admin-item">
+        <span class="admin-label">اسم المتجر</span>
+        <div style="display:flex;gap:6px;">
+          <input class="admin-input-small admin-input-wide" type="text" id="venueNameInput" value="باثيون">
+          <button class="admin-btn-small" onclick="applyVenueName()">تطبيق</button>
+        </div>
+      </div>
+      <div class="admin-item">
+        <span class="admin-label">كود الخصم</span>
+        <div style="display:flex;gap:6px;">
+          <input class="admin-input-small admin-input-wide" type="text" id="promoCodeInput" value="GAME20">
+          <button class="admin-btn-small" onclick="applyPromoCode()">تطبيق</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-section-title">📊 إحصائيات المتجر</div>
+      <div class="admin-item"><span class="admin-label">إجمالي الألعاب</span><span class="admin-status" id="adminGameCount">18 لعبة</span></div>
+      <div class="admin-item"><span class="admin-label">الطلبات اليوم</span><span class="admin-status">47 طلب</span></div>
+      <div class="admin-item"><span class="admin-label">المبيعات اليوم</span><span class="admin-status">$3,284</span></div>
+      <div class="admin-item"><span class="admin-label">المستخدمون النشطون</span><span class="admin-status">312 مستخدم</span></div>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-section-title">➕ إضافة لعبة جديدة</div>
+      <div class="admin-item" style="flex-direction:column;align-items:stretch;gap:8px;">
+        <input class="modal-input" type="text" id="newGameTitle" placeholder="اسم اللعبة" style="margin:0;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <input class="modal-input" type="number" id="newGamePrice" placeholder="السعر $" style="margin:0;">
+          <input class="modal-input" type="text" id="newGameGenre" placeholder="النوع (FPS/RPG...)" style="margin:0;">
+        </div>
+        <select class="modal-input" id="newGameEmoji" style="margin:0;cursor:pointer;">
+          <option value="🎮">🎮 عام</option><option value="🔫">🔫 FPS</option><option value="⚔️">⚔️ RPG</option>
+          <option value="🏎️">🏎️ سباق</option><option value="⚽">⚽ رياضة</option><option value="😱">😱 رعب</option>
+          <option value="🌆">🌆 مغامرة</option><option value="🧩">🧩 ألغاز</option>
+        </select>
+        <select class="modal-input" id="newGamePlatform" style="margin:0;cursor:pointer;">
+          <option value="PC">PC</option><option value="PS5">PS5</option><option value="Xbox">Xbox</option>
+        </select>
+        <button class="admin-btn-small" style="width:100%;" onclick="adminAddGame()">➕ إضافة اللعبة للمتجر</button>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-section-title">💰 خصم شامل</div>
+      <div class="admin-item">
+        <span class="admin-label">نسبة الخصم على الكل (%)</span>
+        <input class="admin-input-small" type="number" value="0" min="0" max="80" id="globalDiscount">
+      </div>
+      <div style="margin-top:8px;">
+        <button class="admin-btn-small" style="width:100%;" onclick="applyGlobalDiscount()">تطبيق الخصم</button>
+      </div>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-section-title">🌐 حالة النظام</div>
+      <div class="admin-item"><span class="admin-label">الخادم الرئيسي</span><span class="admin-status">✓ يعمل</span></div>
+      <div class="admin-item"><span class="admin-label">بوابة الدفع</span><span class="admin-status">✓ متصلة</span></div>
+      <div class="admin-item"><span class="admin-label">قاعدة البيانات</span><span class="admin-status">✓ نشطة</span></div>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-section-title">🔐 الأمان</div>
+      <div class="admin-item"><span class="admin-label">المصادقة الثنائية</span><div class="admin-toggle on" onclick="this.classList.toggle('on')"><div class="admin-toggle-thumb"></div></div></div>
+      <div class="admin-item"><span class="admin-label">تسجيل الطلبات</span><div class="admin-toggle on" onclick="this.classList.toggle('on')"><div class="admin-toggle-thumb"></div></div></div>
+    </div>
+
+    <div class="admin-section">
+      <div class="admin-section-title">⚡ إجراءات سريعة</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <button class="admin-btn-small" onclick="notify('📢 تم إرسال الإعلان للمستخدمين!')">📢 بث إعلان</button>
+        <button class="admin-btn-small" onclick="notify('📄 جاري إنشاء التقرير...')">📄 تصدير تقرير</button>
+        <button class="admin-btn-small admin-danger" onclick="if(confirm('إعادة التشغيل؟'))notify('🔄 جاري إعادة التشغيل...')">🔄 إعادة تشغيل النظام</button>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:18px;">
+      <button class="modal-btn-primary" onclick="closeModal('adminModal')">إغلاق</button>
+      <button class="modal-btn-secondary" onclick="closeModal('adminModal');openChangePwd()">🔑 تغيير كلمة المرور</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT MODAL -->
+<div class="modal-overlay" id="productModal" onclick="closeModal('productModal')">
+  <div class="modal product-modal" onclick="event.stopPropagation()">
+    <div class="product-modal-img" id="pmImg" style="font-size:80px;overflow:hidden;padding:0;"></div>
+    <div class="product-modal-body">
+      <div class="pm-genre" id="pmGenre"></div>
+      <div class="pm-title" id="pmTitle"></div>
+      <div class="pm-desc" id="pmDesc"></div>
+      <div class="pm-meta" id="pmMeta"></div>
+      <div class="pm-footer">
+        <div><span class="pm-old" id="pmOld"></span><span class="pm-price" id="pmPrice"></span></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-outline" onclick="closeModal('productModal')" style="padding:9px 18px;font-size:13px;">إغلاق</button>
+          <button class="btn-primary" id="pmAddBtn" style="padding:9px 18px;font-size:13px;">🛒 أضف للسلة</button>
+        </div>
+      </div>
+
+      <!-- RATING SECTION -->
+      <div class="rating-section" id="pmRatingSection">
+        <div class="rating-section-title">⭐ تقييمات اللعبة</div>
+
+        <!-- Summary -->
+        <div class="rating-summary" id="pmRatingSummary"></div>
+
+        <!-- Write review -->
+        <div class="star-input-wrap" id="pmWriteReview">
+          <div class="star-input-title" id="pmReviewFormTitle">✍️ اكتب تقييمك</div>
+          <div class="star-input-row" id="pmStarRow">
+            <button class="star-btn" data-val="1" onclick="selectStar(1)" onmouseenter="hoverStar(1)" onmouseleave="unhoverStar()">★</button>
+            <button class="star-btn" data-val="2" onclick="selectStar(2)" onmouseenter="hoverStar(2)" onmouseleave="unhoverStar()">★</button>
+            <button class="star-btn" data-val="3" onclick="selectStar(3)" onmouseenter="hoverStar(3)" onmouseleave="unhoverStar()">★</button>
+            <button class="star-btn" data-val="4" onclick="selectStar(4)" onmouseenter="hoverStar(4)" onmouseleave="unhoverStar()">★</button>
+            <button class="star-btn" data-val="5" onclick="selectStar(5)" onmouseenter="hoverStar(5)" onmouseleave="unhoverStar()">★</button>
+          </div>
+          <div class="star-input-labels"><span>سيء</span><span>مقبول</span><span>جيد</span><span>ممتاز</span><span>رائع!</span></div>
+          <div class="star-selected-label" id="pmStarLabel"></div>
+          <textarea class="rating-comment" id="pmReviewComment" placeholder="شاركنا رأيك بالتفصيل... (اختياري)"></textarea>
+          <button class="submit-rating-btn" id="pmSubmitRating" onclick="submitRating()" disabled>اختر عدد النجوم أولاً</button>
+        </div>
+
+        <!-- Reviews list -->
+        <div class="reviews-list" id="pmReviewsList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal-overlay" id="checkoutModal" onclick="closeModal('checkoutModal')">
+  <div class="modal checkout-modal" onclick="event.stopPropagation()">
+    <div class="modal-title">💳 إتمام الشراء</div>
+    <div class="modal-sub">راجع طلبك وأدخل بيانات الدفع</div>
+    <div class="chk-step">ملخص الطلب</div>
+    <div id="chkSummary"></div>
+    <div class="chk-step">طريقة الدفع</div>
+    <div class="pay-methods">
+      <div class="pay-method active" onclick="selPay(this)">💳 بطاقة ائتمانية</div>
+      <div class="pay-method" onclick="selPay(this)">🏦 تحويل بنكي</div>
+      <div class="pay-method" onclick="selPay(this)">📱 محفظة إلكترونية</div>
+      <div class="pay-method" onclick="selPay(this)">💵 نقداً</div>
+    </div>
+    <div class="chk-step">بيانات الدفع</div>
+    <input class="modal-input" type="text" placeholder="الاسم الكامل">
+    <input class="modal-input" type="email" placeholder="البريد الإلكتروني">
+    <div class="chk-total" id="chkTotal"></div>
+    <div class="modal-actions">
+      <button class="modal-btn-primary" onclick="completePurchase()">✅ تأكيد الشراء</button>
+      <button class="modal-btn-secondary" onclick="closeModal('checkoutModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal" onclick="closeModal('authModal')">
+  <div class="modal auth-modal" onclick="event.stopPropagation()">
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="loginTab" onclick="switchAuthTab('login')">تسجيل الدخول</div>
+      <div class="auth-tab" id="registerTab" onclick="switchAuthTab('register')">إنشاء حساب</div>
+    </div>
+    <!-- LOGIN -->
+    <div class="auth-body" id="loginBody">
+      <div class="auth-error" id="loginError"></div>
+      <div class="auth-input-group">
+        <label class="auth-label">البريد الإلكتروني</label>
+        <input class="auth-input" type="email" id="loginEmail" placeholder="example@email.com" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="auth-input-group">
+        <label class="auth-label">كلمة المرور</label>
+        <input class="auth-input" type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="auth-btn" onclick="doLogin()">تسجيل الدخول</button>
+      <div class="auth-divider">أو</div>
+      <div style="text-align:center;font-size:13px;color:var(--text-muted);">ليس لديك حساب؟ <span style="color:var(--accent);cursor:pointer;font-weight:700;" onclick="switchAuthTab('register')">سجّل الآن</span></div>
+    </div>
+    <!-- REGISTER -->
+    <div class="auth-body" id="registerBody" style="display:none;">
+      <div class="auth-error" id="registerError"></div>
+      <div class="auth-input-group">
+        <label class="auth-label">الاسم الكامل</label>
+        <input class="auth-input" type="text" id="regName" placeholder="محمد أحمد">
+      </div>
+      <div class="auth-input-group">
+        <label class="auth-label">البريد الإلكتروني</label>
+        <input class="auth-input" type="email" id="regEmail" placeholder="example@email.com">
+      </div>
+      <div class="auth-input-group">
+        <label class="auth-label">كلمة المرور</label>
+        <input class="auth-input" type="password" id="regPassword" placeholder="6 أحرف على الأقل">
+      </div>
+      <div class="auth-input-group">
+        <label class="auth-label">رقم الهاتف (اختياري)</label>
+        <input class="auth-input" type="tel" id="regPhone" placeholder="+964 7xx xxx xxxx">
+      </div>
+      <button class="auth-btn" onclick="doRegister()">إنشاء الحساب</button>
+      <div class="auth-divider">أو</div>
+      <div style="text-align:center;font-size:13px;color:var(--text-muted);">لديك حساب؟ <span style="color:var(--accent);cursor:pointer;font-weight:700;" onclick="switchAuthTab('login')">سجّل الدخول</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal" onclick="closeModal('profileModal')">
+  <div class="modal profile-modal" onclick="event.stopPropagation()">
+    <div class="profile-header">
+      <div class="profile-avatar-big" id="profileAvatarBig">م</div>
+      <div>
+        <div class="profile-name-big" id="profileNameBig">—</div>
+        <div class="profile-email-big" id="profileEmailBig">—</div>
+        <div class="profile-joined" id="profileJoined">—</div>
+      </div>
+    </div>
+    <div class="profile-body">
+      <div class="profile-section">
+        <div class="profile-section-title">📦 طلباتي</div>
+        <div id="profileOrders"><div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;">لا توجد طلبات بعد</div></div>
+      </div>
+      <div class="profile-section">
+        <div class="profile-section-title">⚙️ إعدادات الحساب</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:8px;">
+            <input class="auth-input" type="text" id="editProfileName" placeholder="الاسم الكامل" style="flex:1;">
+            <button class="btn-primary" style="padding:10px 16px;font-size:13px;border-radius:8px;border:none;cursor:pointer;font-family:'Cairo',sans-serif;font-weight:700;" onclick="saveProfileEdit()">حفظ</button>
+          </div>
+          <input class="auth-input" type="tel" id="editProfilePhone" placeholder="رقم الهاتف">
+        </div>
+      </div>
+      <div style="padding-top:14px;border-top:1px solid var(--border);">
+        <button onclick="doLogout()" style="width:100%;background:rgba(232,35,42,0.1);border:1px solid rgba(232,35,42,0.25);color:var(--accent);border-radius:8px;padding:11px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;">🚪 تسجيل الخروج</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DELIVERY DETAIL MODAL -->
+<div class="modal-overlay" id="deliveryDetailModal" onclick="closeModal('deliveryDetailModal')">
+  <div class="modal delivery-detail-modal" onclick="event.stopPropagation()">
+    <div class="delivery-detail-header">
+      <div class="delivery-detail-title">✅ تم قبول طلبك!</div>
+      <div class="delivery-detail-sub" id="ddOrderId">—</div>
+    </div>
+    <div class="delivery-detail-body">
+      <div class="delivery-msg-box" id="ddMessage"></div>
+      <div class="delivery-code-box" id="ddCodeBox">
+        <div class="delivery-code-label" id="ddCodeLabel">🔑 الكود / بيانات الدخول</div>
+        <div class="delivery-code-value" id="ddCodeValue"></div>
+        <button class="copy-code-btn" onclick="copyDeliveryCodeVenue()">📋 نسخ</button>
+      </div>
+      <div id="ddItemsList" style="margin-top:12px;"></div>
+      <button onclick="closeModal('deliveryDetailModal')" style="width:100%;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px;">حسناً، شكراً!</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo" onclick="showPage('home')">⬡ <span id="logoName">باثيون</span></div>
+  <div class="nav-links">
+    <div class="nav-link active" onclick="setNav(this);showPage('home')">الرئيسية</div>
+    <div class="nav-link" onclick="setNav(this);showPage('store')">المتجر</div>
+    <div class="nav-link" onclick="setNav(this);showPage('store')">العروض</div>
+    <div class="nav-link" onclick="setNav(this);showPage('store')">الأكثر مبيعاً</div>
+  </div>
+  <div class="nav-search-wrap">
+    <input class="nav-search" type="text" placeholder="🔍 ابحث عن لعبة..." id="searchInput" oninput="syncSearch(this.value)">
+  </div>
+  <div class="nav-actions">
+    <div class="fs-switcher" title="حجم الخط">
+      <button class="fs-btn" id="fsSmall"  onclick="setFontSize('small')"  title="صغير">ص</button>
+      <button class="fs-btn active" id="fsMedium" onclick="setFontSize('medium')" title="متوسط">م</button>
+      <button class="fs-btn" id="fsLarge"  onclick="setFontSize('large')"  title="كبير">ك</button>
+    </div>
+    <!-- USER BUTTON -->
+    <div class="user-wrap" id="userWrap">
+      <button class="user-btn" id="userNavBtn" onclick="toggleUserDropdown()">
+        <div class="user-avatar" id="userNavAvatar">؟</div>
+        <span id="userNavLabel">دخول</span>
+      </button>
+      <div class="user-dropdown" id="userDropdown" style="display:none;">
+        <div class="user-dropdown-header">
+          <div class="user-dropdown-name" id="ddName">—</div>
+          <div class="user-dropdown-email" id="ddEmail">—</div>
+        </div>
+        <div class="user-dropdown-item" onclick="openModal('profileModal');loadProfileModal();closeDropdown()">👤 ملفي الشخصي</div>
+        <div class="user-dropdown-item" onclick="openModal('profileModal');loadProfileModal();closeDropdown()">📦 طلباتي</div>
+        <hr class="user-dropdown-sep">
+        <div class="user-dropdown-item danger" onclick="doLogout();closeDropdown()">🚪 تسجيل الخروج</div>
+      </div>
+    </div>
+    <!-- BELL / INBOX BUTTON -->
+    <div class="notif-bell-wrap" id="bellWrap">
+      <button class="notif-bell-btn" id="bellBtn" onclick="toggleBell()" title="الإشعارات">
+        🔔
+        <span class="notif-bell-badge" id="bellBadge">0</span>
+      </button>
+      <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-dropdown-header">
+          <div class="notif-dropdown-title">🔔 الإشعارات</div>
+          <span class="notif-mark-all" onclick="markAllRead()">تحديد الكل كمقروء</span>
+        </div>
+        <div class="notif-list" id="notifList"></div>
+      </div>
+    </div>
+    <button class="cart-btn" onclick="openCart()">🛒 السلة <span class="cart-count" id="cartBadge">0</span></button>
+  </div>
+</nav>
+
+<!-- MOBILE SEARCH BAR -->
+<div id="mobileSearchBar" style="display:none;position:sticky;z-index:190;background:rgba(8,10,14,0.97);border-bottom:1px solid var(--border);padding:8px 12px;top:60px;">
+  <div style="position:relative;">
+    <input class="nav-search" type="text" placeholder="🔍 ابحث عن لعبة أو بطاقة..." id="mobileSearchInput" style="width:100%;" oninput="syncSearch(this.value)">
+  </div>
+</div>
+<script>
+// Show mobile search on small screens
+if(window.innerWidth <= 600) {
+  document.getElementById('mobileSearchBar').style.display = 'block';
+}
+window.addEventListener('resize', () => {
+  document.getElementById('mobileSearchBar').style.display = window.innerWidth<=600 ? 'block' : 'none';
+});
+</script>
+
+<!-- HOME PAGE -->
+<div id="homePage">
+
+  <!-- CINEMATIC HERO BANNER -->
+  <div class="hero-banner" id="heroBanner">
+    <div class="hb-track" id="hbTrack"></div>
+    <!-- Nav buttons -->
+    <button class="hb-nav hb-prev" onclick="hbPrev()">&#8250;</button>
+    <button class="hb-nav hb-next" onclick="hbNext()">&#8249;</button>
+    <!-- Dots -->
+    <div class="hb-dots" id="hbDots"></div>
+    <!-- Counter -->
+    <div class="hb-counter" id="hbCounter"><span id="hbCurNum">1</span> / <span id="hbTotNum">1</span></div>
+    <!-- Thumbnails -->
+    <div class="hb-thumbs" id="hbThumbs"></div>
+    <!-- Progress bar -->
+    <div class="hb-progress" id="hbProgress" style="width:0%"></div>
+  </div>
+  <div class="home-section">
+    <div class="home-section-header">
+      <div><div class="home-section-title">الألعاب المميزة</div><div class="home-section-sub">أبرز الألعاب هذا الأسبوع</div></div>
+      <button class="btn-outline" style="padding:9px 20px;font-size:13px;" onclick="setNav(document.querySelectorAll('.nav-link')[1]);showPage('store')">عرض الكل →</button>
+    </div>
+    <div class="games-grid" id="homeGrid"></div>
+  </div>
+</div>
+
+<!-- STORE PAGE -->
+<div id="storePage" style="display:none;">
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+  <div class="main-layout">
+    <aside class="sidebar" id="storeSidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">التصنيف</div>
+        <div class="filter-option active" onclick="setGenre(this,'all')"><span>🎮 الكل</span><span class="filter-count" id="cAll">18</span></div>
+        <div class="filter-option" onclick="setGenre(this,'FPS')"><span>🔫 FPS</span><span class="filter-count" id="cFPS">4</span></div>
+        <div class="filter-option" onclick="setGenre(this,'RPG')"><span>⚔️ RPG</span><span class="filter-count" id="cRPG">5</span></div>
+        <div class="filter-option" onclick="setGenre(this,'مغامرة')"><span>🌆 مغامرة</span><span class="filter-count" id="cAdv">4</span></div>
+        <div class="filter-option" onclick="setGenre(this,'رياضة')"><span>⚽ رياضة</span><span class="filter-count" id="cSport">2</span></div>
+        <div class="filter-option" onclick="setGenre(this,'رعب')"><span>😱 رعب</span><span class="filter-count" id="cHorror">2</span></div>
+        <div class="filter-option" onclick="setGenre(this,'مجانية')"><span>🎁 مجانية</span><span class="filter-count" id="cFree">1</span></div>
+        <div class="filter-option" onclick="setGenre(this,'بطاقة')"><span>💳 بطاقات رقمية</span><span class="filter-count" id="cCards">0</span></div>
+        <div class="filter-option" onclick="setCardType(this,'steamoffline')"><span>💻 Steam أوفلاين</span><span class="filter-count" id="cSteamOff">0</span></div>
+      </div>
+      <hr class="sidebar-divider">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">نوع البطاقة</div>
+        <div class="filter-option" onclick="setCardType(this,'all')"><span>🃏 الكل</span></div>
+        <div class="filter-option" onclick="setCardType(this,'steam')"><span>🎮 Steam</span></div>
+        <div class="filter-option" onclick="setCardType(this,'psn')"><span>🎮 PlayStation</span></div>
+        <div class="filter-option" onclick="setCardType(this,'xbox')"><span>🟩 Xbox</span></div>
+        <div class="filter-option" onclick="setCardType(this,'pubg')"><span>🪖 PUBG UC</span></div>
+        <div class="filter-option" onclick="setCardType(this,'fortnite')"><span>🏆 Fortnite</span></div>
+        <div class="filter-option" onclick="setCardType(this,'valorant')"><span>⚡ Valorant</span></div>
+        <div class="filter-option" onclick="setCardType(this,'roblox')"><span>🧱 Roblox</span></div>
+        <div class="filter-option" onclick="setCardType(this,'asiacell')"><span>📱 Asiacell</span></div>
+        <div class="filter-option" onclick="setCardType(this,'zain')"><span>📱 Zain</span></div>
+        <div class="filter-option" onclick="setCardType(this,'korek')"><span>📱 Korek</span></div>
+        <div class="filter-option" onclick="setCardType(this,'itunes')"><span>🍎 App Store</span></div>
+        <div class="filter-option" onclick="setCardType(this,'google')"><span>▶ Google Play</span></div>
+        <div class="filter-option" onclick="setCardType(this,'netflix')"><span>🎬 Netflix</span></div>
+      </div>
+      <hr class="sidebar-divider">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">المنصة</div>
+        <div class="platform-grid">
+          <div class="platform-chip active" onclick="setPlatform(this,'all')">الكل</div>
+          <div class="platform-chip" onclick="setPlatform(this,'PC')">PC</div>
+          <div class="platform-chip" onclick="setPlatform(this,'PS5')">PS5</div>
+          <div class="platform-chip" onclick="setPlatform(this,'Xbox')">Xbox</div>
+        </div>
+      </div>
+      <hr class="sidebar-divider">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">السعر الأقصى</div>
+        <div style="padding:0 4px;">
+          <input type="range" min="0" max="100" value="100" style="width:100%;accent-color:var(--accent);" oninput="maxPrice=+this.value;document.getElementById('maxPriceVal').textContent='$'+this.value;renderStore()">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;"><span>$0</span><span id="maxPriceVal">$100</span></div>
+        </div>
+      </div>
+      <hr class="sidebar-divider">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">التقييم</div>
+        <div class="filter-option active" onclick="setRating(this,0)"><span>⭐ الكل</span></div>
+        <div class="filter-option" onclick="setRating(this,4.5)"><span>⭐ 4.5+</span></div>
+        <div class="filter-option" onclick="setRating(this,4)"><span>⭐ 4.0+</span></div>
+      </div>
+    </aside>
+
+    <div class="content">
+      <div class="promo-banner" id="promoBanner">
+        <div><div class="promo-text" id="promoMainTextDisplay">🎉 عرض حصري! وفّر على أفضل الألعاب</div><div class="promo-sub" id="promoSubTextDisplay">استخدم الكود عند الدفع للحصول على خصم</div></div>
+        <div class="promo-code" id="promoDisplay" onclick="copyPromo()">GAME20</div>
+      </div>
+      <div class="content-header">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button class="mobile-filter-btn" onclick="openSidebar()">☰ الفلاتر</button>
+            <div><div class="content-title">جميع الألعاب</div></div>
+          </div>
+          <div class="content-count" id="storeCount">18 لعبة</div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <select class="sort-select" id="sortSelect" onchange="renderStore()">
+            <option value="def">الافتراضي</option>
+            <option value="pa">السعر: الأقل</option>
+            <option value="pd">السعر: الأعلى</option>
+            <option value="r">الأعلى تقييماً</option>
+            <option value="n">الأحدث</option>
+          </select>
+          <div class="view-toggle">
+            <button class="view-btn active" id="gvBtn" onclick="setView('grid')">⊞</button>
+            <button class="view-btn" id="lvBtn" onclick="setView('list')">☰</button>
+          </div>
+        </div>
+      </div>
+      <div class="games-grid" id="storeGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer" id="siteFooter">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo-text">⬡ <span id="footerName">PANTHEON</span></div>
+      <div class="footer-desc">متجرك الأول للألعاب الإلكترونية. أفضل الأسعار وأوسع مكتبة ألعاب في المنطقة العربية.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">المتجر</div>
+      <div class="footer-link">جميع الألعاب</div>
+      <div class="footer-link">العروض</div>
+      <div class="footer-link">الأكثر مبيعاً</div>
+      <div class="footer-link">الجديد</div>
+    </div>
+    <div>
+      <div class="footer-col-title">الدعم</div>
+      <div class="footer-link">مركز المساعدة</div>
+      <div class="footer-link">سياسة الاسترجاع</div>
+      <div class="footer-link">تتبع الطلب</div>
+      <div class="footer-link">تواصل معنا</div>
+    </div>
+    <div>
+      <div class="footer-col-title">قانوني</div>
+      <div class="footer-link">الشروط والأحكام</div>
+      <div class="footer-link">سياسة الخصوصية</div>
+      <div class="footer-link">ملفات الارتباط</div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 <span id="footerYear">باثيون</span>. جميع الحقوق محفوظة.</span>
+    <span>v3.0.0 • متجر الألعاب الإلكترونية</span>
+  </div>
+</footer>
+
+<script>
+// DATA
+let games = [
+  {id:0,emoji:'🌆',title:'Cyberpunk 2077',genre:'RPG',platform:'PC',price:39.99,oldPrice:59.99,rating:4.8,rc:12400,badges:['Top'],desc:'استكشف مدينة Night City المستقبلية في لعبة RPG مفتوحة العالم.',year:2020,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#0d0020,#1a0030)'},
+  {id:1,emoji:'🔫',title:'Counter-Strike 2',genre:'FPS',platform:'PC',price:0,oldPrice:null,rating:4.9,rc:85000,badges:['Top','Hot'],desc:'أحدث إصدار من CS الكلاسيكية. رسومات محسّنة وفيزياء دخان جديدة.',year:2023,dev:'Valve',bg:'linear-gradient(135deg,#001a00,#003000)'},
+  {id:2,emoji:'⚔️',title:'DOTA 2',genre:'RPG',platform:'PC',price:0,oldPrice:null,rating:4.6,rc:42000,badges:[],desc:'لعبة MOBA الأشهر في العالم. 100+ بطل بأسلوب لعب فريد.',year:2013,dev:'Valve',bg:'linear-gradient(135deg,#1a0000,#300000)'},
+  {id:3,emoji:'🌿',title:'The Last of Us II',genre:'مغامرة',platform:'PS5',price:49.99,oldPrice:69.99,rating:4.9,rc:31000,badges:['Top'],desc:'رحلة عاطفية في عالم مدمر. قصة مشاعر معقدة ورسومات استثنائية.',year:2020,dev:'Naughty Dog',bg:'linear-gradient(135deg,#001a10,#002818)'},
+  {id:4,emoji:'🪖',title:'Halo Infinite',genre:'FPS',platform:'Xbox',price:39.99,oldPrice:59.99,rating:4.5,rc:18000,badges:['New'],desc:'عودة Master Chief في أكبر خريطة مفتوحة في تاريخ السلسلة.',year:2021,dev:'343 Industries',bg:'linear-gradient(135deg,#001522,#001a2a)'},
+  {id:5,emoji:'🧟',title:'Resident Evil 3',genre:'رعب',platform:'PC',price:29.99,oldPrice:39.99,rating:4.3,rc:9200,badges:[],desc:'الرعب الكلاسيكي بمعالجة حديثة. نيمسيس يلاحقك في كل مكان.',year:2020,dev:'Capcom',bg:'linear-gradient(135deg,#1a0005,#2a0008)'},
+  {id:6,emoji:'🏯',title:'Ghost of Tsushima',genre:'مغامرة',platform:'PS5',price:44.99,oldPrice:59.99,rating:4.9,rc:27000,badges:['Top'],desc:'الساموراي الأخير يدافع عن جزيرة تسوشيما. من أجمل الألعاب بصرياً.',year:2020,dev:'Sucker Punch',bg:'linear-gradient(135deg,#1a0800,#280f00)'},
+  {id:7,emoji:'💣',title:'CoD: Warzone',genre:'FPS',platform:'PC',price:0,oldPrice:null,rating:4.4,rc:56000,badges:['Hot'],desc:'Battle Royale مجانية. 150 لاعب في خريطة ضخمة مع تحديثات موسمية.',year:2020,dev:'Activision',bg:'linear-gradient(135deg,#0a0f1a,#101828)'},
+  {id:8,emoji:'🐺',title:'The Witcher 3',genre:'RPG',platform:'PC',price:19.99,oldPrice:39.99,rating:5.0,rc:48000,badges:['Top'],desc:'الفائز بأكثر من 800 جائزة لعبة العام. عالم مفتوح ضخم لا مثيل له.',year:2015,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#001400,#002000)'},
+  {id:9,emoji:'😈',title:'DOOM Eternal',genre:'FPS',platform:'PC',price:24.99,oldPrice:49.99,rating:4.8,rc:21000,badges:['Hot'],desc:'أسرع وأضخم. DOOM Slayer يجوب الكون لإبادة جحافل الشياطين.',year:2020,dev:'id Software',bg:'linear-gradient(135deg,#1a0000,#2a0000)'},
+  {id:10,emoji:'🏆',title:'Fortnite',genre:'رياضة',platform:'PC',price:0,oldPrice:null,rating:4.2,rc:93000,badges:['Hot'],desc:'Battle Royale الأشهر في العالم. بناء وقتال وتعاون مستمر.',year:2017,dev:'Epic Games',bg:'linear-gradient(135deg,#0a001a,#120030)'},
+  {id:11,emoji:'☢️',title:'Fallout 4',genre:'RPG',platform:'PC',price:14.99,oldPrice:29.99,rating:4.5,rc:32000,badges:[],desc:'استكشف بوسطن ما بعد الحرب النووية. بناء مستوطنات وصنع أسلحة.',year:2015,dev:'Bethesda',bg:'linear-gradient(135deg,#0a1400,#101e00)'},
+  {id:12,emoji:'👻',title:'Ghostwire: Tokyo',genre:'مغامرة',platform:'PS5',price:34.99,oldPrice:49.99,rating:4.3,rc:7800,badges:[],desc:'مدينة طوكيو الفارغة. استخدم قوى خارقة لمحاربة الكيانات الشريرة.',year:2022,dev:'Tango Gameworks',bg:'linear-gradient(135deg,#0d0a1a,#18133a)'},
+  {id:13,emoji:'🥽',title:'Half-Life: Alyx',genre:'مغامرة',platform:'PC',price:59.99,oldPrice:null,rating:4.9,rc:15000,badges:[],desc:'أفضل تجربة VR على الإطلاق. قصة جديدة في عالم Half-Life.',year:2020,dev:'Valve',bg:'linear-gradient(135deg,#001a1a,#003030)'},
+  {id:14,emoji:'🗡️',title:'Nioh 2',genre:'RPG',platform:'PS5',price:39.99,oldPrice:59.99,rating:4.7,rc:11000,badges:[],desc:'أصعب ألعاب الساموراي. نظام قتال عميق مع أرواح شريرة.',year:2020,dev:'Team Ninja',bg:'linear-gradient(135deg,#1a1000,#2a1a00)'},
+  {id:15,emoji:'🏜️',title:'Wasteland 3',genre:'RPG',platform:'PC',price:19.99,oldPrice:44.99,rating:4.4,rc:6500,badges:[],desc:'RPG تكتيكي في كولورادو ما بعد الكارثة. قرارات أخلاقية صعبة.',year:2020,dev:'inXile',bg:'linear-gradient(135deg,#1a1a00,#2a2a00)'},
+  {id:16,emoji:'🚀',title:'CoD: Infinite Warfare',genre:'FPS',platform:'Xbox',price:24.99,oldPrice:49.99,rating:4.1,rc:14000,badges:[],desc:'حرب الفضاء في مستقبل بعيد. مهمات فضائية ومعارك جاذبية صفرية.',year:2016,dev:'Infinity Ward',bg:'linear-gradient(135deg,#0a0f1a,#0f1620)'},
+  {id:17,emoji:'😱',title:'Resident Evil Village',genre:'رعب',platform:'PS5',price:44.99,oldPrice:59.99,rating:4.7,rc:19000,badges:['New'],desc:'Ethan Winters في قرية مسكونة. كوابيس ومفاجآت لا تنتهي.',year:2021,dev:'Capcom',bg:'linear-gradient(135deg,#0d0a00,#1a1000)'},
+  // DIGITAL CARDS
+  {id:100,emoji:'🎮',title:'بطاقة Steam $10',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:10,oldPrice:null,rating:4.9,rc:5200,badges:['Hot'],desc:'بطاقة هدية Steam بقيمة 10 دولار. صالحة لجميع المنتجات على منصة Steam.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
+  {id:101,emoji:'🎮',title:'بطاقة Steam $20',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:20,oldPrice:null,rating:4.9,rc:8100,badges:['Top'],desc:'بطاقة هدية Steam بقيمة 20 دولار. صالحة لجميع المنتجات على منصة Steam.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
+  {id:102,emoji:'🎮',title:'بطاقة Steam $50',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:50,oldPrice:null,rating:4.9,rc:4300,badges:[],desc:'بطاقة هدية Steam بقيمة 50 دولار. أفضل قيمة للاعبين المخلصين.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
+  {id:103,emoji:'🎮',title:'PSN Card $10',genre:'بطاقة رقمية',platform:'PS5',cardType:'psn',price:10,oldPrice:null,rating:4.8,rc:6700,badges:[],desc:'بطاقة PlayStation Network بقيمة 10 دولار. للعاب والإضافات على PS4/PS5.',year:2024,dev:'Sony',bg:'linear-gradient(135deg,#003087,#001a4d)'},
+  {id:104,emoji:'🎮',title:'PSN Card $25',genre:'بطاقة رقمية',platform:'PS5',cardType:'psn',price:25,oldPrice:null,rating:4.8,rc:9200,badges:['Hot'],desc:'بطاقة PlayStation Network بقيمة 25 دولار.',year:2024,dev:'Sony',bg:'linear-gradient(135deg,#003087,#001a4d)'},
+  {id:105,emoji:'🟩',title:'Xbox Gift Card $15',genre:'بطاقة رقمية',platform:'Xbox',cardType:'xbox',price:15,oldPrice:null,rating:4.7,rc:4100,badges:[],desc:'بطاقة هدية Xbox بقيمة 15 دولار. للألعاب والإضافات على Xbox وPC.',year:2024,dev:'Microsoft',bg:'linear-gradient(135deg,#107c10,#0a5a0a)'},
+  {id:106,emoji:'🪖',title:'PUBG UC 660',genre:'بطاقة رقمية',platform:'PC',cardType:'pubg',price:9.99,oldPrice:null,rating:4.8,rc:12000,badges:['Hot'],desc:'660 UC لعبة PUBG Mobile. استخدمها للحصول على أزياء وأسلحة حصرية.',year:2024,dev:'Krafton',bg:'linear-gradient(135deg,#1a0f00,#2d1a00)'},
+  {id:107,emoji:'🪖',title:'PUBG UC 1800',genre:'بطاقة رقمية',platform:'PC',cardType:'pubg',price:24.99,oldPrice:29.99,rating:4.8,rc:8900,badges:['Top'],desc:'1800 UC لعبة PUBG Mobile بسعر مخفض. أفضل قيمة للشراء.',year:2024,dev:'Krafton',bg:'linear-gradient(135deg,#1a0f00,#2d1a00)'},
+  {id:108,emoji:'⚡',title:'Valorant Points 1000 VP',genre:'بطاقة رقمية',platform:'PC',cardType:'valorant',price:9.99,oldPrice:null,rating:4.7,rc:7600,badges:[],desc:'1000 نقطة Valorant لشراء الأعوان والأسلحة الجمالية.',year:2024,dev:'Riot Games',bg:'linear-gradient(135deg,#1a0005,#380010)'},
+  {id:109,emoji:'🏆',title:'Fortnite V-Bucks 1000',genre:'بطاقة رقمية',platform:'PC',cardType:'fortnite',price:7.99,oldPrice:null,rating:4.6,rc:15000,badges:[],desc:'1000 V-Bucks للعبة Fortnite. احصل على أزياء وعبوات المعركة.',year:2024,dev:'Epic Games',bg:'linear-gradient(135deg,#001a2a,#002a40)'},
+  {id:110,emoji:'🧱',title:'Roblox 400 Robux',genre:'بطاقة رقمية',platform:'PC',cardType:'roblox',price:4.99,oldPrice:null,rating:4.7,rc:22000,badges:[],desc:'400 Robux لعبة Roblox. للحصول على أزياء وتحسينات في اللعبة.',year:2024,dev:'Roblox Corp',bg:'linear-gradient(135deg,#1a0000,#2d0000)'},
+  {id:111,emoji:'📱',title:'شحن Asiacell 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'asiacell',price:3.5,oldPrice:null,rating:4.9,rc:31000,badges:['Hot'],desc:'شحن رصيد Asiacell بقيمة 5000 دينار عراقي. فوري ومضمون.',year:2024,dev:'Asiacell',bg:'linear-gradient(135deg,#1a0a00,#ff6b0020)'},
+  {id:112,emoji:'📱',title:'شحن Asiacell 10000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'asiacell',price:7,oldPrice:null,rating:4.9,rc:28000,badges:['Top'],desc:'شحن رصيد Asiacell بقيمة 10000 دينار عراقي.',year:2024,dev:'Asiacell',bg:'linear-gradient(135deg,#1a0a00,#ff6b0020)'},
+  {id:113,emoji:'📱',title:'شحن Zain 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'zain',price:3.5,oldPrice:null,rating:4.8,rc:18000,badges:[],desc:'شحن رصيد Zain Iraq بقيمة 5000 دينار عراقي. فوري ومضمون.',year:2024,dev:'Zain Iraq',bg:'linear-gradient(135deg,#1a0000,#cc000022)'},
+  {id:114,emoji:'📱',title:'شحن Zain 15000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'zain',price:10.5,oldPrice:null,rating:4.8,rc:12000,badges:[],desc:'شحن رصيد Zain Iraq بقيمة 15000 دينار عراقي.',year:2024,dev:'Zain Iraq',bg:'linear-gradient(135deg,#1a0000,#cc000022)'},
+  {id:115,emoji:'📱',title:'شحن Korek 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'korek',price:3.5,oldPrice:null,rating:4.7,rc:9000,badges:[],desc:'شحن رصيد Korek Telecom بقيمة 5000 دينار عراقي.',year:2024,dev:'Korek Telecom',bg:'linear-gradient(135deg,#1a0020,#e2007422)'},
+  {id:116,emoji:'🍎',title:'iTunes Gift Card $15',genre:'بطاقة رقمية',platform:'iOS',cardType:'itunes',price:15,oldPrice:null,rating:4.8,rc:11000,badges:[],desc:'بطاقة iTunes/App Store بقيمة 15 دولار. للتطبيقات والألعاب والاشتراكات.',year:2024,dev:'Apple',bg:'linear-gradient(135deg,#001a2a,#0071e322)'},
+  {id:117,emoji:'▶',title:'Google Play $10',genre:'بطاقة رقمية',platform:'Android',cardType:'google',price:10,oldPrice:null,rating:4.7,rc:14000,badges:[],desc:'بطاقة Google Play بقيمة 10 دولار. للتطبيقات والألعاب والاشتراكات.',year:2024,dev:'Google',bg:'linear-gradient(135deg,#001a00,#34a85322)'},
+  {id:118,emoji:'🎬',title:'Netflix شهر واحد',genre:'بطاقة رقمية',platform:'جميع المنصات',cardType:'netflix',price:12.99,oldPrice:15.99,rating:4.6,rc:7800,badges:['Sale'],desc:'اشتراك Netflix لمدة شهر كامل. وصول لآلاف الأفلام والمسلسلات.',year:2024,dev:'Netflix',bg:'linear-gradient(135deg,#1a0000,#e5091422)'},
+
+  // ── STEAM OFFLINE PACKAGES ──
+  {id:200,emoji:'💻',title:'Grand Theft Auto V — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:8.99,oldPrice:14.99,rating:4.8,rc:210000,badges:['Top','Hot'],
+   offlineNote:'تثبيت محلي بدون إنترنت. حساب Steam مؤقت مُرفق.',
+   includes:['GTA V Story Mode','GTA Online (Offline Crack)','جميع DLCs'],
+   size:'95 GB',version:'v1.0.3179.0',
+   desc:'لعبة GTA V كاملة للتثبيت الأوفلاين على الكمبيوتر. تشغيل مباشر بدون حاجة لإنترنت أو حساب Steam حقيقي.',
+   year:2013,dev:'Rockstar Games',bg:'linear-gradient(135deg,#0a1a0a,#0f2a0f)'},
+
+  {id:201,emoji:'🧙',title:'Elden Ring — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:12.99,oldPrice:24.99,rating:4.9,rc:89000,badges:['Top'],
+   offlineNote:'تثبيت كامل أوفلاين. يشمل التحديث الأخير.',
+   includes:['Elden Ring Base Game','Shadow of the Erdtree DLC','آخر تحديث مثبّت'],
+   size:'60 GB',version:'v1.14.0',
+   desc:'Elden Ring كاملة مع إضافة Shadow of the Erdtree. تجربة RPG استثنائية من FromSoftware بدون إنترنت.',
+   year:2022,dev:'FromSoftware',bg:'linear-gradient(135deg,#1a1000,#2a1a00)'},
+
+  {id:202,emoji:'🌿',title:'Red Dead Redemption 2 — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:11.99,oldPrice:19.99,rating:4.9,rc:145000,badges:['Top'],
+   offlineNote:'نسخة أوفلاين كاملة بدون Rockstar Launcher.',
+   includes:['RDR2 Story Mode','جميع التحديثات','تعديلات مجتمعية مثبّتة'],
+   size:'120 GB',version:'v1491.50',
+   desc:'Red Dead Redemption 2 بكل تفاصيله المذهلة. عالم مفتوح ضخم في الغرب الأمريكي — أوفلاين كامل.',
+   year:2019,dev:'Rockstar Games',bg:'linear-gradient(135deg,#1a0500,#2a0a00)'},
+
+  {id:203,emoji:'🌆',title:'Cyberpunk 2077 + Phantom Liberty — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:13.99,oldPrice:22.99,rating:4.8,rc:72000,badges:['Hot','New'],
+   offlineNote:'الإصدار 2.2 الكامل مع إضافة Phantom Liberty.',
+   includes:['Cyberpunk 2077','Phantom Liberty DLC','REDmod أداة تعديل'],
+   size:'75 GB',version:'v2.21',
+   desc:'Cyberpunk 2077 بعد كل التحديثات الكبرى. أفضل نسخة من اللعبة + إضافة Phantom Liberty.',
+   year:2023,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#0d0020,#1a0035)'},
+
+  {id:204,emoji:'🏔️',title:'The Witcher 3 GOTY — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:6.99,oldPrice:12.99,rating:5.0,rc:180000,badges:['Top'],
+   offlineNote:'نسخة GOTY الكاملة مع جميع الإضافات.',
+   includes:['The Witcher 3: Wild Hunt','Hearts of Stone DLC','Blood and Wine DLC','Next-Gen Update مثبّت'],
+   size:'50 GB',version:'v4.04',
+   desc:'The Witcher 3 في أفضل حالاتها. نسخة GOTY مع كل الإضافات والتحديث الكبير للجيل الجديد.',
+   year:2022,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#001400,#002a00)'},
+
+  {id:205,emoji:'🔴',title:'Spider-Man Remastered — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:10.99,oldPrice:18.99,rating:4.8,rc:53000,badges:[],
+   offlineNote:'نسخة PC الكاملة بدون PSN.',
+   includes:['Spider-Man Remastered','The City That Never Sleeps DLC','ثلاث قصص إضافية'],
+   size:'75 GB',version:'v1.1223.0.0',
+   desc:'مغامرات Spider-Man على الكمبيوتر بجودة عالية. رسومات مذهلة وقصة آسرة — أوفلاين كامل.',
+   year:2022,dev:'Insomniac / Nixxes',bg:'linear-gradient(135deg,#1a0000,#380000)'},
+
+  {id:206,emoji:'🌍',title:'God of War — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:9.99,oldPrice:16.99,rating:4.9,rc:98000,badges:['Top'],
+   offlineNote:'نسخة PC الكاملة بدون PSN مطلوب.',
+   includes:['God of War (2018)','جميع التحديثات','دعم 4K + Ultrawide'],
+   size:'34 GB',version:'v1.0.15',
+   desc:'God of War على الكمبيوتر. تجربة Kratos ممتعة مع رسومات استثنائية — أوفلاين تام.',
+   year:2022,dev:'Santa Monica Studio',bg:'linear-gradient(135deg,#1a0800,#300f00)'},
+
+  {id:207,emoji:'⚔️',title:'Dark Souls 3 + DLCs — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:7.99,oldPrice:13.99,rating:4.7,rc:67000,badges:[],
+   offlineNote:'النسخة الكاملة مع جميع الإضافات. تشغيل أوفلاين.',
+   includes:['Dark Souls III','Ashes of Ariandel DLC','The Ringed City DLC'],
+   size:'22 GB',version:'v1.15.2',
+   desc:'Dark Souls 3 كاملة مع كلا الإضافتين. أصعب وأجمل ألعاب FromSoftware — أوفلاين.',
+   year:2016,dev:'FromSoftware',bg:'linear-gradient(135deg,#0a0a1a,#15152a)'},
+
+  {id:208,emoji:'🏰',title:'Hogwarts Legacy — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:11.99,oldPrice:20.99,rating:4.7,rc:84000,badges:['Hot'],
+   offlineNote:'نسخة كاملة بدون WB Games Launcher.',
+   includes:['Hogwarts Legacy','جميع المحتوى الإضافي','Deluxe Edition Items'],
+   size:'85 GB',version:'v1116523',
+   desc:'استكشف عالم هاري بوتر في Hogwarts Legacy. مغامرة سحرية ضخمة — أوفلاين كامل.',
+   year:2023,dev:'Avalanche Software',bg:'linear-gradient(135deg,#0a0020,#180040)'},
+
+  {id:209,emoji:'🧟',title:'Resident Evil 4 Remake — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:9.99,oldPrice:17.99,rating:4.9,rc:61000,badges:['New'],
+   offlineNote:'Denuvo مزال. تشغيل مباشر أوفلاين.',
+   includes:['RE4 Remake','Separate Ways DLC (Ada Wong)','Deluxe Weapons Pack'],
+   size:'67 GB',version:'v1.1.1',
+   desc:'Resident Evil 4 Remake كاملة مع إضافة Ada Wong. إعادة تصميم مذهلة للكلاسيكية.',
+   year:2023,dev:'Capcom',bg:'linear-gradient(135deg,#1a0005,#2a000a)'},
+
+  {id:210,emoji:'🚀',title:'Starfield — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:13.99,oldPrice:23.99,rating:4.3,rc:39000,badges:[],
+   offlineNote:'بدون Xbox App. نسخة Steam أوفلاين.',
+   includes:['Starfield Base Game','Shattered Space DLC','جميع التحديثات'],
+   size:'140 GB',version:'v1.14.74',
+   desc:'Starfield من Bethesda. استكشاف فضاء ضخم مع نظام RPG عميق — أوفلاين كامل.',
+   year:2023,dev:'Bethesda',bg:'linear-gradient(135deg,#000a1a,#00102a)'},
+
+  {id:211,emoji:'🐉',title:'Monster Hunter World: Iceborne — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
+   price:9.99,oldPrice:16.99,rating:4.8,rc:74000,badges:['Top'],
+   offlineNote:'نسخة Master Edition الكاملة أوفلاين.',
+   includes:['Monster Hunter: World','Iceborne Expansion','جميع الـ DLCs الكبرى'],
+   size:'48 GB',version:'v15.21.01',
+   desc:'Monster Hunter World + Iceborne. المجموعة الكاملة بمئات الساعات من الصيد والمعارك.',
+   year:2019,dev:'Capcom',bg:'linear-gradient(135deg,#0a1500,#152500)'},
+];
+
+let cart=[], wishlist=new Set(), adminPwd='asdasdFG12';
+let genreFilter='all', platformFilter='all', cardTypeFilter='all', maxPrice=100, minRating=0, viewMode='grid';
+
+// PAGES
+function showPage(p) {
+  document.getElementById('homePage').style.display = p==='home'?'block':'none';
+  document.getElementById('storePage').style.display = p==='store'?'block':'none';
+  document.getElementById('siteFooter').style.display = p==='home'?'block':'none';
+  if(p==='store') renderStore();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function setNav(el) {
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// PLATFORM CARD META
+const CARD_META = {
+  game:        { label:'لعبة رقمية',      color:'#3d8bff', icon:'🎮' },
+  steamoffline:{ label:'Steam أوفلاين',   color:'#1b2838', icon:'💻' },
+  steam:       { label:'Steam',           color:'#1b2838', icon:'🎮' },
+  psn:         { label:'PlayStation',     color:'#003791', icon:'🎮' },
+  xbox:        { label:'Xbox',            color:'#107c10', icon:'🟩' },
+  asiacell:    { label:'Asiacell',        color:'#ff6b00', icon:'📱' },
+  zain:        { label:'Zain',            color:'#cc0000', icon:'📱' },
+  korek:       { label:'Korek',           color:'#e20074', icon:'📱' },
+  itunes:      { label:'App Store',       color:'#0071e3', icon:'🍎' },
+  google:      { label:'Google Play',     color:'#34a853', icon:'▶'  },
+  pubg:        { label:'PUBG UC',         color:'#f5a623', icon:'🪖' },
+  freefire:    { label:'Free Fire',       color:'#ff4500', icon:'🔥' },
+  valorant:    { label:'Valorant',        color:'#ff4655', icon:'⚡' },
+  fortnite:    { label:'Fortnite V-Bucks',color:'#00d4ff', icon:'🏆' },
+  roblox:      { label:'Roblox',          color:'#e2231a', icon:'🧱' },
+  netflix:     { label:'Netflix',         color:'#e50914', icon:'🎬' },
+  other:       { label:'بطاقة أخرى',     color:'#6c757d', icon:'💳' },
+};
+
+// RENDER
+function cardHTML(g, lv) {
+  const inCart = cart.some(c=>c.id===g.id);
+  const inWish = wishlist.has(g.id);
+  const isCard = g.cardType && g.cardType !== 'game';
+  const cm = isCard ? (CARD_META[g.cardType]||CARD_META.other) : null;
+
+  // Price
+  const priceHTML = g.price===0
+    ? `<span class="price-free">مجاني</span>`
+    : `${g.oldPrice?`<span class="price-old">$${g.oldPrice}</span>`:''}<span class="price">$${g.price}</span>`;
+
+  const badges = (g.badges||[]).map(b=>`<span class="badge badge-${b==='Top'?'top':b==='New'?'new':b==='Hot'?'hot':'sale'}">${b}</span>`).join('');
+  const stars = '★'.repeat(Math.floor(g.rating||4));
+
+  // Image area: real image > card gradient > emoji fallback
+  let imgContent = '';
+  if(g.image) {
+    imgContent = `<img src="${g.image}" alt="${g.title}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+  } else if(isCard) {
+    imgContent = `<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,${cm.color}22,${cm.color}44);gap:6px;">
+      <span style="font-size:36px;">${cm.icon}</span>
+      <span style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:#fff;letter-spacing:1px;opacity:0.8;">${cm.label}</span>
+    </div>`;
+  } else {
+    imgContent = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:${g.bg||'linear-gradient(135deg,#1a1a2e,#16213e)'};font-size:46px;">${g.emoji||'🎮'}</div>`;
+  }
+
+  const isOffline = g.cardType === 'steamoffline';
+
+  // Card type chip
+  const cardChip = isCard
+    ? `<div style="position:absolute;bottom:8px;right:8px;background:${cm.color};color:#fff;font-family:'Cairo',sans-serif;font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;letter-spacing:0.5px;">${cm.label}</div>`
+    : '';
+
+  // Offline extra info strip
+  const offlineStrip = isOffline && g.size
+    ? `<div style="font-size:10px;color:var(--text-secondary);display:flex;gap:8px;flex-wrap:wrap;margin-top:2px;">
+        <span>💾 ${g.size}</span>
+        ${g.version?`<span>v${g.version}</span>`:''}
+      </div>`
+    : '';
+
+  return `<div class="game-card${lv?' lv':''}" onclick="openProduct(${g.id})">
+    <div class="game-img" style="background:${g.bg||'#131720'};overflow:hidden;padding:0;">
+      ${imgContent}
+      <div class="game-badges">${badges}</div>
+      <button class="wishlist-btn${inWish?' on':''}" onclick="event.stopPropagation();toggleWish(${g.id},this)">${inWish?'❤️':'🤍'}</button>
+      ${cardChip}
+    </div>
+    <div class="game-body">
+      <div class="game-genre">${isOffline?'💻 Steam أوفلاين':isCard?(cm.label+' • بطاقة رقمية'):g.genre}</div>
+      <div class="game-title">${g.title}</div>
+      <div class="game-platform">${g.platform||''}</div>
+      ${offlineStrip}
+      <div class="game-rating"><span class="stars">${stars}</span><span style="font-size:12px;color:var(--gold);margin-right:3px;">${g.rating||4.0}</span><span class="rating-count">(${g.rc?((g.rc/1000).toFixed(1)+'k'):'جديد'})</span></div>
+      <div class="game-price-row"><div class="price-wrap">${priceHTML}</div><button class="add-cart-btn${inCart?' added':''}" onclick="event.stopPropagation();addToCart(${g.id})">${inCart?'✓ في السلة':'+ سلة'}</button></div>
+    </div>
+  </div>`;
+}
+
+function renderHome() {
+  document.getElementById('homeGrid').innerHTML = games.slice(0,6).map(g=>cardHTML(g,false)).join('');
+  const hcEl = document.getElementById('heroCount'); if(hcEl) hcEl.textContent = games.length+'+';
+}
+
+function renderStore() {
+  let f = [...games];
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  if(q) f = f.filter(g=>g.title.toLowerCase().includes(q)||g.genre.toLowerCase().includes(q));
+  if(genreFilter!=='all') { if(genreFilter==='مجانية') f=f.filter(g=>g.price===0); else if(genreFilter==='بطاقة') f=f.filter(g=>g.cardType&&g.cardType!=='game'); else f=f.filter(g=>g.genre===genreFilter); }
+  if(platformFilter!=='all') f=f.filter(g=>g.platform===platformFilter);
+  if(cardTypeFilter!=='all') f=f.filter(g=>g.cardType===cardTypeFilter);
+  f=f.filter(g=>g.price<=maxPrice);
+  if(minRating>0) f=f.filter(g=>g.rating>=minRating);
+  const s=document.getElementById('sortSelect').value;
+  if(s==='pa') f.sort((a,b)=>a.price-b.price);
+  else if(s==='pd') f.sort((a,b)=>b.price-a.price);
+  else if(s==='r') f.sort((a,b)=>b.rating-a.rating);
+  else if(s==='n') f.sort((a,b)=>b.year-a.year);
+  document.getElementById('storeCount').textContent = f.length+' لعبة';
+  const lv=viewMode==='list';
+  const grid=document.getElementById('storeGrid');
+  grid.className = lv?'games-grid list-view':'games-grid';
+  grid.innerHTML = f.length ? f.map(g=>cardHTML(g,lv)).join('') : '<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);">لا توجد ألعاب مطابقة</div>';
+  updateCounts();
+}
+
+function updateCounts() {
+  document.getElementById('cAll').textContent=games.length;
+  document.getElementById('cFPS').textContent=games.filter(g=>g.genre==='FPS').length;
+  document.getElementById('cRPG').textContent=games.filter(g=>g.genre==='RPG').length;
+  document.getElementById('cAdv').textContent=games.filter(g=>g.genre==='مغامرة').length;
+  document.getElementById('cSport').textContent=games.filter(g=>g.genre==='رياضة').length;
+  document.getElementById('cHorror').textContent=games.filter(g=>g.genre==='رعب').length;
+  document.getElementById('cFree').textContent=games.filter(g=>g.price===0).length;
+  document.getElementById('cCards').textContent=games.filter(g=>g.cardType&&g.cardType!=='game'&&g.cardType!=='steamoffline').length;
+  document.getElementById('cSteamOff').textContent=games.filter(g=>g.cardType==='steamoffline').length;
+}
+
+function syncSearch(val) {
+  // Sync both inputs
+  document.getElementById('searchInput').value = val;
+  const mob = document.getElementById('mobileSearchInput');
+  if(mob) mob.value = val;
+  // Auto-switch to store page when searching
+  if(val.trim()) {
+    document.getElementById('homePage').style.display = 'none';
+    document.getElementById('storePage').style.display = 'block';
+    document.getElementById('siteFooter').style.display = 'none';
+    document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+    document.querySelectorAll('.nav-link')[1]?.classList.add('active');
+  }
+  renderStore();
+}
+function filterGames() { renderStore(); }
+
+function setGenre(el,g) { document.querySelectorAll('.sidebar .filter-option').forEach(e=>e.classList.remove('active')); el.classList.add('active'); genreFilter=g; cardTypeFilter='all'; renderStore(); }
+function setPlatform(el,p) { document.querySelectorAll('.platform-chip').forEach(e=>e.classList.remove('active')); el.classList.add('active'); platformFilter=p; renderStore(); }
+function setCardType(el,t) { document.querySelectorAll('.sidebar .filter-option').forEach(e=>e.classList.remove('active')); el.classList.add('active'); cardTypeFilter=t; genreFilter='all'; renderStore(); }
+function setRating(el,r) { document.querySelectorAll('.sidebar-section:last-child .filter-option').forEach(e=>e.classList.remove('active')); el.classList.add('active'); minRating=r; renderStore(); }
+function setView(v) { viewMode=v; document.getElementById('gvBtn').classList.toggle('active',v==='grid'); document.getElementById('lvBtn').classList.toggle('active',v==='list'); renderStore(); }
+
+// CART
+function addToCart(id) {
+  if(!currentUser) {
+    openModal('authModal');
+    notify('يرجى تسجيل الدخول أولاً للإضافة إلى السلة');
+    return;
+  }
+  const g=games.find(x=>x.id===id);
+  if(!g) return;
+  if(cart.some(c=>c.id===id)) { notify('هذه اللعبة موجودة في السلة'); return; }
+  cart.push({...g});
+  updateCartUI(); renderHome(); renderStore();
+  notify('✓ تمت إضافة "'+g.title+'" إلى السلة');
+}
+function removeFromCart(id) { cart=cart.filter(c=>c.id!==id); updateCartUI(); renderHome(); renderStore(); }
+function updateCartUI() {
+  document.getElementById('cartBadge').textContent=cart.length;
+  const el=document.getElementById('cartItems'), fe=document.getElementById('cartFooter');
+  if(!cart.length) { el.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div>سلتك فارغة</div><div style="font-size:12px;">أضف بعض الألعاب لتبدأ التسوق</div></div>'; fe.style.display='none'; return; }
+  el.innerHTML=cart.map(g=>`<div class="cart-item"><div class="cart-item-img" style="background:${g.bg}">${g.emoji}</div><div class="cart-item-info"><div class="cart-item-title">${g.title}</div><div class="cart-item-platform">${g.platform} • ${g.genre}</div><div class="cart-item-price">${g.price===0?'مجاني':'$'+g.price}</div></div><button class="cart-item-remove" onclick="removeFromCart(${g.id})">✕</button></div>`).join('');
+  const t=cart.reduce((s,g)=>s+g.price,0);
+  document.getElementById('cartSubtotal').textContent='$'+t.toFixed(2);
+  document.getElementById('cartTotal').textContent='$'+t.toFixed(2);
+  fe.style.display='block';
+}
+function openCart() { document.getElementById('cartPanel').classList.add('active'); document.getElementById('cartOverlay').classList.add('active'); }
+function closeCart() { document.getElementById('cartPanel').classList.remove('active'); document.getElementById('cartOverlay').classList.remove('active'); }
+
+// WISHLIST
+function toggleWish(id,btn) {
+  if(wishlist.has(id)) { wishlist.delete(id); btn.textContent='🤍'; btn.classList.remove('on'); notify('تمت إزالة اللعبة من المفضلة'); }
+  else { wishlist.add(id); btn.textContent='❤️'; btn.classList.add('on'); notify('✓ تمت إضافة اللعبة إلى المفضلة'); }
+}
+
+// PRODUCT MODAL
+function openProduct(id) {
+  const g=games.find(x=>x.id===id); if(!g) return;
+  const isCard = g.cardType && g.cardType !== 'game';
+  const isOffline = g.cardType === 'steamoffline';
+  const cm = isCard ? (CARD_META[g.cardType]||CARD_META.other) : null;
+
+  const imgEl=document.getElementById('pmImg');
+  if(g.image) {
+    imgEl.innerHTML=`<img src="${g.image}" alt="${g.title}" style="width:100%;height:100%;object-fit:cover;">`;
+    imgEl.style.background='#000';
+  } else if(isOffline) {
+    imgEl.innerHTML=`<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#0e1419,#1b2838);">
+      <span style="font-size:52px;">${g.emoji||'💻'}</span>
+      <div style="text-align:center;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:#c7d5e0;letter-spacing:2px;">STEAM OFFLINE</div>
+        <div style="font-size:11px;color:#66c0f4;margin-top:3px;">${g.size||''} • ${g.version?'v'+g.version:''}</div>
+      </div>
+    </div>`;
+    imgEl.style.background='#1b2838';
+  } else if(isCard) {
+    imgEl.innerHTML=`<div style="width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,${cm.color}22,${cm.color}55);">
+      <span style="font-size:56px;">${cm.icon}</span>
+      <span style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:2px;">${cm.label}</span>
+    </div>`;
+    imgEl.style.background=cm.color+'22';
+  } else {
+    imgEl.textContent=g.emoji;
+    imgEl.style.background=g.bg||'#131720';
+  }
+
+  document.getElementById('pmGenre').textContent=
+    isOffline ? '💻 Steam Offline Package • PC' :
+    isCard ? cm.label+' • بطاقة رقمية • '+(g.platform||'') :
+    g.genre+' • '+(g.platform||'');
+
+  document.getElementById('pmTitle').textContent=g.title;
+
+  // Description + offline includes list
+  let descHTML = `<div style="font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:14px;">${g.desc}</div>`;
+
+  if(isOffline) {
+    if(g.offlineNote) {
+      descHTML += `<div style="background:rgba(27,40,56,0.6);border:1px solid rgba(102,192,244,0.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#66c0f4;display:flex;gap:8px;align-items:flex-start;">
+        <span style="flex-shrink:0;">ℹ️</span><span>${g.offlineNote}</span>
+      </div>`;
+    }
+    if(g.includes && g.includes.length) {
+      descHTML += `<div style="margin-bottom:4px;font-size:12px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px;">ما يتضمنه الباكج</div>
+      <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:4px;">
+        ${g.includes.map(item=>`<div style="display:flex;align-items:center;gap:8px;font-size:13px;"><span style="color:#00c97b;font-size:11px;">✓</span><span>${item}</span></div>`).join('')}
+      </div>`;
+    }
+  }
+  document.getElementById('pmDesc').innerHTML = descHTML;
+
+  document.getElementById('pmMeta').innerHTML=`
+    <div><div class="pm-meta-label">المطور / الشركة</div><div class="pm-meta-val">${g.dev||'—'}</div></div>
+    <div><div class="pm-meta-label">سنة الإصدار</div><div class="pm-meta-val">${g.year||2024}</div></div>
+    ${isOffline?`<div><div class="pm-meta-label">حجم التثبيت</div><div class="pm-meta-val">${g.size||'—'}</div></div>
+    <div><div class="pm-meta-label">الإصدار</div><div class="pm-meta-val">${g.version?'v'+g.version:'—'}</div></div>`
+    :`<div><div class="pm-meta-label">التقييم</div><div class="pm-meta-val">⭐ ${g.rating} (${g.rc?(g.rc/1000).toFixed(1)+'k':'جديد'})</div></div>
+    <div><div class="pm-meta-label">${isCard?'نوع البطاقة':'المنصة'}</div><div class="pm-meta-val">${isCard?cm.label:(g.platform||'—')}</div></div>`}`;
+
+  document.getElementById('pmOld').textContent=g.oldPrice?'$'+g.oldPrice:'';
+  document.getElementById('pmPrice').textContent=g.price===0?'مجاني':'$'+g.price;
+  const btn=document.getElementById('pmAddBtn');
+  btn.textContent=cart.some(c=>c.id===id)?'✓ في السلة':'🛒 '+(isOffline?'اطلب الباكج':'أضف للسلة');
+  btn.onclick=()=>{addToCart(id);closeModal('productModal');};
+  // Load rating section
+  renderRatingSection(id);
+  openModal('productModal');
+}
+
+// CHECKOUT
+function openCheckout() {
+  closeCart();
+  const t=cart.reduce((s,g)=>s+g.price,0);
+  document.getElementById('chkSummary').innerHTML=cart.map(g=>`<div class="chk-item"><span>${g.title}</span><span>${g.price===0?'مجاني':'$'+g.price}</span></div>`).join('');
+  document.getElementById('chkTotal').innerHTML=`<span>الإجمالي</span><span class="chk-total-price">$${t.toFixed(2)}</span>`;
+  openModal('checkoutModal');
+}
+function selPay(el) { document.querySelectorAll('.pay-method').forEach(e=>e.classList.remove('active')); el.classList.add('active'); }
+function completePurchase() {
+  closeModal('checkoutModal'); cart=[]; updateCartUI(); renderHome(); renderStore();
+  notify('✅ تم الشراء بنجاح! شكراً لتسوقك معنا');
+}
+
+// MODALS
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-overlay').forEach(m=>m.classList.remove('active'));});
+
+// NOTIFY
+let nTimer;
+function notify(msg,isErr=false) {
+  const el=document.getElementById('notification');
+  el.textContent=msg; el.className='notification show'+(isErr?' err':'');
+  clearTimeout(nTimer); nTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+// ADMIN
+function openAdminPwd() { document.getElementById('adminPwdInput').value=''; document.getElementById('pwdError').style.display='none'; openModal('passwordModal'); setTimeout(()=>document.getElementById('adminPwdInput').focus(),150); }
+function verifyPwd() {
+  if(document.getElementById('adminPwdInput').value===adminPwd) { document.getElementById('pwdError').style.display='none'; closeModal('passwordModal'); openModal('adminModal'); }
+  else { document.getElementById('pwdError').style.display='block'; document.getElementById('adminPwdInput').value=''; document.getElementById('adminPwdInput').focus(); }
+}
+function openChangePwd() { ['curPwd','newPwd','cfmPwd'].forEach(id=>document.getElementById(id).value=''); document.getElementById('changePwdError').style.display='none'; openModal('changePwdModal'); }
+function doChangePwd() {
+  const c=document.getElementById('curPwd').value, n=document.getElementById('newPwd').value, f=document.getElementById('cfmPwd').value, err=document.getElementById('changePwdError');
+  if(c!==adminPwd){err.textContent='❌ كلمة المرور الحالية غير صحيحة';err.style.display='block';return;}
+  if(n.length<6){err.textContent='❌ يجب أن تكون 6 أحرف على الأقل';err.style.display='block';return;}
+  if(n!==f){err.textContent='❌ كلمة المرور الجديدة غير متطابقة';err.style.display='block';return;}
+  adminPwd=n; closeModal('changePwdModal'); notify('✓ تم تغيير كلمة المرور بنجاح');
+}
+function applyVenueName() {
+  const n=document.getElementById('venueNameInput').value.trim(); if(!n) return;
+  document.getElementById('logoName').textContent=n;
+  document.getElementById('footerName').textContent=n.toUpperCase();
+  document.getElementById('footerYear').textContent=n;
+  document.title=n+' - متجر الألعاب الإلكترونية';
+  notify('✓ تم تغيير اسم المتجر إلى "'+n+'"');
+}
+function applyPromoCode() {
+  const c=document.getElementById('promoCodeInput').value.trim().toUpperCase(); if(!c) return;
+  document.getElementById('promoDisplay').textContent=c; notify('✓ تم تحديث كود الخصم: '+c);
+}
+function copyPromo() {
+  const c=document.getElementById('promoDisplay').textContent;
+  navigator.clipboard.writeText(c).then(()=>notify('✓ تم نسخ الكود: '+c)).catch(()=>notify('الكود: '+c));
+}
+function adminAddGame() {
+  const title=document.getElementById('newGameTitle').value.trim();
+  const price=parseFloat(document.getElementById('newGamePrice').value)||0;
+  const genre=document.getElementById('newGameGenre').value.trim()||'عام';
+  const emoji=document.getElementById('newGameEmoji').value;
+  const platform=document.getElementById('newGamePlatform').value;
+  if(!title){notify('❌ أدخل اسم اللعبة',true);return;}
+  games.push({id:Date.now(),emoji,title,genre,platform,price,oldPrice:null,rating:4.0,rc:100,badges:['New'],desc:'لعبة جديدة.',year:2026,dev:'مجهول',bg:'linear-gradient(135deg,#0a0a0a,#1a1a1a)'});
+  document.getElementById('newGameTitle').value=''; document.getElementById('newGamePrice').value=''; document.getElementById('newGameGenre').value='';
+  updateCounts(); renderHome(); renderStore(); notify('✓ تم إضافة "'+title+'" للمتجر');
+}
+function applyGlobalDiscount() {
+  const d=parseFloat(document.getElementById('globalDiscount').value)||0;
+  if(d<=0){notify('❌ أدخل نسبة خصم صحيحة',true);return;}
+  games.forEach(g=>{if(g.price>0){if(!g._orig)g._orig=g.price;g.oldPrice=g._orig;g.price=parseFloat((g._orig*(1-d/100)).toFixed(2));if(!g.badges.includes('Sale'))g.badges.push('Sale');}});
+  renderHome(); renderStore(); notify('✓ تم تطبيق خصم '+d+'% على جميع الألعاب');
+}
+
+// ===== MOBILE SIDEBAR =====
+function openSidebar() {
+  document.getElementById('storeSidebar').classList.add('mobile-open');
+  document.getElementById('sidebarBackdrop').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('storeSidebar').classList.remove('mobile-open');
+  document.getElementById('sidebarBackdrop').classList.remove('show');
+  document.body.style.overflow = '';
+}
+// Close sidebar when filter is selected on mobile
+const _origSetGenre = setGenre;
+setGenre = function(el, g) { _origSetGenre(el, g); if(window.innerWidth<=900) closeSidebar(); };
+const _origSetCardType = setCardType;
+setCardType = function(el, t) { _origSetCardType(el, t); if(window.innerWidth<=900) closeSidebar(); };
+
+// ===== HERO BANNER SYSTEM =====
+let bannerSlides     = [];   // array of game IDs to show
+let hbCurrent        = 0;
+let hbAutoTimer      = null;
+let hbProgressTimer  = null;
+let hbProgressVal    = 0;
+const HB_DURATION    = 6000; // ms per slide
+
+// Default banner slides — top games with badges
+let bannerConfig = {
+  autoPlay:      true,
+  interval:      6000,
+  showCounter:   true,
+  showThumbs:    true,
+  showProgress:  true,
+  slideIds:      [] // populated from games with 'Top' or 'Hot' badge
+};
+
+function getBannerGames() {
+  if(bannerConfig.slideIds.length) return bannerConfig.slideIds.map(id=>games.find(g=>g.id===id)).filter(Boolean);
+  // Default: pick games with Top/Hot badges, max 6
+  const top = games.filter(g=>(g.badges||[]).some(b=>['Top','Hot','New'].includes(b))).slice(0,6);
+  return top.length ? top : games.slice(0,5);
+}
+
+function buildSlideHTML(g, idx) {
+  const isActive = idx===0 ? ' active' : '';
+  const stars    = '★'.repeat(Math.floor(g.rating||4));
+  const bgStyle  = g.image ? `background-image:url('${g.image}')` : `background:${g.bg||'#131720'}`;
+  const glowColor = g.bg ? g.bg.match(/#[0-9a-f]{6}/i)?.[0] || '#e8232a' : '#e8232a';
+
+  const badgeTags = (g.badges||[]).map(b=>{
+    const cls = b==='Top'?'gold':b==='Hot'?'accent':b==='New'?'':b==='Sale'?'accent':'';
+    return `<span class="hb-tag ${cls}">${b==='Top'?'🏆 الأفضل':b==='Hot'?'🔥 رائج':b==='New'?'✨ جديد':b==='Sale'?'🏷 عرض':b}</span>`;
+  }).join('');
+  const genreTag = `<span class="hb-tag">${g.genre||''}</span>`;
+  const platTag  = g.platform ? `<span class="hb-tag">${g.platform}</span>` : '';
+
+  const priceHTML = g.price===0
+    ? `<span class="hb-free">مجاني</span>`
+    : `${g.oldPrice?`<span class="hb-old-price">$${g.oldPrice}</span>`:''}<span class="hb-price">$${g.price}</span>`;
+
+  const coverInner = g.image
+    ? `<img src="${g.image}" alt="${g.title}">`
+    : `<div class="hb-cover-inner" style="background:${g.bg||'#131720'}">${g.emoji||'🎮'}</div>`;
+
+  return `<div class="hb-slide${isActive}" data-id="${g.id}" data-idx="${idx}">
+    <div class="hb-bg" style="${bgStyle}"></div>
+    <div class="hb-glow" style="background:${glowColor};"></div>
+    <div class="hb-overlay-dark"></div>
+    <div class="hb-overlay-bottom"></div>
+    <div class="hb-content">
+      <div class="hb-text">
+        <div class="hb-tags">${badgeTags}${genreTag}${platTag}</div>
+        <div class="hb-rating"><span class="hb-stars">${stars}</span><span style="color:var(--gold);font-weight:700;">${g.rating||4.0}</span><span class="hb-rating-count">(${g.rc?((g.rc/1000).toFixed(1)+'k'):'جديد'})</span></div>
+        <div class="hb-title">${g.title}</div>
+        <div class="hb-desc">${g.desc||''}</div>
+        <div class="hb-actions">
+          <div class="hb-price-badge">${priceHTML}</div>
+          <button class="hb-btn-primary" onclick="addToCart(${g.id})">🛒 أضف للسلة</button>
+          <button class="hb-btn-secondary" onclick="openProduct(${g.id})">🔍 تفاصيل</button>
+        </div>
+      </div>
+      <div class="hb-cover">
+        ${coverInner}
+        <div class="hb-cover-shine"></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderBanner() {
+  const slideGames = getBannerGames();
+  if(!slideGames.length) return;
+
+  const track  = document.getElementById('hbTrack');
+  const dots   = document.getElementById('hbDots');
+  const thumbs = document.getElementById('hbThumbs');
+  const totEl  = document.getElementById('hbTotNum');
+
+  track.innerHTML  = slideGames.map((g,i) => buildSlideHTML(g,i)).join('');
+  dots.innerHTML   = slideGames.map((_,i) => `<button class="hb-dot${i===0?' active':''}" onclick="hbGoTo(${i})"></button>`).join('');
+  thumbs.innerHTML = slideGames.map((g,i) => {
+    const inner = g.image ? `<img src="${g.image}" alt="">` : `<span style="font-size:18px;">${g.emoji||'🎮'}</span>`;
+    return `<div class="hb-thumb${i===0?' active':''}" onclick="hbGoTo(${i})" style="${g.image?'':`background:${g.bg||'#131720'}`}">${inner}</div>`;
+  }).join('');
+
+  if(totEl) totEl.textContent = slideGames.length;
+  document.getElementById('hbCounter').style.display = bannerConfig.showCounter ? 'block' : 'none';
+  document.getElementById('hbThumbs').style.display  = bannerConfig.showThumbs  ? 'flex'  : 'none';
+  document.getElementById('hbProgress').style.display= bannerConfig.showProgress? 'block' : 'none';
+
+  hbCurrent = 0;
+  hbStartAuto();
+}
+
+function hbGoTo(idx) {
+  const slides = document.querySelectorAll('.hb-slide');
+  const dots   = document.querySelectorAll('.hb-dot');
+  const thumbs = document.querySelectorAll('.hb-thumb');
+  if(!slides.length) return;
+
+  slides[hbCurrent].classList.remove('active');
+  dots[hbCurrent]?.classList.remove('active');
+  thumbs[hbCurrent]?.classList.remove('active');
+
+  hbCurrent = ((idx % slides.length) + slides.length) % slides.length;
+
+  slides[hbCurrent].classList.add('active');
+  dots[hbCurrent]?.classList.add('active');
+  thumbs[hbCurrent]?.classList.add('active');
+
+  document.getElementById('hbTrack').style.transform = `translateX(${hbCurrent * 100}%)`;
+  const curEl = document.getElementById('hbCurNum');
+  if(curEl) curEl.textContent = hbCurrent + 1;
+
+  hbResetProgress();
+}
+
+function hbNext() { hbGoTo(hbCurrent + 1); hbRestartAuto(); }
+function hbPrev() { hbGoTo(hbCurrent - 1); hbRestartAuto(); }
+
+function hbStartAuto() {
+  if(!bannerConfig.autoPlay) return;
+  hbResetProgress();
+  hbAutoTimer = setInterval(() => hbGoTo(hbCurrent + 1), bannerConfig.interval);
+}
+function hbStopAuto()    { clearInterval(hbAutoTimer); clearInterval(hbProgressTimer); }
+function hbRestartAuto() { hbStopAuto(); hbStartAuto(); }
+
+function hbResetProgress() {
+  clearInterval(hbProgressTimer);
+  hbProgressVal = 0;
+  const bar = document.getElementById('hbProgress');
+  if(!bar) return;
+  bar.style.transition = 'none';
+  bar.style.width = '0%';
+  setTimeout(() => {
+    bar.style.transition = '';
+    hbProgressTimer = setInterval(() => {
+      hbProgressVal += 100 / (bannerConfig.interval / 100);
+      if(hbProgressVal >= 100) { hbProgressVal = 0; }
+      bar.style.width = hbProgressVal + '%';
+    }, 100);
+  }, 50);
+}
+
+// Pause on hover
+document.addEventListener('DOMContentLoaded', () => {
+  const banner = document.getElementById('heroBanner');
+  if(banner) {
+    banner.addEventListener('mouseenter', hbStopAuto);
+    banner.addEventListener('mouseleave', () => { if(bannerConfig.autoPlay) hbStartAuto(); });
+    // Touch swipe
+    let touchStartX = 0;
+    banner.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+    banner.addEventListener('touchend',   e => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if(Math.abs(diff) > 50) diff > 0 ? hbNext() : hbPrev();
+    });
+  }
+});
+
+// Handle banner commands from admin
+function applyBannerConfig(cfg) {
+  Object.assign(bannerConfig, cfg);
+  hbStopAuto();
+  renderBanner();
+}
+
+// ===== RATING SYSTEM =====
+const RATINGS_KEY = 'pantheon_ratings';
+let currentRatingGameId = null;
+let selectedStars = 0;
+
+const STAR_LABELS = ['','سيء 😞','مقبول 😐','جيد 👍','ممتاز 🌟','رائع! 🔥'];
+
+function getRatings() { try { return JSON.parse(localStorage.getItem(RATINGS_KEY))||[]; } catch { return []; } }
+function saveRatings(r) { localStorage.setItem(RATINGS_KEY, JSON.stringify(r)); }
+
+function getGameRatings(gameId) {
+  return getRatings().filter(r => r.gameId === gameId);
+}
+
+function getUserRating(gameId) {
+  if(!currentUser) return null;
+  return getRatings().find(r => r.gameId === gameId && r.userId === currentUser.id) || null;
+}
+
+function calcRatingStats(gameId) {
+  const reviews = getGameRatings(gameId);
+  if(!reviews.length) return { avg: 0, count: 0, dist: [0,0,0,0,0] };
+  const dist = [0,0,0,0,0];
+  let sum = 0;
+  reviews.forEach(r => { dist[r.stars-1]++; sum += r.stars; });
+  return { avg: (sum/reviews.length).toFixed(1), count: reviews.length, dist };
+}
+
+function renderRatingSection(gameId) {
+  currentRatingGameId = gameId;
+  selectedStars = 0;
+
+  const stats = calcRatingStats(gameId);
+  const reviews = getGameRatings(gameId);
+
+  // Summary
+  const summaryEl = document.getElementById('pmRatingSummary');
+  const bars = [5,4,3,2,1].map(n => {
+    const cnt = stats.dist[n-1];
+    const pct = stats.count ? Math.round(cnt/stats.count*100) : 0;
+    return `<div class="rating-bar-row">
+      <span class="rating-bar-label">${n}★</span>
+      <div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div>
+      <span class="rating-bar-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+  const avgStars = '★'.repeat(Math.floor(stats.avg)) + (stats.avg % 1 >= 0.5 ? '½' : '');
+  summaryEl.innerHTML = `
+    <div style="text-align:center;flex-shrink:0;">
+      <div class="rating-big-num">${stats.count ? stats.avg : '—'}</div>
+      <div class="rating-big-stars">${avgStars||'☆☆☆☆☆'}</div>
+      <div class="rating-big-count">${stats.count} تقييم</div>
+    </div>
+    <div class="rating-bars">${bars}</div>`;
+
+  // Write review section
+  const formEl = document.getElementById('pmWriteReview');
+  const myReview = getUserRating(gameId);
+
+  if(!currentUser) {
+    formEl.innerHTML = `<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;">
+      <div style="font-size:24px;margin-bottom:8px;">🔒</div>
+      <div>سجّل الدخول لتكتب تقييمك</div>
+      <button class="submit-rating-btn" style="margin-top:12px;width:auto;padding:9px 24px;" onclick="closeModal('productModal');openModal('authModal')">تسجيل الدخول</button>
+    </div>`;
+  } else if(myReview) {
+    formEl.innerHTML = `<div>
+      <div class="star-input-title">✅ قيّمت هذه اللعبة</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <span style="font-size:22px;color:var(--gold);">${'★'.repeat(myReview.stars)}${'☆'.repeat(5-myReview.stars)}</span>
+        <span style="font-size:13px;font-weight:700;">${STAR_LABELS[myReview.stars]}</span>
+      </div>
+      ${myReview.comment?`<div style="font-size:12px;color:var(--text-secondary);font-style:italic;margin-bottom:10px;">"${myReview.comment}"</div>`:''}
+      <button class="submit-rating-btn" style="background:rgba(232,35,42,0.12);color:var(--accent);border:1px solid rgba(232,35,42,0.25);" onclick="deleteMyRating(${gameId})">🗑 حذف تقييمي</button>
+    </div>`;
+  } else {
+    // Fresh form
+    formEl.innerHTML = `
+      <div class="star-input-title">✍️ قيّم هذه اللعبة</div>
+      <div class="star-input-row" id="pmStarRow">
+        ${[1,2,3,4,5].map(n=>`<button class="star-btn" data-val="${n}" onclick="selectStar(${n})" onmouseenter="hoverStar(${n})" onmouseleave="unhoverStar()">★</button>`).join('')}
+      </div>
+      <div class="star-input-labels"><span>سيء</span><span>مقبول</span><span>جيد</span><span>ممتاز</span><span>رائع!</span></div>
+      <div class="star-selected-label" id="pmStarLabel"></div>
+      <textarea class="rating-comment" id="pmReviewComment" placeholder="شاركنا رأيك بالتفصيل... (اختياري)"></textarea>
+      <button class="submit-rating-btn" id="pmSubmitRating" onclick="submitRating()" disabled>اختر عدد النجوم أولاً</button>`;
+    selectedStars = 0;
+  }
+
+  // Reviews list
+  renderReviewsList(gameId);
+}
+
+function renderReviewsList(gameId) {
+  const reviews = getGameRatings(gameId).slice().reverse();
+  const el = document.getElementById('pmReviewsList');
+  if(!reviews.length) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">كن أول من يقيّم هذه اللعبة!</div>';
+    return;
+  }
+  el.innerHTML = reviews.map(r => {
+    const initials = r.userName.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const isMe = currentUser && r.userId === currentUser.id;
+    return `<div class="review-item">
+      <div class="review-header">
+        <div class="review-avatar">${initials}</div>
+        <div class="review-name">${r.userName}</div>
+        ${isMe ? '<span class="review-my-badge">تقييمي</span>' : ''}
+        <span class="review-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5-r.stars)}</span>
+        <span class="review-date">${r.date}</span>
+      </div>
+      ${r.comment ? `<div class="review-comment">${r.comment}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+function hoverStar(n) {
+  document.querySelectorAll('#pmStarRow .star-btn').forEach((btn,i) => {
+    btn.classList.toggle('hovered', i < n);
+  });
+}
+function unhoverStar() {
+  document.querySelectorAll('#pmStarRow .star-btn').forEach((btn,i) => {
+    btn.classList.remove('hovered');
+    btn.classList.toggle('selected', i < selectedStars);
+  });
+}
+function selectStar(n) {
+  selectedStars = n;
+  document.querySelectorAll('#pmStarRow .star-btn').forEach((btn,i) => {
+    btn.classList.toggle('selected', i < n);
+    btn.classList.remove('hovered');
+  });
+  const labelEl = document.getElementById('pmStarLabel');
+  if(labelEl) labelEl.textContent = STAR_LABELS[n];
+  const submitEl = document.getElementById('pmSubmitRating');
+  if(submitEl) { submitEl.disabled = false; submitEl.textContent = `إرسال تقييمي (${n} نجوم)`; }
+}
+
+function submitRating() {
+  if(!currentUser) { openModal('authModal'); return; }
+  if(!selectedStars || !currentRatingGameId) return;
+  const comment = (document.getElementById('pmReviewComment')?.value || '').trim();
+  const ratings = getRatings();
+  // Remove old rating if exists
+  const filtered = ratings.filter(r => !(r.gameId===currentRatingGameId && r.userId===currentUser.id));
+  filtered.push({
+    id:        'rev_' + Date.now(),
+    gameId:    currentRatingGameId,
+    userId:    currentUser.id,
+    userName:  currentUser.name,
+    stars:     selectedStars,
+    comment,
+    date:      new Date().toLocaleDateString('ar-IQ'),
+  });
+  saveRatings(filtered);
+
+  // Recalculate game rating average
+  updateGameRatingAvg(currentRatingGameId);
+
+  // Re-render section
+  renderRatingSection(currentRatingGameId);
+
+  notify('✓ شكراً! تم إرسال تقييمك');
+}
+
+function deleteMyRating(gameId) {
+  if(!currentUser) return;
+  const filtered = getRatings().filter(r => !(r.gameId===gameId && r.userId===currentUser.id));
+  saveRatings(filtered);
+  updateGameRatingAvg(gameId);
+  renderRatingSection(gameId);
+  notify('تم حذف تقييمك');
+}
+
+function updateGameRatingAvg(gameId) {
+  const stats = calcRatingStats(gameId);
+  // Update in-memory game
+  const g = games.find(x => x.id === gameId);
+  if(!g) return;
+  if(stats.count > 0) {
+    g.rating = parseFloat(stats.avg);
+    g.rc     = stats.count;
+  }
+  // Refresh cards
+  renderHome();
+  renderStore();
+  // Notify admin
+  try { const ch2=new BroadcastChannel('pantheon_admin'); ch2.postMessage({type:'UPDATE_GAME', game:{id:gameId, rating:g.rating, rc:g.rc}}); } catch{}
+}
+
+// ORDER_DELIVERED handled inside main ch.onmessage below
+
+// Poll localStorage every 5s for new notifs (cross-tab delivery)
+setInterval(() => {
+  if(currentUser) updateBellBadge();
+}, 5000);
+
+// ===== FONT SIZE =====
+
+function getUserNotifs() {
+  if(!currentUser) return [];
+  try { return JSON.parse(localStorage.getItem(NOTIF_KEY_PREFIX + currentUser.id)) || []; }
+  catch { return []; }
+}
+function saveUserNotifs(arr) {
+  if(!currentUser) return;
+  localStorage.setItem(NOTIF_KEY_PREFIX + currentUser.id, JSON.stringify(arr));
+}
+
+function updateBellBadge() {
+  const notifs  = getUserNotifs();
+  const unread  = notifs.filter(n => !n.read).length;
+  const badge   = document.getElementById('bellBadge');
+  const bellBtn = document.getElementById('bellBtn');
+  if(!badge) return;
+  if(unread > 0) {
+    badge.textContent = unread > 9 ? '9+' : unread;
+    badge.classList.add('has-new');
+    bellBtn.style.borderColor = 'rgba(0,201,123,0.4)';
+  } else {
+    badge.classList.remove('has-new');
+    bellBtn.style.borderColor = '';
+  }
+}
+
+function toggleBell() {
+  if(!currentUser) { openModal('authModal'); return; }
+  const dd = document.getElementById('notifDropdown');
+  const isOpen = dd.classList.contains('open');
+  dd.classList.toggle('open', !isOpen);
+  if(!isOpen) renderNotifList();
+}
+
+function renderNotifList() {
+  const notifs = getUserNotifs();
+  const el = document.getElementById('notifList');
+  if(!notifs.length) {
+    el.innerHTML = `<div class="notif-empty"><div class="notif-empty-icon">🔔</div><div>لا توجد إشعارات بعد</div></div>`;
+    return;
+  }
+  const typeIcons = { delivery:'✅', code:'🔑', account:'👤', link:'🔗', manual:'📦', cancelled:'❌' };
+  el.innerHTML = notifs.map(n => `
+    <div class="notif-item${n.read?'':' unread'}" onclick="openNotifDetail('${n.id}')">
+      <div style="display:flex;align-items:flex-start;gap:10px;">
+        <div class="notif-item-icon">${typeIcons[n.deliveryType||n.type]||'📬'}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="notif-item-title">${n.type==='delivery'?'✅ تم تسليم طلبك':'📬 إشعار جديد'} — #${n.orderId}</div>
+          <div class="notif-item-sub">${(n.message||'').substring(0,80)}${(n.message||'').length>80?'...':''}</div>
+          <div class="notif-item-time">${n.sentAt||'—'}</div>
+        </div>
+        ${!n.read?'<div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:4px;"></div>':''}
+      </div>
+    </div>`).join('');
+}
+
+function openNotifDetail(notifId) {
+  const notifs = getUserNotifs();
+  const n = notifs.find(x => x.id === notifId);
+  if(!n) return;
+  // Mark as read
+  n.read = true;
+  saveUserNotifs(notifs);
+  updateBellBadge();
+  renderNotifList();
+  // Close dropdown
+  document.getElementById('notifDropdown').classList.remove('open');
+  // Open delivery detail modal
+  showDeliveryDetail(n);
+}
+
+function showDeliveryDetail(n) {
+  document.getElementById('ddOrderId').textContent = `طلب #${n.orderId}`;
+  document.getElementById('ddMessage').textContent = n.message || '';
+  // Code / delivery box
+  const codeBox   = document.getElementById('ddCodeBox');
+  const codeLabel = document.getElementById('ddCodeLabel');
+  const codeValue = document.getElementById('ddCodeValue');
+  if(n.code) {
+    const labels = { code:'🔑 كود التفعيل', account:'👤 بيانات الحساب', link:'🔗 رابط التنزيل', file:'📂 رابط الملف', manual:'📦 تعليمات الاستلام' };
+    codeLabel.textContent = labels[n.deliveryType] || '🔑 بيانات المنتج';
+    codeValue.textContent = n.code;
+    codeBox.style.display = 'block';
+    codeBox.dataset.code  = n.code;
+  } else {
+    codeBox.style.display = 'none';
+  }
+  // Items list
+  const items = n.items || [];
+  document.getElementById('ddItemsList').innerHTML = items.length ? `
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">المنتجات المشتراة</div>
+    ${items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-secondary);padding:4px 0;border-bottom:1px solid var(--border);">
+      <span>${i.title}</span><span style="color:var(--accent);font-family:'Orbitron',sans-serif;font-size:12px;">${i.price===0?'مجاني':'$'+i.price}</span>
+    </div>`).join('')}
+    <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding-top:8px;">
+      <span>الإجمالي</span><span style="color:var(--accent);font-family:'Orbitron',sans-serif;">$${(n.total||0).toFixed(2)}</span>
+    </div>` : '';
+  openModal('deliveryDetailModal');
+}
+
+function copyDeliveryCodeVenue() {
+  const val = document.getElementById('ddCodeValue').textContent;
+  navigator.clipboard.writeText(val).then(()=>notify('✓ تم نسخ الكود')).catch(()=>notify('الكود: '+val));
+}
+
+function markAllRead() {
+  const notifs = getUserNotifs();
+  notifs.forEach(n => n.read = true);
+  saveUserNotifs(notifs);
+  updateBellBadge();
+  renderNotifList();
+}
+
+// Close bell dropdown when clicking outside
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('bellWrap');
+  if(wrap && !wrap.contains(e.target)) document.getElementById('notifDropdown')?.classList.remove('open');
+});
+
+// ORDER_DELIVERED is handled in the main ch.onmessage handler below
+
+// ===== FONT SIZE =====
+function setFontSize(size) {
+  document.body.classList.remove('fs-small','fs-medium','fs-large');
+  document.body.classList.add('fs-'+size);
+  document.querySelectorAll('.fs-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('fs'+size.charAt(0).toUpperCase()+size.slice(1)).classList.add('active');
+  localStorage.setItem('pantheon_fs', size);
+}
+// Restore saved preference
+(function(){ const s=localStorage.getItem('pantheon_fs'); if(s) setFontSize(s); })();
+
+// ===== USER AUTH SYSTEM =====
+// Storage key
+const USERS_KEY  = 'pantheon_users';
+const ORDERS_KEY = 'pantheon_orders';
+const SESSION_KEY = 'pantheon_session';
+
+function getUsers()  { try { return JSON.parse(localStorage.getItem(USERS_KEY))||[]; } catch { return []; } }
+function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+function getOrders() { try { return JSON.parse(localStorage.getItem(ORDERS_KEY))||[]; } catch { return []; } }
+function saveOrders(o){ localStorage.setItem(ORDERS_KEY, JSON.stringify(o)); }
+function getSession() { try { return JSON.parse(localStorage.getItem(SESSION_KEY))||null; } catch { return null; } }
+function saveSession(u){ localStorage.setItem(SESSION_KEY, JSON.stringify(u)); }
+function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+
+let currentUser = getSession();
+
+function initUserUI() {
+  const btn    = document.getElementById('userNavBtn');
+  const avatar = document.getElementById('userNavAvatar');
+  const label  = document.getElementById('userNavLabel');
+  if(currentUser) {
+    const initials = currentUser.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    avatar.textContent = initials;
+    label.textContent  = currentUser.name.split(' ')[0];
+    document.getElementById('ddName').textContent  = currentUser.name;
+    document.getElementById('ddEmail').textContent = currentUser.email;
+    updateBellBadge();
+  } else {
+    avatar.textContent = '؟';
+    label.textContent  = 'دخول';
+    const badge = document.getElementById('bellBadge');
+    if(badge) badge.classList.remove('has-new');
+  }
+}
+
+function toggleUserDropdown() {
+  if(!currentUser) { openModal('authModal'); return; }
+  const dd = document.getElementById('userDropdown');
+  dd.style.display = dd.style.display==='none' ? 'block' : 'none';
+}
+function closeDropdown() { document.getElementById('userDropdown').style.display='none'; }
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('userWrap');
+  if(wrap && !wrap.contains(e.target)) closeDropdown();
+});
+
+function switchAuthTab(tab) {
+  document.getElementById('loginBody').style.display    = tab==='login'    ? 'block' : 'none';
+  document.getElementById('registerBody').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('loginTab').classList.toggle('active',    tab==='login');
+  document.getElementById('registerTab').classList.toggle('active', tab==='register');
+  document.getElementById('loginError').style.display    = 'none';
+  document.getElementById('registerError').style.display = 'none';
+}
+
+function doLogin() {
+  const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  if(!email||!pass){ errEl.textContent='يرجى ملء جميع الحقول'; errEl.style.display='block'; return; }
+  const users = getUsers();
+  const user  = users.find(u=>u.email===email && u.password===btoa(pass));
+  if(!user){ errEl.textContent='البريد الإلكتروني أو كلمة المرور غير صحيحة'; errEl.style.display='block'; return; }
+  if(user.banned){ errEl.textContent='تم تعليق هذا الحساب. تواصل مع الدعم.'; errEl.style.display='block'; return; }
+  currentUser = {...user};
+  saveSession(currentUser);
+  closeModal('authModal');
+  initUserUI();
+  notify('✓ أهلاً '+user.name+'! تم تسجيل الدخول');
+  broadcastUserEvent('login', user);
+}
+
+function doRegister() {
+  const name  = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('regPassword').value;
+  const phone = document.getElementById('regPhone').value.trim();
+  const errEl = document.getElementById('registerError');
+  if(!name||!email||!pass){ errEl.textContent='يرجى ملء الحقول المطلوبة'; errEl.style.display='block'; return; }
+  if(pass.length<6){ errEl.textContent='كلمة المرور يجب أن تكون 6 أحرف على الأقل'; errEl.style.display='block'; return; }
+  if(!/\S+@\S+\.\S+/.test(email)){ errEl.textContent='صيغة البريد الإلكتروني غير صحيحة'; errEl.style.display='block'; return; }
+  const users = getUsers();
+  if(users.find(u=>u.email===email)){ errEl.textContent='هذا البريد الإلكتروني مسجّل مسبقاً'; errEl.style.display='block'; return; }
+  const newUser = {
+    id:      'u_' + Date.now(),
+    name,
+    email,
+    password: btoa(pass),
+    phone:    phone||'',
+    joinedAt: new Date().toLocaleDateString('ar-IQ'),
+    banned:   false,
+    totalSpent: 0,
+    orderCount: 0,
+  };
+  users.push(newUser);
+  saveUsers(users);
+  currentUser = {...newUser};
+  saveSession(currentUser);
+  closeModal('authModal');
+  initUserUI();
+  notify('✓ مرحباً '+name+'! تم إنشاء حسابك بنجاح');
+  broadcastUserEvent('register', newUser);
+}
+
+function doLogout() {
+  currentUser = null;
+  clearSession();
+  initUserUI();
+  notify('تم تسجيل الخروج');
+}
+
+function saveProfileEdit() {
+  if(!currentUser) return;
+  const name  = document.getElementById('editProfileName').value.trim();
+  const phone = document.getElementById('editProfilePhone').value.trim();
+  if(!name) return;
+  const users = getUsers();
+  const idx   = users.findIndex(u=>u.id===currentUser.id);
+  if(idx>=0){ users[idx].name=name; users[idx].phone=phone; saveUsers(users); }
+  currentUser.name  = name;
+  currentUser.phone = phone;
+  saveSession(currentUser);
+  initUserUI();
+  notify('✓ تم حفظ التعديلات');
+}
+
+function loadProfileModal() {
+  if(!currentUser) return;
+  const initials = currentUser.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('profileAvatarBig').textContent = initials;
+  document.getElementById('profileNameBig').textContent   = currentUser.name;
+  document.getElementById('profileEmailBig').textContent  = currentUser.email;
+  document.getElementById('profileJoined').textContent    = 'عضو منذ: ' + (currentUser.joinedAt||'—');
+  document.getElementById('editProfileName').value  = currentUser.name;
+  document.getElementById('editProfilePhone').value = currentUser.phone||'';
+  // Load orders
+  const orders = getOrders().filter(o=>o.userId===currentUser.id);
+  const el = document.getElementById('profileOrders');
+  if(!orders.length){ el.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:20px;font-size:13px;">لا توجد طلبات بعد</div>'; return; }
+  el.innerHTML = orders.slice().reverse().map(o=>`
+    <div class="order-card">
+      <div class="order-header">
+        <div>
+          <div class="order-id">#${o.orderId}</div>
+          <div class="order-date">${o.date}</div>
+        </div>
+        <span class="order-status ${o.status==='مفعّل'?'active':o.status==='قيد المراجعة'?'pending':'cancelled'}">${o.status}</span>
+      </div>
+      <div class="order-items">
+        ${o.items.map(i=>`<div class="order-item-row"><span>${i.title}</span><span>${i.price===0?'مجاني':'$'+i.price}</span></div>`).join('')}
+      </div>
+      <div class="order-total"><span>الإجمالي</span><span class="order-total-price">$${o.total.toFixed(2)}</span></div>
+    </div>`).join('');
+}
+
+function broadcastUserEvent(type, data) {
+  try { const ch=new BroadcastChannel('pantheon_admin'); ch.postMessage({type:'USER_EVENT', eventType:type, user:{id:data.id,name:data.name,email:data.email,joinedAt:data.joinedAt}}); } catch{}
+}
+
+// Override completePurchase to save order
+const _origCompletePurchase = completePurchase;
+completePurchase = function() {
+  if(currentUser) {
+    const orders = getOrders();
+    const order  = {
+      orderId:  'ORD-' + Date.now().toString().slice(-6),
+      userId:   currentUser.id,
+      userName: currentUser.name,
+      userEmail:currentUser.email,
+      items:    cart.map(g=>({id:g.id, title:g.title, price:g.price})),
+      total:    cart.reduce((s,g)=>s+g.price,0),
+      date:     new Date().toLocaleDateString('ar-IQ'),
+      status:   'قيد المراجعة',
+      payMethod: document.querySelector('.pay-method.active')?.textContent?.trim()||'—',
+    };
+    orders.push(order);
+    saveOrders(orders);
+    // Update user stats
+    const users = getUsers();
+    const idx   = users.findIndex(u=>u.id===currentUser.id);
+    if(idx>=0){ users[idx].totalSpent=(users[idx].totalSpent||0)+order.total; users[idx].orderCount=(users[idx].orderCount||0)+1; saveUsers(users); currentUser=users[idx]; saveSession(currentUser); }
+    // Notify admin
+    try { const ch=new BroadcastChannel('pantheon_admin'); ch.postMessage({type:'NEW_ORDER', order}); } catch{}
+  }
+  closeModal('checkoutModal');
+  cart=[]; updateCartUI(); renderHome(); renderStore();
+  notify('✅ تم الشراء بنجاح! شكراً لتسوقك معنا');
+};
+
+// Init user UI on load
+initUserUI();
+
+// Load real ratings into game objects on startup
+function loadRatingsIntoGames() {
+  games.forEach(g => {
+    const stats = calcRatingStats(g.id);
+    if(stats.count > 0) {
+      g.rating = parseFloat(stats.avg);
+      g.rc     = stats.count;
+    }
+  });
+}
+
+// INIT
+loadRatingsIntoGames(); renderHome(); renderBanner(); updateCartUI(); updateCounts();
+
+// ===== ADMIN PANEL COMMUNICATION =====
+function openAdminPanel() {
+  localStorage.setItem('pantheon_games', JSON.stringify(games));
+  localStorage.setItem('pantheon_storeName', document.getElementById('logoName').textContent);
+  localStorage.setItem('pantheon_promoCode', document.getElementById('promoDisplay').textContent);
+  // On mobile window.open with size params is blocked — use simple tab open
+  const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) || window.innerWidth <= 900;
+  if(isMobile) {
+    window.open('gaming-admin.html', '_blank');
+  } else {
+    window.open('gaming-admin.html', 'pantheon_admin', 'width=1200,height=800,resizable=yes');
+  }
+}
+
+// Listen for commands from admin panel
+const ch = new BroadcastChannel('pantheon_admin');
+ch.onmessage = (e) => {
+  const cmd = e.data;
+  if(!cmd || !cmd.type) return;
+
+  if(cmd.type === 'SET_DOMAIN') {
+    if(cmd.domain) {
+      localStorage.setItem('pantheon_domain', cmd.domain.replace(/^https?:\/\//,'').replace(/\/+$/,''));
+      let can = document.querySelector('link[rel="canonical"]');
+      if(!can){ can=document.createElement('link'); can.rel='canonical'; document.head.appendChild(can); }
+      can.href = cmd.domain;
+    }
+  }
+
+  else if(cmd.type === 'SET_NAME') {
+    document.getElementById('logoName').textContent = cmd.value;
+    const fn = document.getElementById('footerName'); if(fn) fn.textContent = cmd.value.toUpperCase();
+    const fy = document.getElementById('footerYear'); if(fy) fy.textContent = cmd.value;
+    document.title = cmd.value + ' - متجر الألعاب الإلكترونية';
+    notify('✓ تم تغيير اسم المتجر إلى "'+cmd.value+'"');
+  }
+
+  else if(cmd.type === 'SET_PROMO') {
+    const el = document.getElementById('promoDisplay'); if(el) el.textContent = cmd.value;
+    notify('✓ تم تحديث كود الخصم: '+cmd.value);
+  }
+
+  else if(cmd.type === 'SET_PROMO_TEXT') {
+    const el = document.getElementById('promoMainTextDisplay') || document.querySelector('.promo-text');
+    if(el) el.textContent = cmd.value;
+  }
+
+  else if(cmd.type === 'SET_PROMO_SUB') {
+    const el = document.getElementById('promoSubTextDisplay') || document.querySelector('.promo-sub');
+    if(el) el.textContent = cmd.value;
+  }
+
+  else if(cmd.type === 'ADD_GAME') {
+    games.push(cmd.game);
+    updateCounts(); renderHome(); renderStore(); renderBanner();
+    notify('✓ تمت إضافة "'+cmd.game.title+'" للمتجر');
+  }
+
+  else if(cmd.type === 'DELETE_GAME') {
+    games = games.filter(g=>g.id!==cmd.id);
+    updateCounts(); renderHome(); renderStore(); renderBanner();
+    notify('🗑 تم حذف اللعبة من المتجر');
+  }
+
+  else if(cmd.type === 'UPDATE_GAME') {
+    const idx = games.findIndex(g=>g.id===cmd.game.id);
+    if(idx>=0){ games[idx]={...games[idx],...cmd.game}; updateCounts(); renderHome(); renderStore(); notify('✓ تم تحديث "'+cmd.game.title+'"'); }
+  }
+
+  else if(cmd.type === 'GLOBAL_DISCOUNT') {
+    games.forEach(g=>{ if(g.price>0){ if(!g._orig)g._orig=g.price; g.oldPrice=g._orig; g.price=parseFloat((g._orig*(1-cmd.pct/100)).toFixed(2)); if(!g.badges.includes('Sale'))g.badges.push('Sale'); }});
+    renderHome(); renderStore();
+    notify('✓ تم تطبيق خصم '+cmd.pct+'% على جميع الألعاب');
+  }
+
+  else if(cmd.type === 'RESET_PRICES') {
+    games.forEach(g=>{ if(g._orig){ g.price=g._orig; g.oldPrice=null; g._orig=null; g.badges=g.badges.filter(b=>b!=='Sale'); }});
+    renderHome(); renderStore(); notify('✓ تم إعادة الأسعار الأصلية');
+  }
+
+  else if(cmd.type === 'BANNER_CONFIG') {
+    applyBannerConfig(cmd.config);
+  }
+
+  else if(cmd.type === 'BANNER_REFRESH') {
+    hbStopAuto(); renderBanner();
+  }
+
+  else if(cmd.type === 'BANNER_TOGGLE') {
+    const el = document.getElementById('promoBanner') || document.querySelector('.promo-banner');
+    if(el) el.style.display = cmd.show ? 'flex' : 'none';
+  }
+
+  else if(cmd.type === 'ORDER_DELIVERED') {
+    if(currentUser && cmd.userId === currentUser.id) {
+      const notifs = getUserNotifs();
+      notifs.unshift({
+        id: 'notif_'+Date.now(), orderId:cmd.orderId, type:'delivery',
+        deliveryType:cmd.deliveryType, code:cmd.code, message:cmd.message,
+        items:cmd.items||[], total:cmd.total||0,
+        sentAt: new Date().toLocaleString('ar-IQ'), read:false,
+      });
+      saveUserNotifs(notifs);
+      updateBellBadge();
+      notify('✅ تم قبول طلبك #'+cmd.orderId+' — اضغط 🔔 للتفاصيل');
+      setTimeout(()=>showDeliveryDetail(notifs[0]), 1500);
+    }
+  }
+
+  else if(cmd.type === 'SET_LEGAL') {
+    const lp = getLegalPagesVenue();
+    lp[cmd.page] = cmd.content;
+    saveLegalPagesVenue(lp);
+  }
+
+  else if(cmd.type === 'PING') {
+    const banner = document.getElementById('promoBanner') || document.querySelector('.promo-banner');
+    ch.postMessage({
+      type:         'PONG',
+      games:        games.map(g=>({id:g.id,title:g.title,price:g.price,oldPrice:g.oldPrice,genre:g.genre,platform:g.platform,rating:g.rating,rc:g.rc,badges:g.badges,emoji:g.emoji,cardType:g.cardType,image:g.image||null})),
+      cartCount:    cart.length,
+      storeName:    document.getElementById('logoName')?.textContent || 'باثيون',
+      promoCode:    document.getElementById('promoDisplay')?.textContent || '',
+      bannerVisible: banner ? banner.style.display !== 'none' : true,
+      promoMainText: document.getElementById('promoMainTextDisplay')?.textContent || '',
+      promoSubText:  document.getElementById('promoSubTextDisplay')?.textContent  || '',
+    });
+  }
+};
+
+</script>
+</body>
+</html>

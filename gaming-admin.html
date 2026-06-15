@@ -1,0 +1,3656 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⚙️ باثيون — لوحة التحكم</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080b12;--bg2:#0e1219;--bg3:#141922;--bg4:#1c2230;
+  --accent:#e8232a;--accent2:#b71c22;--glow:rgba(232,35,42,0.18);
+  --green:#00c97b;--blue:#3d8bff;--gold:#f5a623;--purple:#9b59b6;--orange:#ff6b35;
+  --t1:#f0f2f5;--t2:#8a8f9e;--t3:#4a4f60;--border:rgba(255,255,255,0.07);
+}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;font-size:13px;overflow-x:hidden}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px}
+
+/* ── TOPBAR ── */
+.topbar{height:54px;background:rgba(8,11,18,0.98);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.logo{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:var(--accent);letter-spacing:2px;display:flex;align-items:center;gap:6px}
+.logo-sub{font-size:11px;color:var(--t3);font-family:'Cairo',sans-serif;font-weight:400;letter-spacing:0;margin-right:4px}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-right:auto}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background 0.3s}
+.status-dot.live{background:var(--green);box-shadow:0 0 8px var(--green)}
+.status-text{font-size:12px;color:var(--t2)}
+.topbar-stat{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-size:12px;color:var(--t2)}
+.topbar-stat span{color:var(--t1);font-weight:700}
+.sync-btn{background:rgba(61,139,255,0.12);border:1px solid rgba(61,139,255,0.25);color:var(--blue);border-radius:7px;padding:6px 14px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.sync-btn:hover{background:rgba(61,139,255,0.22)}
+.sync-btn.spinning .sync-ico{animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.open-store-btn{background:rgba(232,35,42,0.12);border:1px solid rgba(232,35,42,0.25);color:var(--accent);border-radius:7px;padding:6px 14px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none;display:flex;align-items:center;gap:6px}
+.open-store-btn:hover{background:rgba(232,35,42,0.22)}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:210px 1fr;min-height:calc(100vh - 54px)}
+
+/* ── SIDEBAR ── */
+.sidebar{background:var(--bg2);border-left:1px solid var(--border);padding:20px 0;position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto}
+.sidebar-section{margin-bottom:6px;padding:0 10px}
+.sidebar-label{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;padding:8px 10px 4px;display:block}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--t2);font-size:13px;font-weight:600;transition:all 0.18s;margin-bottom:1px}
+.sidebar-item:hover{background:rgba(255,255,255,0.04);color:var(--t1)}
+.sidebar-item.active{background:rgba(232,35,42,0.1);color:var(--accent)}
+.sidebar-item .ico{font-size:15px;width:20px;text-align:center}
+.sidebar-divider{border:none;border-top:1px solid var(--border);margin:8px 12px}
+
+/* ── MAIN ── */
+.main{padding:28px;overflow-y:auto}
+
+/* ── PANEL ── */
+.panel{display:none}
+.panel.active{display:block}
+
+/* ── SECTION CARD ── */
+.card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:18px}
+.card-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;color:var(--t1)}
+.card-title .badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;background:rgba(232,35,42,0.15);color:var(--accent);border:1px solid rgba(232,35,42,0.25)}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:-30px;left:-30px;width:100px;height:100px;border-radius:50%;opacity:0.05}
+.stat-card.red::before{background:var(--accent)}
+.stat-card.green::before{background:var(--green)}
+.stat-card.blue::before{background:var(--blue)}
+.stat-card.gold::before{background:var(--gold)}
+.stat-label{font-size:11px;color:var(--t2);margin-bottom:6px}
+.stat-num{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:700}
+.stat-card.red .stat-num{color:var(--accent)}
+.stat-card.green .stat-num{color:var(--green)}
+.stat-card.blue .stat-num{color:var(--blue)}
+.stat-card.gold .stat-num{color:var(--gold)}
+.stat-sub{font-size:11px;color:var(--t3);margin-top:4px}
+
+/* ── FORM ELEMENTS ── */
+.form-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--bg4);border-radius:8px;margin-bottom:8px;border:1px solid var(--border);gap:12px}
+.form-label{font-size:13px;color:var(--t2);font-weight:500;white-space:nowrap}
+.inp{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:7px;padding:8px 12px;color:var(--t1);font-family:'Cairo',sans-serif;font-size:13px;outline:none;transition:border-color 0.2s}
+.inp:focus{border-color:rgba(232,35,42,0.45)}
+.inp-sm{width:110px;text-align:center}
+.inp-md{width:180px;text-align:right}
+.inp-full{width:100%;margin-bottom:10px}
+.inp-full:last-child{margin-bottom:0}
+
+/* ── BUTTONS ── */
+.btn{font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;border:none;border-radius:8px;padding:9px 18px;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-blue{background:rgba(61,139,255,0.15);border:1px solid rgba(61,139,255,0.3);color:var(--blue)}
+.btn-blue:hover{background:rgba(61,139,255,0.25)}
+.btn-green{background:rgba(0,201,123,0.14);border:1px solid rgba(0,201,123,0.28);color:var(--green)}
+.btn-green:hover{background:rgba(0,201,123,0.24)}
+.btn-gold{background:rgba(245,166,35,0.14);border:1px solid rgba(245,166,35,0.28);color:var(--gold)}
+.btn-gold:hover{background:rgba(245,166,35,0.24)}
+.btn-danger{background:rgba(232,35,42,0.14);border:1px solid rgba(232,35,42,0.28);color:var(--accent)}
+.btn-danger:hover{background:rgba(232,35,42,0.24)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-full{width:100%;justify-content:center}
+
+/* ── TOGGLE ── */
+.toggle{width:42px;height:24px;background:rgba(255,255,255,0.1);border:1px solid var(--border);border-radius:12px;cursor:pointer;position:relative;transition:all 0.3s;flex-shrink:0}
+.toggle.on{background:var(--green);border-color:var(--green)}
+.toggle-thumb{position:absolute;top:2px;right:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:right 0.3s}
+.toggle.on .toggle-thumb{right:20px}
+
+/* ── GAMES TABLE ── */
+.games-table{width:100%;border-collapse:collapse}
+.games-table th{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;padding:10px 14px;text-align:right;border-bottom:1px solid var(--border)}
+.games-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle}
+.games-table tr:hover td{background:rgba(255,255,255,0.02)}
+.game-emoji-cell{font-size:22px;width:36px;text-align:center}
+.game-title-cell{font-weight:700;font-size:13px;max-width:180px}
+.game-sub{font-size:11px;color:var(--t3);margin-top:2px}
+.price-cell{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--accent)}
+.badge-pill{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;margin:1px}
+.bp-top{background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.3)}
+.bp-new{background:rgba(0,201,123,0.15);color:var(--green);border:1px solid rgba(0,201,123,0.3)}
+.bp-hot{background:rgba(232,35,42,0.15);color:var(--accent);border:1px solid rgba(232,35,42,0.3)}
+.bp-sale{background:rgba(155,89,182,0.15);color:var(--purple);border:1px solid rgba(155,89,182,0.3)}
+.rating-cell{color:var(--gold);font-size:12px}
+.action-btns{display:flex;gap:6px}
+.tbl-search{margin-bottom:14px;width:100%}
+
+/* ── ACTIVITY LOG ── */
+.log-list{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+.log-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--bg4);border-radius:8px;border-right:3px solid var(--border)}
+.log-item.cmd{border-color:var(--blue)}
+.log-item.success{border-color:var(--green)}
+.log-item.error{border-color:var(--accent)}
+.log-time{font-size:10px;color:var(--t3);white-space:nowrap;padding-top:2px}
+.log-msg{font-size:12px;color:var(--t2);flex:1;line-height:1.5}
+.log-msg strong{color:var(--t1)}
+
+/* ── EDIT GAME MODAL ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:500;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.overlay.show{display:flex}
+.modal{background:var(--bg3);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:26px;width:420px;animation:fadeUp 0.25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px}
+.modal-actions{display:flex;gap:10px;margin-top:16px}
+
+/* ── OFFLINE NOTICE ── */
+.offline-notice{background:rgba(232,35,42,0.1);border:1px solid rgba(232,35,42,0.25);border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:12px;font-size:13px;color:var(--t2)}
+.offline-notice.hidden{display:none}
+
+/* ── NOTIFICATION ── */
+.notif{position:fixed;top:66px;left:50%;transform:translateX(-50%) translateY(-12px);background:var(--bg3);border:1px solid rgba(0,201,123,0.35);border-radius:9px;padding:10px 22px;font-size:13px;font-weight:600;color:var(--green);z-index:999;opacity:0;transition:all 0.28s;white-space:nowrap;pointer-events:none}
+.notif.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.notif.err{border-color:rgba(232,35,42,0.35);color:var(--accent)}
+
+/* ── PASSWORD SCREEN ── */
+.pwd-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
+.pwd-box{background:var(--bg3);border:1px solid var(--border);border-radius:16px;padding:40px;width:360px;text-align:center}
+.pwd-logo{font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--accent);margin-bottom:6px}
+.pwd-sub{font-size:13px;color:var(--t2);margin-bottom:24px}
+.pwd-inp{width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--t1);font-family:'Cairo',sans-serif;font-size:15px;outline:none;text-align:center;letter-spacing:2px;margin-bottom:10px;transition:border-color 0.2s}
+.pwd-inp:focus{border-color:rgba(232,35,42,0.5)}
+.pwd-error{font-size:12px;color:var(--accent);margin-bottom:10px;min-height:18px}
+.pwd-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:12px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s}
+.pwd-btn:hover{background:var(--accent2)}
+.pwd-change-link{font-size:12px;color:var(--t3);margin-top:14px;cursor:pointer;transition:color 0.2s;display:block}
+.pwd-change-link:hover{color:var(--t2)}
+
+/* ── IMAGE UPLOAD ── */
+.img-upload-zone{border:2px dashed var(--border);border-radius:10px;padding:0;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:10px;position:relative;aspect-ratio:460/215;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.img-upload-zone:hover{border-color:rgba(232,35,42,0.5);background:rgba(232,35,42,0.04)}
+.img-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:2;}
+.img-preview{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;border-radius:8px;}
+.img-preview.show{display:block}
+.upload-placeholder{color:var(--t3);font-size:13px;pointer-events:none;z-index:1;}
+.upload-ico{font-size:28px;margin-bottom:6px}
+
+/* ── CARD TYPE SELECTOR ── */
+.card-types-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.card-type-chip{background:var(--bg4);border:1px solid var(--border);border-radius:7px;padding:8px 4px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:11px;font-weight:600;color:var(--t2)}
+.card-type-chip:hover{border-color:rgba(255,255,255,0.15);color:var(--t1)}
+.card-type-chip.active{border-color:var(--accent);background:rgba(232,35,42,0.12);color:var(--accent)}
+.card-type-chip .ct-ico{font-size:18px;display:block;margin-bottom:3px}
+.product-type-tabs{display:flex;gap:6px;margin-bottom:16px}
+.type-tab{flex:1;text-align:center;padding:10px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--t2);transition:all 0.2s;background:var(--bg4)}
+.type-tab:hover{color:var(--t1)}
+.type-tab.active{background:rgba(232,35,42,0.1);border-color:rgba(232,35,42,0.35);color:var(--accent)}
+.mini-chart{display:flex;align-items:flex-end;gap:4px;height:50px;margin-top:10px}
+.bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;background:rgba(232,35,42,0.25);transition:height 0.4s}
+
+.delivery-type-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:7px; padding:7px 14px; font-family:'Cairo',sans-serif; font-size:12px; font-weight:600; color:var(--t2); cursor:pointer; transition:all 0.2s; }
+.delivery-type-btn:hover { color:var(--t1); border-color:rgba(255,255,255,0.15); }
+.delivery-type-btn.active { background:rgba(0,201,123,0.12); border-color:rgba(0,201,123,0.3); color:var(--green); }
+
+/* ── DELIVERY MODAL ── */
+.delivery-modal { width: min(560px, calc(100vw - 24px)); padding: 0; overflow: hidden; }
+.delivery-header { padding: 20px 24px 16px; border-bottom: 1px solid var(--border); background: var(--bg3); }
+.delivery-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.delivery-meta  { font-size: 12px; color: var(--t3); }
+.delivery-body  { padding: 20px 24px; display: flex; flex-direction: column; gap: 14px; }
+.delivery-field-label { font-size: 11px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.delivery-textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; color: var(--t1); font-family: 'Cairo', sans-serif; font-size: 13px; resize: vertical; min-height: 80px; outline: none; transition: border-color 0.2s; line-height: 1.6; }
+.delivery-textarea:focus { border-color: rgba(0,201,123,0.45); }
+.delivery-textarea::placeholder { color: var(--t3); }
+.delivery-code-input { width: 100%; background: rgba(0,201,123,0.06); border: 1px solid rgba(0,201,123,0.25); border-radius: 8px; padding: 12px 14px; color: var(--green); font-family: 'Orbitron', monospace; font-size: 14px; font-weight: 700; letter-spacing: 2px; outline: none; transition: border-color 0.2s; }
+.delivery-code-input:focus { border-color: rgba(0,201,123,0.55); }
+.delivery-code-input::placeholder { color: var(--t3); font-family: 'Cairo', sans-serif; font-size: 12px; letter-spacing: 0; font-weight: 400; }
+.delivery-order-summary { background: var(--bg4); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+.delivery-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+.order-notif-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 4px; background: rgba(0,201,123,0.12); color: var(--green); border: 1px solid rgba(0,201,123,0.25); }
+.user-table th,.order-table th{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:0.5px;padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);}
+.user-table td,.order-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:middle;font-size:13px;}
+.user-table tr:hover td,.order-table tr:hover td{background:rgba(255,255,255,0.02);}
+.user-avatar-sm{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#e8232a,#b71c22);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
+.status-chip{display:inline-block;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;}
+.status-active{background:rgba(0,201,123,0.12);color:var(--green);border:1px solid rgba(0,201,123,0.25);}
+.status-pending{background:rgba(245,166,35,0.12);color:var(--gold);border:1px solid rgba(245,166,35,0.25);}
+.status-banned{background:rgba(232,35,42,0.12);color:var(--accent);border:1px solid rgba(232,35,42,0.25);}
+.status-cancelled{background:rgba(100,100,100,0.15);color:var(--t2);border:1px solid rgba(100,100,100,0.2);}
+.user-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px;}
+.page-header{margin-bottom:24px}
+.page-title{font-size:20px;font-weight:700}
+.page-sub{font-size:13px;color:var(--t3);margin-top:4px}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* ── BANNER MANAGER ── */
+.banner-game-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg4);border:1px solid var(--border);border-radius:8px;cursor:grab;}
+.banner-game-item:active{cursor:grabbing;background:rgba(255,255,255,0.06);}
+.banner-game-item.drag-over{border-color:var(--accent);background:rgba(232,35,42,0.08);}
+.banner-drag-handle{color:var(--t3);font-size:16px;cursor:grab;flex-shrink:0;}
+.banner-add-btn{background:rgba(0,201,123,0.12);border:1px dashed rgba(0,201,123,0.3);color:var(--green);border-radius:8px;padding:10px 14px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px;width:100%;justify-content:center;}
+.banner-add-btn:hover{background:rgba(0,201,123,0.2);}
+.banner-preview-slide{border-radius:10px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:all 0.2s;position:relative;}
+.banner-preview-slide:hover{border-color:var(--accent);}
+.banner-preview-slide.active-slide{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);}
+.color-swatch{width:28px;height:28px;border-radius:6px;cursor:pointer;border:2px solid transparent;transition:all 0.2s;flex-shrink:0;}
+.color-swatch.selected{border-color:#fff;}
+
+/* ── LEGAL EDITOR ── */
+.legal-tabs { display:flex; gap:6px; margin-bottom:18px; flex-wrap:wrap; }
+.legal-tab { padding:8px 18px; border-radius:8px; border:1px solid var(--border); background:var(--bg4); color:var(--t2); font-family:'Cairo',sans-serif; font-size:13px; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.legal-tab:hover { color:var(--t1); border-color:rgba(255,255,255,0.15); }
+.legal-tab.active { background:rgba(61,139,255,0.12); border-color:rgba(61,139,255,0.3); color:var(--blue); }
+.legal-toolbar { display:flex; gap:4px; flex-wrap:wrap; padding:8px 10px; background:var(--bg4); border:1px solid var(--border); border-bottom:none; border-radius:8px 8px 0 0; }
+.tb-btn { background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:5px; padding:5px 10px; color:var(--t2); font-size:12px; font-weight:600; cursor:pointer; transition:all 0.18s; font-family:'Cairo',sans-serif; }
+.tb-btn:hover { background:rgba(255,255,255,0.1); color:var(--t1); }
+.tb-btn.active { background:rgba(61,139,255,0.15); color:var(--blue); border-color:rgba(61,139,255,0.3); }
+.tb-sep { width:1px; background:var(--border); margin:0 3px; }
+.legal-editor { width:100%; min-height:380px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:0 0 8px 8px; padding:16px 18px; color:var(--t1); font-family:'Cairo',sans-serif; font-size:14px; line-height:1.8; outline:none; resize:vertical; direction:rtl; }
+.legal-editor:focus { border-color:rgba(61,139,255,0.4); background:rgba(255,255,255,0.05); }
+.legal-preview { min-height:380px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:0 0 8px 8px; padding:18px 22px; line-height:1.9; font-size:14px; overflow-y:auto; }
+.legal-preview h1 { font-size:20px; font-weight:700; margin:0 0 14px; color:var(--t1); }
+.legal-preview h2 { font-size:16px; font-weight:700; margin:18px 0 10px; color:var(--t1); border-bottom:1px solid var(--border); padding-bottom:6px; }
+.legal-preview h3 { font-size:14px; font-weight:700; margin:14px 0 8px; color:var(--blue); }
+.legal-preview p  { color:var(--t2); margin:0 0 12px; }
+.legal-preview ul, .legal-preview ol { color:var(--t2); padding-right:20px; margin:0 0 12px; }
+.legal-preview li { margin-bottom:5px; }
+.legal-preview strong { color:var(--t1); }
+.legal-preview a { color:var(--blue); }
+.legal-preview hr { border:none; border-top:1px solid var(--border); margin:16px 0; }
+.char-count { font-size:11px; color:var(--t3); text-align:left; margin-top:6px; }
+.legal-mode-btns { display:flex; gap:4px; }
+.mode-btn { padding:6px 14px; border-radius:6px; border:1px solid var(--border); background:var(--bg4); color:var(--t2); font-family:'Cairo',sans-serif; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.18s; }
+.mode-btn.active { background:rgba(232,35,42,0.12); border-color:rgba(232,35,42,0.3); color:var(--accent); }
+
+/* ── GENRE TAG ── */
+.genre-tag{display:inline-block;padding:3px 9px;border-radius:5px;font-size:11px;font-weight:600;background:rgba(61,139,255,0.12);color:var(--blue);border:1px solid rgba(61,139,255,0.22)}
+
+/* ── EDIT OVERLAY HELPERS ── */
+.edit-section-title{font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.edit-field-label{font-size:11px;color:var(--t3);margin-bottom:4px;}
+.edit-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg4);border-radius:8px;border:1px solid var(--border);}
+.badge-label{display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;}
+.edit-discount-btn{background:rgba(245,166,35,0.1);border:1px solid rgba(245,166,35,0.25);color:var(--gold);border-radius:6px;padding:5px 10px;font-family:'Cairo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.edit-discount-btn:hover{background:rgba(245,166,35,0.22);}
+/* ═══════════════════════════════
+   TABLET (≤900px)
+═══════════════════════════════ */
+/* ═══════════════════════════════
+   TABLET (≤900px)
+═══════════════════════════════ */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    display: none;
+    position: fixed;
+    top: 54px; left: 0; right: 0; bottom: 0;
+    z-index: 200;
+    height: calc(100vh - 54px);
+    border-left: none;
+    border-top: 1px solid var(--border);
+    overflow-y: auto;
+  }
+  .sidebar.mob-open { display: block; }
+  .mob-sidebar-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    z-index: 199;
+    backdrop-filter: blur(2px);
+  }
+  .mob-sidebar-backdrop.show { display: block; }
+
+  /* Topbar */
+  .topbar { padding: 0 14px; gap: 8px; }
+  .logo-sub { display: none; }
+  .topbar-stat { display: none; }
+
+  /* Stats */
+  .stats-grid { grid-template-columns: repeat(2,1fr); }
+  .user-stats-grid { grid-template-columns: repeat(2,1fr); }
+  .two-col { grid-template-columns: 1fr; }
+  .three-col { grid-template-columns: 1fr; }
+  .card { padding: 16px; }
+
+  /* Tables */
+  .games-table, .user-table, .order-table { font-size: 12px; }
+  .games-table th, .user-table th, .order-table th { font-size: 10px; padding: 8px 10px; }
+  .games-table td, .user-table td, .order-table td { padding: 8px 10px; }
+
+  /* Add game form */
+  .card-types-grid { grid-template-columns: repeat(4,1fr); }
+}
+
+/* ═══════════════════════════════
+   MOBILE (≤600px)
+═══════════════════════════════ */
+@media (max-width: 600px) {
+  /* Topbar — compact with overflow hidden */
+  .topbar {
+    height: 50px;
+    padding: 0 10px;
+    gap: 6px;
+    flex-wrap: nowrap;
+    overflow: hidden;
+  }
+  .logo { font-size: 14px; letter-spacing: 1px; }
+  .logo span.logo-sub { display: none; }
+  .topbar-right { gap: 5px; margin-right: auto; }
+  .topbar-stat { display: none; }
+  /* Compact sync & store buttons */
+  .sync-btn { padding: 5px 9px; font-size: 11px; }
+  .sync-btn span:not(.sync-ico) { display: none; }
+  .open-store-btn { padding: 5px 9px; font-size: 11px; }
+  .open-store-btn span:last-child { display: none; }
+  /* Status dot only, no text */
+  .status-text { display: none; }
+  #statusDot { margin: 0; }
+  /* Keep status area compact */
+  .topbar > div:last-child { padding: 5px 8px; min-width: unset; }
+
+  /* Password screen */
+  .pwd-screen { padding: 16px; }
+  .pwd-box { width: 100%; max-width: 360px; padding: 28px 20px; }
+  .pwd-logo { font-size: 18px; }
+  .pwd-sub { font-size: 12px; }
+  .pwd-inp { font-size: 15px; padding: 11px 14px; }
+
+  /* Layout & main */
+  .layout { grid-template-columns: 1fr; }
+  .main { padding: 14px 12px 40px; }
+
+  /* Page header */
+  .page-header { margin-bottom: 16px; }
+  .page-title { font-size: 16px; }
+  .page-sub { font-size: 11px; margin-top: 2px; }
+
+  /* Stats */
+  .stats-grid { grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 12px; }
+  .user-stats-grid { grid-template-columns: repeat(2,1fr); gap: 8px; margin-bottom: 12px; }
+  .stat-card { padding: 13px 11px; border-radius: 9px; }
+  .stat-num { font-size: 19px; }
+  .stat-label { font-size: 10px; }
+  .stat-sub { font-size: 9px; }
+
+  /* Cards */
+  .card { padding: 12px; margin-bottom: 12px; border-radius: 10px; }
+  .card-title { font-size: 12px; margin-bottom: 10px; }
+
+  /* Form rows stack */
+  .form-row { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px 11px; }
+  .form-label { font-size: 12px; }
+  .inp { font-size: 13px; }
+  .inp-sm { width: 100%; text-align: right; }
+  .inp-md { width: 100%; }
+  .inp-full { font-size: 13px; }
+
+  /* All grids → 1 col */
+  .two-col { grid-template-columns: 1fr; gap: 8px; }
+  .three-col { grid-template-columns: 1fr; gap: 8px; }
+
+  /* Buttons */
+  .btn { font-size: 12px; padding: 8px 12px; }
+  .btn-sm { padding: 6px 9px; font-size: 11px; }
+  .btn-full { padding: 11px; font-size: 13px; }
+
+  /* Overlay / edit modal */
+  .overlay .modal {
+    width: calc(100vw - 12px) !important;
+    max-height: 94vh;
+    border-radius: 12px;
+    padding: 0 !important;
+    margin: 6px;
+  }
+  .edit-section-title { font-size: 10px; letter-spacing: 0.5px; }
+  .edit-field-label { font-size: 11px; }
+  .edit-discount-btn { padding: 5px 7px; font-size: 10px; }
+  .edit-toggle-row { padding: 9px 10px; }
+
+  /* Badge labels in edit form */
+  .badge-label { font-size: 12px; }
+
+  /* Product type tabs */
+  .product-type-tabs { gap: 4px; }
+  .type-tab { padding: 8px 5px; font-size: 11px; }
+
+  /* Card types grid */
+  .card-types-grid { grid-template-columns: repeat(3,1fr); gap: 5px; }
+  .card-type-chip { font-size: 9px; padding: 7px 3px; border-radius: 6px; }
+  .card-type-chip .ct-ico { font-size: 16px; }
+
+  /* Tables — horizontal scroll */
+  .card > div[style*="overflow-x"],
+  .card > div { -webkit-overflow-scrolling: touch; }
+  .games-table, .user-table, .order-table {
+    min-width: 540px;
+    font-size: 11px;
+  }
+  .games-table th, .user-table th, .order-table th {
+    font-size: 9px; padding: 7px 8px; white-space: nowrap;
+  }
+  .games-table td, .user-table td, .order-table td { padding: 7px 8px; }
+  .action-btns { gap: 3px; }
+  .action-btns .btn { padding: 4px 7px; font-size: 10px; }
+
+  /* Dashboard charts */
+  .mini-chart { height: 40px; }
+  #genreBreakdown { gap: 6px; }
+
+  /* Sidebar */
+  .sidebar-label { font-size: 9px; padding: 6px 10px 3px; }
+  .sidebar-item { font-size: 12px; padding: 9px 12px; gap: 8px; }
+  .sidebar-item .ico { font-size: 15px; width: 18px; }
+  .sidebar-divider { margin: 6px 12px; }
+
+  /* Steam sync */
+  #steamGamesList { max-height: 180px; }
+  .promo-banner { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px; }
+  .flash-countdown { gap: 6px; flex-wrap: wrap; }
+
+  /* Log list */
+  .log-list { max-height: 200px; }
+  .log-item { padding: 8px 10px; gap: 7px; }
+  .log-msg { font-size: 11px; }
+  .log-time { font-size: 9px; }
+
+  /* Notification */
+  .notif {
+    top: 58px;
+    font-size: 12px;
+    padding: 9px 14px;
+    max-width: calc(100vw - 24px);
+    white-space: normal;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  /* Offline notice */
+  .offline-notice { font-size: 11px; padding: 11px 13px; border-radius: 8px; }
+
+  /* Image upload zone */
+  .img-upload-zone { border-radius: 8px; }
+  .upload-ico { font-size: 22px; }
+  .upload-placeholder { font-size: 12px; }
+
+  /* Genre tag */
+  .genre-tag { font-size: 10px; padding: 2px 7px; }
+}
+
+/* ═══════════════════════════════
+   SMALL MOBILE (≤380px)
+═══════════════════════════════ */
+@media (max-width: 380px) {
+  .logo { font-size: 12px; }
+  .stats-grid, .user-stats-grid { grid-template-columns: repeat(2,1fr); gap: 7px; }
+  .stat-num { font-size: 17px; }
+  .card-types-grid { grid-template-columns: repeat(3,1fr); gap: 4px; }
+  .type-tab { font-size: 10px; padding: 7px 4px; }
+  .sync-btn, .open-store-btn { padding: 5px 7px; }
+}
+
+/* ═══════════════════════════════
+   MOBILE SIDEBAR TOGGLE BUTTON
+═══════════════════════════════ */
+.mob-menu-btn {
+  display: none;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: var(--t1);
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+}
+@media (max-width: 900px) { .mob-menu-btn { display: flex; align-items: center; } }
+
+/* ═══════════════════════════════
+   MOBILE FIXES
+═══════════════════════════════ */
+@media (max-width: 900px) {
+  /* topbar: hide text on store/sync buttons */
+  .sync-btn .sync-text { display: none; }
+  .open-store-btn .store-text { display: none; }
+
+  /* tables: make them horizontally scrollable */
+  #gamesTable, #usersTable, #ordersTable { min-width: 600px; }
+  .card { overflow-x: auto; }
+
+  /* edit overlay: full screen */
+  .overlay .modal[style*="640px"] {
+    width: calc(100vw - 16px) !important;
+    margin: 8px;
+    max-height: 95vh;
+  }
+
+  /* password screen */
+  .pwd-box { width: calc(100vw - 32px); }
+
+  /* add game card types */
+  .card-types-grid { grid-template-columns: repeat(4,1fr); }
+
+  /* offline notice */
+  .offline-notice { font-size: 12px; padding: 12px 14px; }
+  .offline-notice a { color: var(--accent); }
+}
+
+@media (max-width: 600px) {
+  /* Topbar: show only icons */
+  .sync-btn { padding: 6px 9px; }
+  .open-store-btn { padding: 6px 9px; }
+
+  /* make sure status area doesn't overflow */
+  .topbar-right > div:last-child { padding: 5px 7px; border-radius: 6px; }
+
+  /* steam games list shorter */
+  #steamGamesList { max-height: 160px; }
+
+  /* discount buttons wrap */
+  .edit-discount-btn { padding: 5px 8px; font-size: 11px; }
+
+  /* edit overlay header sticky fix */
+  .overlay .modal > div:first-child {
+    padding: 14px 16px 12px !important;
+  }
+  .overlay .modal > div:last-child {
+    padding: 14px 16px !important;
+  }
+
+  /* profile stats */
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+
+  /* log items */
+  .log-item { gap: 8px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- PASSWORD SCREEN -->
+<div class="pwd-screen" id="pwdScreen">
+  <div class="pwd-box">
+    <div class="pwd-logo">⬡ PANTHEON</div>
+    <div class="pwd-sub">لوحة التحكم الإدارية — أدخل كلمة المرور</div>
+    <input class="pwd-inp" type="password" id="pwdInp" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPwd()">
+    <div class="pwd-error" id="pwdErr"></div>
+    <button class="pwd-btn" onclick="checkPwd()">دخول إلى لوحة التحكم</button>
+    <span class="pwd-change-link" onclick="showChangePwd()">🔑 تغيير كلمة المرور</span>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD OVERLAY -->
+<div class="overlay" id="changePwdOverlay">
+  <div class="modal">
+    <div class="modal-title">🔑 تغيير كلمة المرور</div>
+    <input class="inp inp-full" type="password" id="cpCur" placeholder="كلمة المرور الحالية">
+    <input class="inp inp-full" type="password" id="cpNew" placeholder="كلمة المرور الجديدة">
+    <input class="inp inp-full" type="password" id="cpCfm" placeholder="تأكيد كلمة المرور الجديدة">
+    <div class="pwd-error" id="cpErr" style="text-align:right;"></div>
+    <div class="modal-actions">
+      <button class="btn btn-primary" onclick="doChangePwd()">حفظ</button>
+      <button class="btn btn-danger" onclick="closeOverlay('changePwdOverlay')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT GAME OVERLAY -->
+<div class="overlay" id="editOverlay" onclick="if(event.target===this)closeOverlay('editOverlay')">
+  <div class="modal" style="width:640px;max-height:92vh;overflow-y:auto;padding:0;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 24px 14px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg3);z-index:10;border-radius:14px 14px 0 0;">
+      <div>
+        <div style="font-size:16px;font-weight:700;">✏️ تعديل المنتج</div>
+        <div style="font-size:11px;color:var(--t3);margin-top:2px;" id="editSubLabel">—</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-primary btn-sm" onclick="saveEdit()">💾 حفظ التعديلات</button>
+        <button class="btn btn-danger btn-sm" onclick="closeOverlay('editOverlay')">✕</button>
+      </div>
+    </div>
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:18px;">
+      <input type="hidden" id="editId">
+
+      <!-- ① IMAGE -->
+      <div>
+        <div class="edit-section-title">🖼️ صورة المنتج (460 × 215)</div>
+        <div style="display:flex;gap:12px;align-items:flex-start;flex-direction:column;">
+          <div style="position:relative;width:100%;aspect-ratio:460/215;border-radius:10px;overflow:hidden;background:var(--bg4);border:1px solid var(--border);cursor:pointer;margin-bottom:8px;" onclick="document.getElementById('editImgFile').click()">
+            <img id="editImgPreview" style="width:100%;height:100%;object-fit:cover;display:none;">
+            <div id="editImgPlaceholder" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;flex-direction:column;gap:6px;">
+              <span>🖼️</span>
+              <span style="font-size:11px;color:var(--t3);">460 × 215</span>
+            </div>
+            <input type="file" id="editImgFile" accept="image/*" style="display:none;" onchange="handleEditImage(this)">
+            <div style="position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,0.6);font-size:10px;text-align:center;padding:4px;color:#fff;">📷 اضغط لتغيير الصورة (460×215)</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;width:100%;">
+            <input class="inp" type="text" id="editImgUrl" placeholder="أو أدخل رابط URL للصورة (460×215)" style="flex:1;" oninput="applyEditImgUrl(this.value)">
+            <button class="btn btn-danger btn-sm" style="flex-shrink:0;" onclick="clearEditImage()">✕ حذف</button>
+          </div>
+          <div style="font-size:11px;color:var(--t3);">الدقة الموصى بها: 460 × 215 بكسل</div>
+        </div>
+      </div>
+
+      <!-- ② BASIC INFO -->
+      <div>
+        <div class="edit-section-title">📝 المعلومات الأساسية</div>
+        <div style="margin-bottom:8px;">
+          <div class="edit-field-label">اسم المنتج *</div>
+          <input class="inp inp-full" type="text" id="editTitle" placeholder="اسم المنتج">
+        </div>
+        <div>
+          <div class="edit-field-label">الوصف</div>
+          <textarea class="inp inp-full" id="editDesc" placeholder="وصف مختصر للمنتج..." style="height:76px;resize:vertical;line-height:1.6;font-family:'Cairo',sans-serif;"></textarea>
+        </div>
+      </div>
+
+      <!-- ③ PRICING + DISCOUNT -->
+      <div>
+        <div class="edit-section-title">💰 السعر والتخفيض</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div>
+            <div class="edit-field-label">السعر الحالي ($)</div>
+            <input class="inp" type="number" id="editPrice" placeholder="0.00" style="width:100%;" min="0" step="0.01" oninput="calcDiscount()">
+          </div>
+          <div>
+            <div class="edit-field-label">السعر القديم / الأصلي ($)</div>
+            <input class="inp" type="number" id="editOldPrice" placeholder="0.00" style="width:100%;" min="0" step="0.01" oninput="calcDiscount()">
+          </div>
+          <div>
+            <div class="edit-field-label">نسبة الخصم المحسوبة</div>
+            <div class="inp" id="editDiscountDisplay" style="background:rgba(0,201,123,0.08);border-color:rgba(0,201,123,0.2);color:var(--green);font-weight:700;text-align:center;cursor:default;line-height:2.2;">—</div>
+          </div>
+        </div>
+        <div style="margin-bottom:8px;">
+          <div class="edit-field-label" style="margin-bottom:6px;">تخفيض سريع — اضغط لتطبيق فوراً</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(5)">5%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(10)">10%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(15)">15%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(20)">20%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(25)">25%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(30)">30%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(40)">40%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(50)">50%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(75)">75%</button>
+            <button class="edit-discount-btn" onclick="applyQuickDiscount(0)" style="color:var(--accent);border-color:rgba(232,35,42,0.3);">✕ إلغاء</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <input class="inp" type="number" id="editCustomDiscount" placeholder="خصم مخصص %" min="0" max="99" style="width:140px;">
+          <button class="btn btn-gold btn-sm" onclick="applyQuickDiscount(parseFloat(document.getElementById('editCustomDiscount').value)||0)">تطبيق الخصم</button>
+        </div>
+      </div>
+
+      <!-- ④ CLASSIFICATION -->
+      <div>
+        <div class="edit-section-title">🏷️ التصنيف والمنصة</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;">
+          <div>
+            <div class="edit-field-label">النوع / الفئة</div>
+            <input class="inp" type="text" id="editGenre" placeholder="FPS, RPG, أوفلاين..." style="width:100%;">
+          </div>
+          <div>
+            <div class="edit-field-label">المنصة</div>
+            <select class="inp" id="editPlatform" style="width:100%;cursor:pointer;">
+              <option value="PC">💻 PC</option><option value="PS5">🎮 PS5</option><option value="Xbox">🟩 Xbox</option>
+              <option value="موبايل">📱 موبايل</option><option value="iOS">🍎 iOS</option><option value="Android">▶ Android</option>
+              <option value="جميع المنصات">🌐 جميع المنصات</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div class="edit-field-label">الرمز التعبيري (Emoji)</div>
+            <select class="inp" id="editEmoji" style="width:100%;cursor:pointer;">
+              <option value="🎮">🎮 عام</option><option value="🔫">🔫 FPS</option><option value="⚔️">⚔️ RPG</option>
+              <option value="🌆">🌆 مغامرة</option><option value="😱">😱 رعب</option><option value="⚽">⚽ رياضة</option>
+              <option value="💻">💻 أوفلاين</option><option value="💳">💳 بطاقة</option><option value="📱">📱 موبايل</option>
+              <option value="🧙">🧙 RPG</option><option value="🏰">🏰 قلعة</option><option value="🚀">🚀 فضاء</option>
+              <option value="🐉">🐉 تنين</option><option value="🌍">🌍 أرض</option><option value="🌿">🌿 نبات</option>
+              <option value="🪖">🪖 خوذة</option><option value="🏆">🏆 كأس</option><option value="⚡">⚡ برق</option>
+              <option value="🧱">🧱 طوب</option><option value="🎬">🎬 فيلم</option><option value="🍎">🍎 تفاحة</option>
+            </select>
+          </div>
+          <div>
+            <div class="edit-field-label">نوع المنتج / البطاقة</div>
+            <select class="inp" id="editCardType" style="width:100%;cursor:pointer;" onchange="toggleEditOffline(this.value)">
+              <option value="game">🎮 لعبة عادية</option>
+              <option value="steamoffline">💻 Steam أوفلاين</option>
+              <option value="steam">🎮 Steam بطاقة</option>
+              <option value="psn">🎮 PlayStation</option>
+              <option value="xbox">🟩 Xbox</option>
+              <option value="pubg">🪖 PUBG UC</option>
+              <option value="fortnite">🏆 Fortnite</option>
+              <option value="valorant">⚡ Valorant</option>
+              <option value="roblox">🧱 Roblox</option>
+              <option value="itunes">🍎 App Store</option>
+              <option value="google">▶ Google Play</option>
+              <option value="netflix">🎬 Netflix</option>
+              <option value="asiacell">📱 Asiacell</option>
+              <option value="zain">📱 Zain</option>
+              <option value="korek">📱 Korek</option>
+              <option value="other">💳 أخرى</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑤ DEVELOPER & META -->
+      <div>
+        <div class="edit-section-title">🏢 بيانات المطور</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div class="edit-field-label">المطور / الشركة</div>
+            <input class="inp" type="text" id="editDev" placeholder="اسم المطور" style="width:100%;">
+          </div>
+          <div>
+            <div class="edit-field-label">سنة الإصدار</div>
+            <input class="inp" type="number" id="editYear" placeholder="2024" style="width:100%;">
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑥ RATING -->
+      <div>
+        <div class="edit-section-title">⭐ التقييم</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div>
+            <div class="edit-field-label">التقييم (0–5)</div>
+            <input class="inp" type="number" id="editRating" placeholder="4.5" min="0" max="5" step="0.1" style="width:100%;">
+          </div>
+          <div>
+            <div class="edit-field-label">عدد المراجعات</div>
+            <input class="inp" type="number" id="editRc" placeholder="1000" style="width:100%;">
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑦ BADGES -->
+      <div>
+        <div class="edit-section-title">🏅 الشارات</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <label class="badge-label"><input type="checkbox" id="editBadgeTop"> <span style="color:var(--gold);">★ Top</span></label>
+          <label class="badge-label"><input type="checkbox" id="editBadgeNew"> <span style="color:var(--green);">● New</span></label>
+          <label class="badge-label"><input type="checkbox" id="editBadgeHot"> <span style="color:var(--accent);">🔥 Hot</span></label>
+          <label class="badge-label"><input type="checkbox" id="editBadgeSale"> <span style="color:var(--purple);">🏷 Sale</span></label>
+        </div>
+      </div>
+
+      <!-- ⑧ VISIBILITY -->
+      <div>
+        <div class="edit-section-title">👁️ خيارات العرض</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div class="edit-toggle-row">
+            <div><div style="font-size:13px;font-weight:600;">إظهار في الصفحة الرئيسية</div><div style="font-size:11px;color:var(--t3);margin-top:2px;">يظهر في قسم "الألعاب المميزة"</div></div>
+            <div class="toggle on" id="editShowHome" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="edit-toggle-row">
+            <div><div style="font-size:13px;font-weight:600;">مميز (Featured)</div><div style="font-size:11px;color:var(--t3);margin-top:2px;">يظهر كبطاقة بارزة في الهيرو</div></div>
+            <div class="toggle" id="editFeatured" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+          </div>
+          <div class="edit-toggle-row">
+            <div><div style="font-size:13px;font-weight:600;">منتج نشط (مرئي للزوار)</div><div style="font-size:11px;color:var(--t3);margin-top:2px;">إيقافه يخفيه من المتجر مؤقتاً</div></div>
+            <div class="toggle on" id="editActive" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ⑨ OFFLINE FIELDS -->
+      <div id="editOfflineFields" style="display:none;padding-top:14px;border-top:1px solid var(--border);">
+        <div class="edit-section-title">📦 بيانات الباكج الأوفلاين</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px;">
+          <div><div class="edit-field-label">حجم التثبيت</div><input class="inp" type="text" id="editSize" placeholder="مثال: 75 GB" style="width:100%;"></div>
+          <div><div class="edit-field-label">الإصدار</div><input class="inp" type="text" id="editVersion" placeholder="مثال: v2.21" style="width:100%;"></div>
+        </div>
+        <div style="margin-bottom:8px;">
+          <div class="edit-field-label">ملاحظة الأوفلاين</div>
+          <input class="inp inp-full" type="text" id="editOfflineNote" placeholder="مثال: Denuvo مزال، تشغيل مباشر بدون Steam">
+        </div>
+        <div>
+          <div class="edit-field-label">محتوى الباكج (سطر لكل عنصر)</div>
+          <textarea class="inp inp-full" id="editIncludes" placeholder="Base Game&#10;DLC 1&#10;DLC 2" style="height:80px;resize:vertical;line-height:1.6;font-family:'Cairo',sans-serif;"></textarea>
+        </div>
+      </div>
+
+      <!-- ⑩ DANGER ZONE -->
+      <div style="padding-top:14px;border-top:1px solid rgba(232,35,42,0.2);">
+        <div class="edit-section-title" style="color:var(--accent);">⚠️ منطقة الخطر</div>
+        <button class="btn btn-danger btn-full" onclick="confirmDeleteFromEdit()">🗑 حذف هذا المنتج نهائياً من المتجر</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+    <div style="padding:20px 24px;display:flex;flex-direction:column;gap:16px;">
+
+      <input type="hidden" id="editId">
+
+      <!-- IMAGE -->
+<!-- DELIVERY MODAL -->
+<div class="overlay" id="deliveryOverlay" onclick="if(event.target===this)closeOverlay('deliveryOverlay')">
+  <div class="modal delivery-modal" onclick="event.stopPropagation()">
+    <div class="delivery-header">
+      <div class="delivery-title">📬 إرسال الطلب للعضو</div>
+      <div class="delivery-meta" id="deliveryMeta">—</div>
+    </div>
+    <div class="delivery-body">
+      <!-- Order Summary -->
+      <div>
+        <div class="delivery-field-label">ملخص الطلب</div>
+        <div class="delivery-order-summary" id="deliveryOrderSummary"></div>
+      </div>
+
+      <!-- Delivery Code / Account -->
+      <div>
+        <div class="delivery-field-label">كود اللعبة / بيانات الحساب 🔑</div>
+        <textarea class="delivery-code-input" id="deliveryCode" rows="3" placeholder="أدخل الكود أو بيانات الحساب هنا&#10;مثال: XXXX-XXXX-XXXX&#10;أو: الإيميل: x@x.com | كلمة المرور: 123456"></textarea>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t2);font-size:11px;" onclick="genRandomCode()">🎲 توليد كود عشوائي</button>
+          <button class="btn btn-sm" style="background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--t2);font-size:11px;" onclick="copyDeliveryCode()">📋 نسخ</button>
+        </div>
+      </div>
+
+      <!-- Message to user -->
+      <div>
+        <div class="delivery-field-label">رسالة للعضو (اختياري)</div>
+        <textarea class="delivery-textarea" id="deliveryMessage" placeholder="أكتب رسالة شخصية للعضو... مثال: شكراً لشرائك، تواصل معنا إن احتجت مساعدة."></textarea>
+      </div>
+
+      <!-- Delivery type -->
+      <div>
+        <div class="delivery-field-label">نوع التسليم</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="deliveryTypeRow">
+          <button class="delivery-type-btn active" data-type="code" onclick="setDeliveryType(this,'code')">🔑 كود</button>
+          <button class="delivery-type-btn" data-type="account" onclick="setDeliveryType(this,'account')">👤 حساب</button>
+          <button class="delivery-type-btn" data-type="link" onclick="setDeliveryType(this,'link')">🔗 رابط</button>
+          <button class="delivery-type-btn" data-type="file" onclick="setDeliveryType(this,'file')">📁 ملف</button>
+          <button class="delivery-type-btn" data-type="manual" onclick="setDeliveryType(this,'manual')">📞 يدوي</button>
+        </div>
+      </div>
+    </div>
+    <div class="delivery-footer">
+      <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="confirmDelivery()">✅ قبول الطلب وإرسال للعضو</button>
+      <button class="btn btn-danger" style="flex:1;justify-content:center;" onclick="closeOverlay('deliveryOverlay')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<!-- MAIN APP (hidden until login) -->
+<div id="appRoot" style="display:none;">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <button class="mob-menu-btn" onclick="toggleAdminSidebar()">☰</button>
+    <div class="logo">⬡ PANTHEON <span class="logo-sub">لوحة التحكم</span></div>
+    <div class="topbar-right">
+      <div class="topbar-stat">السلة: <span id="tCartCount">0</span></div>
+      <div class="topbar-stat">الألعاب: <span id="tGamesCount">0</span></div>
+      <button class="sync-btn" onclick="syncStore()"><span class="sync-ico">🔄</span><span class="sync-text"> مزامنة</span></button>
+      <a class="open-store-btn" href="gaming-venue.html" target="_blank">🏪<span class="store-text"> فتح المتجر</span></a>
+      <div style="display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:6px;">
+        <div class="status-dot" id="statusDot"></div>
+        <span class="status-text" id="statusText">غير متصل</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mob-sidebar-backdrop" id="adminSidebarBackdrop" onclick="closeAdminSidebar()"></div>
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="adminSidebar">
+      <span class="sidebar-label">القسم الرئيسي</span>
+      <div class="sidebar-section">
+        <div class="sidebar-item active" onclick="showPanel('dashboard',this)"><span class="ico">📊</span>لوحة المعلومات</div>
+        <div class="sidebar-item" onclick="showPanel('games',this)"><span class="ico">🎮</span>إدارة الألعاب</div>
+        <div class="sidebar-item" onclick="showPanel('addGame',this)"><span class="ico">➕</span>إضافة لعبة</div>
+      </div>
+      <hr class="sidebar-divider">
+      <span class="sidebar-label">المتجر</span>
+      <div class="sidebar-section">
+        <div class="sidebar-item" onclick="showPanel('settings',this)"><span class="ico">🏷️</span>إعدادات المتجر</div>
+        <div class="sidebar-item" onclick="showPanel('legal',this)"><span class="ico">📄</span>الشروط والسياسات</div>
+        <div class="sidebar-item" onclick="showPanel('banner',this)"><span class="ico">🎬</span>البنر المتحرك</div>
+        <div class="sidebar-item" onclick="showPanel('pricing',this)"><span class="ico">💰</span>إدارة الأسعار</div>
+        <div class="sidebar-item" onclick="showPanel('promo',this)"><span class="ico">🎁</span>العروض والكودات</div>
+      </div>
+      <hr class="sidebar-divider">
+      <span class="sidebar-label">النظام</span>
+      <div class="sidebar-section">
+        <div class="sidebar-item" onclick="showPanel('users',this)"><span class="ico">👥</span>إدارة الأعضاء</div>
+        <div class="sidebar-item" onclick="showPanel('orders',this)"><span class="ico">📦</span>إدارة الطلبات</div>
+        <div class="sidebar-item" onclick="showPanel('logs',this)"><span class="ico">📋</span>سجل الأحداث</div>
+        <div class="sidebar-item" onclick="showPanel('security',this)"><span class="ico">🔐</span>الأمان</div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+
+      <!-- OFFLINE NOTICE -->
+      <div class="offline-notice hidden" id="offlineNotice">
+        ⚠️ المتجر الرئيسي غير متصل حالياً. افتح <a href="gaming-venue.html" target="_blank" style="color:var(--accent)">gaming-venue.html</a> في نافذة أخرى ثم اضغط مزامنة.
+      </div>
+
+      <!-- ═══ DASHBOARD ═══ -->
+      <div class="panel active" id="panel-dashboard">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="page-title">📊 لوحة المعلومات</div>
+            <div class="page-sub" id="dashLastUpdate">آخر تحديث: —</div>
+          </div>
+          <button class="btn btn-green btn-sm" onclick="refreshDashboard()">🔄 تحديث البيانات</button>
+        </div>
+
+        <!-- MAIN STATS -->
+        <div class="stats-grid">
+          <div class="stat-card red">
+            <div class="stat-label">إجمالي الألعاب</div>
+            <div class="stat-num" id="dGames">—</div>
+            <div class="stat-sub" id="dGamesSub">في المتجر</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">مبيعات اليوم</div>
+            <div class="stat-num" id="dSalesToday">$0</div>
+            <div class="stat-sub" id="dSalesSub">من الطلبات المفعّلة</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-label">الطلبات اليوم</div>
+            <div class="stat-num" id="dOrdersToday">0</div>
+            <div class="stat-sub" id="dOrdersSub">إجمالي اليوم</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">إجمالي الأعضاء</div>
+            <div class="stat-num" id="dUsers">0</div>
+            <div class="stat-sub" id="dUsersSub">مسجّل</div>
+          </div>
+        </div>
+
+        <!-- SECONDARY STATS -->
+        <div class="stats-grid" style="margin-top:0;">
+          <div class="stat-card blue">
+            <div class="stat-label">سلات نشطة</div>
+            <div class="stat-num" id="dCart">—</div>
+            <div class="stat-sub">من المتجر</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">طلبات مفعّلة</div>
+            <div class="stat-num" id="dActiveOrders">0</div>
+            <div class="stat-sub">إجمالي كل الوقت</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">قيد المراجعة</div>
+            <div class="stat-num" id="dPendingOrders">0</div>
+            <div class="stat-sub" style="color:var(--gold);">بانتظار التفعيل</div>
+          </div>
+          <div class="stat-card red">
+            <div class="stat-label">إجمالي المبيعات</div>
+            <div class="stat-num" id="dTotalSales">$0</div>
+            <div class="stat-sub">كل الوقت</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <!-- SALES CHART -->
+          <div class="card">
+            <div class="card-title">📈 المبيعات — آخر 7 أيام</div>
+            <div class="mini-chart" id="salesChart"></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--t3);margin-top:6px;" id="salesChartLabels"></div>
+            <div style="margin-top:10px;display:flex;justify-content:space-between;font-size:11px;color:var(--t2);">
+              <span>إجمالي الأسبوع: <b id="weekTotal" style="color:var(--green);">$0</b></span>
+              <span>متوسط اليوم: <b id="dayAvg" style="color:var(--blue);">$0</b></span>
+            </div>
+          </div>
+          <!-- GENRE BREAKDOWN -->
+          <div class="card">
+            <div class="card-title">🎮 الألعاب حسب النوع</div>
+            <div id="genreBreakdown" style="display:flex;flex-direction:column;gap:8px;margin-top:4px;"></div>
+          </div>
+        </div>
+
+        <!-- RECENT ORDERS -->
+        <div class="card">
+          <div class="card-title">📦 آخر الطلبات <span class="badge" id="recentOrdersBadge">0</span></div>
+          <div id="recentOrdersList" style="display:flex;flex-direction:column;gap:6px;max-height:280px;overflow-y:auto;"></div>
+          <div style="margin-top:10px;text-align:center;" id="recentOrdersEmpty" style="display:none;">
+            <div style="color:var(--t3);font-size:13px;padding:20px;">لا توجد طلبات بعد</div>
+          </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="card">
+          <div class="card-title">⚡ أوامر سريعة</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-blue" onclick="sendCmd({type:'BANNER_TOGGLE',show:true});log('تم تفعيل البانر','success')">📢 تفعيل البانر</button>
+            <button class="btn btn-danger" onclick="sendCmd({type:'BANNER_TOGGLE',show:false});log('تم إخفاء البانر','cmd')">🚫 إخفاء البانر</button>
+            <button class="btn btn-gold" onclick="sendCmd({type:'RESET_PRICES'});log('تم إعادة الأسعار الأصلية','success')">↩ إعادة الأسعار</button>
+            <button class="btn btn-green" onclick="syncStore()">🔄 مزامنة المتجر</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ GAMES ═══ -->
+      <div class="panel" id="panel-games">
+        <div class="page-header">
+          <div class="page-title">🎮 إدارة الألعاب</div>
+          <div class="page-sub" id="gamesSubTitle">18 لعبة في المتجر</div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <input class="inp tbl-search" type="text" placeholder="🔍 بحث في الألعاب..." oninput="filterTable(this.value)">
+          <table class="games-table" id="gamesTable">
+            <thead>
+              <tr>
+                <th style="width:44px"></th>
+                <th>اللعبة</th>
+                <th>النوع</th>
+                <th>المنصة</th>
+                <th>السعر</th>
+                <th>التقييم</th>
+                <th>الشارات</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="gamesBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ═══ ADD GAME ═══ -->
+      <div class="panel" id="panel-addGame">
+        <div class="page-header">
+          <div class="page-title">➕ إضافة منتج جديد</div>
+          <div class="page-sub">لعبة رقمية أو بطاقة شحن — ستظهر في المتجر فوراً</div>
+        </div>
+        <div class="card" style="max-width:560px;">
+
+          <!-- PRODUCT TYPE TABS -->
+          <div class="card-title">نوع المنتج</div>
+          <div class="product-type-tabs">
+            <div class="type-tab active" id="tabGame" onclick="switchProductType('game')">🎮 لعبة</div>
+            <div class="type-tab" id="tabCard" onclick="switchProductType('card')">💳 بطاقة رقمية</div>
+            <div class="type-tab" id="tabCredit" onclick="switchProductType('credit')">📱 رصيد هاتف</div>
+          </div>
+
+          <!-- CARD TYPE SELECTOR (hidden by default) -->
+          <div id="cardTypeSection" style="display:none;margin-bottom:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">اختر نوع البطاقة</div>
+            <div class="card-types-grid" id="cardTypeGrid">
+              <div class="card-type-chip active" onclick="selectCardType(this,'steam')" data-type="steam"><span class="ct-ico">🎮</span>Steam</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'steamoffline')" data-type="steamoffline"><span class="ct-ico">💻</span>Steam أوفلاين</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'psn')" data-type="psn"><span class="ct-ico">🎮</span>PlayStation</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'xbox')" data-type="xbox"><span class="ct-ico">🟩</span>Xbox</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'pubg')" data-type="pubg"><span class="ct-ico">🪖</span>PUBG UC</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'fortnite')" data-type="fortnite"><span class="ct-ico">🏆</span>Fortnite</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'valorant')" data-type="valorant"><span class="ct-ico">⚡</span>Valorant</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'roblox')" data-type="roblox"><span class="ct-ico">🧱</span>Roblox</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'itunes')" data-type="itunes"><span class="ct-ico">🍎</span>App Store</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'google')" data-type="google"><span class="ct-ico">▶</span>Google Play</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'netflix')" data-type="netflix"><span class="ct-ico">🎬</span>Netflix</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'other')" data-type="other"><span class="ct-ico">💳</span>أخرى</div>
+            </div>
+          </div>
+
+          <!-- CREDIT TYPE SELECTOR -->
+          <div id="creditTypeSection" style="display:none;margin-bottom:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">شركة الاتصالات</div>
+            <div class="card-types-grid" id="creditTypeGrid">
+              <div class="card-type-chip active" onclick="selectCardType(this,'asiacell')" data-type="asiacell"><span class="ct-ico">📱</span>Asiacell</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'zain')" data-type="zain"><span class="ct-ico">📱</span>Zain</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'korek')" data-type="korek"><span class="ct-ico">📱</span>Korek</div>
+              <div class="card-type-chip" onclick="selectCardType(this,'other')" data-type="other"><span class="ct-ico">📡</span>أخرى</div>
+            </div>
+          </div>
+
+          <!-- IMAGE UPLOAD -->
+          <div style="font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">صورة المنتج — 460 × 215 (اختياري)</div>
+          <div class="img-upload-zone" id="uploadZone" onclick="document.getElementById('imgFileInput').click()">
+            <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImageUpload(this)">
+            <img id="imgPreview" class="img-preview" alt="preview">
+            <div class="upload-placeholder" id="uploadPlaceholder">
+              <div class="upload-ico">🖼️</div>
+              <div>اضغط لرفع صورة أو اسحب وأفلت</div>
+              <div style="font-size:11px;margin-top:4px;color:var(--t3);">الدقة الموصى بها: 460 × 215 — PNG, JPG, WEBP</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-bottom:14px;">
+            <input class="inp" type="text" id="agImgUrl" placeholder="أو أدخل رابط صورة مباشر (URL)" style="flex:1;" oninput="previewUrl(this.value)">
+            <button class="btn btn-blue btn-sm" onclick="clearImage()">✕ مسح</button>
+          </div>
+
+          <!-- PRODUCT INFO -->
+          <div style="font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">معلومات المنتج</div>
+          <input class="inp inp-full" type="text" id="agTitle" placeholder="اسم المنتج / البطاقة *">
+          <input class="inp inp-full" type="text" id="agDesc" placeholder="وصف مختصر">
+          <div class="two-col" style="gap:10px;margin-bottom:10px">
+            <input class="inp" type="number" id="agPrice" placeholder="السعر $ *" style="width:100%">
+            <input class="inp" type="number" id="agOldPrice" placeholder="السعر القديم (اختياري)" style="width:100%">
+          </div>
+          <div class="two-col" style="gap:10px;margin-bottom:10px" id="gameOnlyFields">
+            <input class="inp" type="text" id="agGenre" placeholder="النوع (FPS, RPG...)" style="width:100%">
+            <select class="inp" id="agPlatform" style="width:100%;cursor:pointer">
+              <option value="PC">💻 PC</option>
+              <option value="PS5">🎮 PS5</option>
+              <option value="Xbox">🟩 Xbox</option>
+              <option value="موبايل">📱 موبايل</option>
+              <option value="iOS">🍎 iOS</option>
+              <option value="Android">▶ Android</option>
+              <option value="جميع المنصات">🌐 جميع المنصات</option>
+            </select>
+          </div>
+          <div class="two-col" style="gap:10px;margin-bottom:10px" id="gameEmojiField">
+            <select class="inp" id="agEmoji" style="width:100%;cursor:pointer">
+              <option value="🎮">🎮 عام</option><option value="🔫">🔫 FPS</option><option value="⚔️">⚔️ RPG</option>
+              <option value="🏎️">🏎️ سباق</option><option value="⚽">⚽ رياضة</option><option value="😱">😱 رعب</option>
+              <option value="🌆">🌆 مغامرة</option><option value="🧩">🧩 ألغاز</option><option value="🚀">🚀 فضاء</option>
+              <option value="💳">💳 بطاقة</option><option value="📱">📱 هاتف</option>
+            </select>
+            <input class="inp" type="number" id="agYear" placeholder="سنة الإصدار" value="2024" style="width:100%">
+          </div>
+          <input class="inp inp-full" type="text" id="agDev" placeholder="اسم المطور / الشركة">
+
+          <!-- OFFLINE PACKAGE FIELDS -->
+          <div id="offlineFields" style="display:none;margin-top:10px;padding-top:14px;border-top:1px solid var(--border);">
+            <div style="font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">📦 معلومات الباكج الأوفلاين</div>
+            <div class="two-col" style="gap:10px;margin-bottom:10px;">
+              <input class="inp" type="text" id="agSize" placeholder="حجم التثبيت (مثال: 75 GB)" style="width:100%">
+              <input class="inp" type="text" id="agVersion" placeholder="الإصدار (مثال: v2.21)" style="width:100%">
+            </div>
+            <input class="inp inp-full" type="text" id="agOfflineNote" placeholder="ملاحظة الأوفلاين (مثال: Denuvy مزال، تشغيل مباشر)">
+            <textarea class="inp inp-full" id="agIncludes" placeholder="محتوى الباكج (سطر لكل عنصر):&#10;Base Game&#10;DLC 1&#10;DLC 2" style="height:90px;resize:vertical;line-height:1.6;font-family:'Cairo',sans-serif;"></textarea>
+          </div>
+
+          <!-- BADGES -->
+          <div style="margin:10px 0 8px;font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;">الشارات</div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;"><input type="checkbox" id="badgeTop"> <span style="color:var(--gold)">★ Top</span></label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;"><input type="checkbox" id="badgeNew" checked> <span style="color:var(--green)">● New</span></label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;"><input type="checkbox" id="badgeHot"> <span style="color:var(--accent)">🔥 Hot</span></label>
+            <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:13px;"><input type="checkbox" id="badgeSale"> <span style="color:var(--purple)">🏷 Sale</span></label>
+          </div>
+
+          <button class="btn btn-primary btn-full" onclick="submitAddGame()">➕ إضافة للمتجر فوراً</button>
+        </div>
+      </div>
+
+      <!-- ═══ BANNER ═══ -->
+      <div class="panel" id="panel-banner">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="page-title">🎬 البنر المتحرك</div>
+            <div class="page-sub">إدارة الألعاب والإعدادات الكاملة للبنر الرئيسي</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="applyBannerAdmin()">✅ تطبيق على المتجر</button>
+        </div>
+
+        <div class="two-col">
+          <!-- LEFT: GAME SELECTION -->
+          <div>
+            <div class="card">
+              <div class="card-title">🎮 الألعاب في البنر <span class="badge" id="bannerSlideCount">0 شرائح</span></div>
+              <div style="margin-bottom:10px;font-size:12px;color:var(--t3);">اسحب لترتيب الشرائح • حذف أو إضافة ألعاب</div>
+              <div id="bannerSlidesList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+              <div style="margin-top:8px;">
+                <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">إضافة لعبة للبنر</div>
+                <div style="display:flex;gap:8px;">
+                  <select class="inp" id="bannerGameSelect" style="flex:1;cursor:pointer;"></select>
+                  <button class="btn btn-green btn-sm" onclick="addGameToBanner()">+ إضافة</button>
+                </div>
+              </div>
+              <div style="margin-top:10px;">
+                <button class="btn btn-blue btn-sm btn-full" onclick="autoSelectBannerGames()">🤖 تحديد تلقائي (الأبرز)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: SETTINGS -->
+          <div>
+            <div class="card">
+              <div class="card-title">⚙️ إعدادات البنر</div>
+              <div class="form-row">
+                <span class="form-label">التشغيل التلقائي</span>
+                <div class="toggle on" id="bannerAutoPlay" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+              </div>
+              <div class="form-row">
+                <span class="form-label">مدة كل شريحة (ثانية)</span>
+                <input class="inp inp-sm" type="number" id="bannerInterval" value="6" min="2" max="30">
+              </div>
+              <div class="form-row">
+                <span class="form-label">عداد الشرائح</span>
+                <div class="toggle on" id="bannerShowCounter" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+              </div>
+              <div class="form-row">
+                <span class="form-label">الصور المصغّرة</span>
+                <div class="toggle on" id="bannerShowThumbs" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+              </div>
+              <div class="form-row">
+                <span class="form-label">شريط التقدم</span>
+                <div class="toggle on" id="bannerShowProgress" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="card">
+          <div class="card-title">👁️ معاينة الشرائح المحددة</div>
+          <div id="bannerPreviewGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;"></div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="applyBannerAdmin()">✅ تطبيق على المتجر فوراً</button>
+          <button class="btn btn-danger btn-sm" onclick="resetBannerAdmin()">↩ إعادة ضبط</button>
+        </div>
+      </div>
+
+      <!-- ═══ LEGAL ═══ -->
+      <div class="panel" id="panel-legal">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="page-title">📄 الشروط والسياسات</div>
+            <div class="page-sub">تحرير وحفظ الصفحات القانونية — تُطبَّق فوراً على المتجر</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="saveLegalPage()">💾 حفظ وتطبيق</button>
+        </div>
+
+        <!-- PAGE TABS -->
+        <div class="legal-tabs" id="legalTabs">
+          <button class="legal-tab active" onclick="switchLegalPage('terms',this)">📋 الشروط والأحكام</button>
+          <button class="legal-tab" onclick="switchLegalPage('privacy',this)">🔒 سياسة الخصوصية</button>
+          <button class="legal-tab" onclick="switchLegalPage('refund',this)">↩ سياسة الاسترجاع</button>
+          <button class="legal-tab" onclick="switchLegalPage('cookies',this)">🍪 ملفات الارتباط</button>
+          <button class="legal-tab" onclick="switchLegalPage('about',this)">ℹ️ عن المتجر</button>
+          <button class="legal-tab" onclick="switchLegalPage('contact',this)">📞 تواصل معنا</button>
+        </div>
+
+        <!-- EDITOR / PREVIEW TOGGLE -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:13px;font-weight:600;color:var(--t2);" id="legalPageTitle">📋 الشروط والأحكام</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <div class="legal-mode-btns">
+              <button class="mode-btn active" id="editModeBtn" onclick="setLegalMode('edit')">✏️ تحرير</button>
+              <button class="mode-btn" id="previewModeBtn" onclick="setLegalMode('preview')">👁 معاينة</button>
+            </div>
+            <button class="btn btn-blue btn-sm" onclick="insertLegalTemplate()">📝 قالب جاهز</button>
+            <button class="btn btn-danger btn-sm" onclick="clearLegalEditor()">🗑 مسح</button>
+          </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="legal-toolbar" id="legalToolbar">
+          <button class="tb-btn" onclick="legalFormat('h1')" title="عنوان رئيسي"># H1</button>
+          <button class="tb-btn" onclick="legalFormat('h2')" title="عنوان ثانوي">## H2</button>
+          <button class="tb-btn" onclick="legalFormat('h3')" title="عنوان ثالثي">### H3</button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" onclick="legalFormat('bold')" title="عريض"><b>B</b></button>
+          <button class="tb-btn" onclick="legalFormat('italic')" title="مائل"><i>I</i></button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" onclick="legalFormat('ul')" title="قائمة نقطية">• قائمة</button>
+          <button class="tb-btn" onclick="legalFormat('ol')" title="قائمة مرقمة">1. مرقمة</button>
+          <button class="tb-btn" onclick="legalFormat('hr')" title="خط فاصل">― فاصل</button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" onclick="legalFormat('date')" title="تاريخ اليوم">📅 تاريخ</button>
+          <button class="tb-btn" onclick="legalFormat('storename')" title="اسم المتجر">🏷 الاسم</button>
+        </div>
+
+        <!-- EDITOR -->
+        <textarea class="legal-editor" id="legalEditor" oninput="updateCharCount()" placeholder="اكتب محتوى الصفحة هنا بصيغة Markdown...&#10;&#10;# عنوان رئيسي&#10;## عنوان فرعي&#10;&#10;نص عادي..."></textarea>
+        <div class="char-count" id="legalCharCount">0 حرف</div>
+
+        <!-- PREVIEW -->
+        <div class="legal-preview" id="legalPreview" style="display:none;"></div>
+
+        <!-- ACTIONS -->
+        <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;">
+          <button class="btn btn-primary" style="flex:1;justify-content:center;min-width:160px;" onclick="saveLegalPage()">💾 حفظ وتطبيق على المتجر</button>
+          <button class="btn btn-gold btn-sm" onclick="exportLegalPage()">📥 تصدير</button>
+          <button class="btn btn-blue btn-sm" onclick="resetLegalPage()">↩ إعادة الافتراضي</button>
+        </div>
+      </div>
+
+      <!-- ═══ SETTINGS ═══ -->
+      <div class="panel" id="panel-settings">
+        <div class="page-header">
+          <div class="page-title">🏷️ إعدادات المتجر</div>
+          <div class="page-sub">تغييراتك تُطبّق على المتجر فوراً</div>
+        </div>
+
+        <!-- DOMAIN SETTINGS -->
+        <div class="card">
+          <div class="card-title">🌐 إعدادات الدومين (Vercel)</div>
+
+          <div style="background:rgba(0,201,123,0.06);border:1px solid rgba(0,201,123,0.18);border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--green);line-height:1.7;">
+            ℹ️ أدخل دومين Vercel الخاص بمشروعك. يُستخدم في روابط المشاركة وإشعارات البريد والـ canonical URL.
+          </div>
+
+          <!-- Current domain display -->
+          <div class="form-row" style="margin-bottom:10px;">
+            <span class="form-label">الدومين الحالي</span>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span id="currentDomainDisplay" style="font-family:'Orbitron',sans-serif;font-size:11px;color:var(--blue);background:rgba(61,139,255,0.08);border:1px solid rgba(61,139,255,0.2);border-radius:6px;padding:5px 12px;">غير محدد</span>
+              <a id="domainOpenLink" href="#" target="_blank" style="display:none;" class="btn btn-blue btn-sm">🔗 فتح</a>
+            </div>
+          </div>
+
+          <!-- Primary domain input -->
+          <div class="form-row">
+            <div>
+              <span class="form-label" style="display:block;margin-bottom:2px;">دومين المتجر الرئيسي</span>
+              <span style="font-size:10px;color:var(--t3);">مثال: my-store.vercel.app أو custom-domain.com</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="inp" type="text" id="domainInput" placeholder="my-store.vercel.app" style="width:230px;"
+                     value="vercelshop-murex.vercel.app" oninput="previewDomain(this.value)">
+              <button class="btn btn-green btn-sm" onclick="saveDomain()">💾 حفظ</button>
+            </div>
+          </div>
+
+          <!-- Domain preview -->
+          <div id="domainPreview" style="display:none;margin-top:10px;padding:10px 14px;background:var(--bg4);border-radius:8px;border:1px solid var(--border);">
+            <div style="font-size:11px;color:var(--t3);margin-bottom:6px;">معاينة الروابط</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="font-size:12px;"><span style="color:var(--t3);width:90px;display:inline-block;">الرئيسية:</span><span id="previewHome" style="color:var(--blue);font-family:monospace;"></span></div>
+              <div style="font-size:12px;"><span style="color:var(--t3);width:90px;display:inline-block;">المتجر:</span><span id="previewStore" style="color:var(--blue);font-family:monospace;"></span></div>
+            </div>
+          </div>
+
+          <!-- Vercel environment info -->
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Vercel Deployment Info</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div class="form-row" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px 12px;">
+                <div style="font-size:10px;color:var(--t3);">ملف المتجر الرئيسي</div>
+                <div style="font-family:monospace;font-size:12px;color:var(--green);">gaming-venue.html</div>
+              </div>
+              <div class="form-row" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px 12px;">
+                <div style="font-size:10px;color:var(--t3);">ملف لوحة التحكم</div>
+                <div style="font-family:monospace;font-size:12px;color:var(--gold);">gaming-admin.html</div>
+              </div>
+            </div>
+            <div style="margin-top:8px;padding:10px 14px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:12px;color:var(--t2);line-height:1.8;">
+              <div>📌 <b>دومين مشروعك على Vercel:</b></div>
+              <div style="margin-top:6px;font-family:monospace;font-size:13px;color:var(--green);padding:8px 12px;background:rgba(0,201,123,0.08);border:1px solid rgba(0,201,123,0.2);border-radius:6px;">
+                https://vercelshop-murex.vercel.app
+              </div>
+              <div style="margin-top:8px;font-size:11px;color:var(--t3);">
+                رابط المتجر: <span style="color:var(--blue);font-family:monospace;">https://vercelshop-murex.vercel.app</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STORE IDENTITY -->
+        <div class="card">
+          <div class="card-title">هوية المتجر</div>
+          <div class="form-row">
+            <span class="form-label">اسم المتجر</span>
+            <div style="display:flex;gap:8px;">
+              <input class="inp inp-md" type="text" id="sName" value="باثيون">
+              <button class="btn btn-blue btn-sm" onclick="applyName()">تطبيق</button>
+            </div>
+          </div>
+          <div class="form-row">
+            <span class="form-label">نص البانر الترويجي</span>
+            <div style="display:flex;gap:8px;">
+              <input class="inp" type="text" id="sBannerText" value="🎉 عرض حصري! وفّر على أفضل الألعاب" style="width:260px;">
+              <button class="btn btn-blue btn-sm" onclick="applyBannerText()">تطبيق</button>
+            </div>
+          </div>
+          <div class="form-row">
+            <span class="form-label">إظهار البانر الترويجي</span>
+            <div class="toggle on" id="bannerToggle" onclick="toggleBanner(this)"><div class="toggle-thumb"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PRICING ═══ -->
+      <div class="panel" id="panel-pricing">
+        <div class="page-header">
+          <div class="page-title">💰 إدارة الأسعار ومزامنة Steam</div>
+          <div class="page-sub">جلب أسعار Steam الحقيقية مع إمكانية تطبيق نسبة رفع مخصصة</div>
+        </div>
+
+        <!-- STEAM SYNC CARD -->
+        <div class="card">
+          <div class="card-title">🎮 مزامنة أسعار Steam
+            <span class="badge" id="syncStatusBadge">غير مزامَن</span>
+          </div>
+
+          <div style="background:rgba(27,40,56,0.5);border:1px solid rgba(102,192,244,0.15);border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:12px;color:#66c0f4;line-height:1.7;">
+            ℹ️ يستخدم النظام <strong>Claude AI</strong> كوسيط لجلب أسعار Steam (يتطلب اتصالاً بالإنترنت). الأسعار تُعرض بالدولار الأمريكي من Steam العالمي.
+          </div>
+
+          <!-- MARKUP SETTING -->
+          <div class="form-row" style="margin-bottom:12px;">
+            <div>
+              <div style="font-size:13px;font-weight:600;">نسبة الرفع على سعر Steam (%)</div>
+              <div style="font-size:11px;color:var(--t3);margin-top:2px;">السعر النهائي = سعر Steam × (1 + النسبة/100)</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="inp inp-sm" type="number" id="steamMarkup" value="0" min="0" max="500" step="1" oninput="previewMarkup()">
+              <span style="font-size:12px;color:var(--t2);">%</span>
+            </div>
+          </div>
+
+          <!-- QUICK MARKUP BTNS -->
+          <div style="margin-bottom:14px;">
+            <div class="edit-field-label" style="margin-bottom:6px;">رفع سريع</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="edit-discount-btn" onclick="setMarkup(0)">0%</button>
+              <button class="edit-discount-btn" onclick="setMarkup(10)">10%</button>
+              <button class="edit-discount-btn" onclick="setMarkup(20)">20%</button>
+              <button class="edit-discount-btn" onclick="setMarkup(30)">30%</button>
+              <button class="edit-discount-btn" onclick="setMarkup(50)">50%</button>
+              <button class="edit-discount-btn" onclick="setMarkup(75)">75%</button>
+              <button class="edit-discount-btn" onclick="setMarkup(100)">100%</button>
+            </div>
+          </div>
+
+          <!-- GAME SELECTION -->
+          <div style="margin-bottom:12px;">
+            <div class="edit-field-label" style="margin-bottom:6px;">اختر الألعاب للمزامنة</div>
+            <div style="display:flex;gap:8px;margin-bottom:8px;">
+              <button class="btn btn-blue btn-sm" onclick="selectAllSteamGames()">تحديد الكل</button>
+              <button class="btn btn-danger btn-sm" onclick="deselectAllSteamGames()">إلغاء الكل</button>
+            </div>
+            <div id="steamGamesList" style="max-height:260px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;border:1px solid var(--border);border-radius:8px;padding:10px;background:var(--bg4);"></div>
+          </div>
+
+          <!-- SYNC BUTTON -->
+          <button class="btn btn-primary btn-full" id="syncBtn" onclick="startSteamSync()">
+            🔄 جلب أسعار Steam ومزامنتها
+          </button>
+        </div>
+
+        <!-- SYNC RESULTS -->
+        <div class="card" id="syncResultsCard" style="display:none;">
+          <div class="card-title">📊 نتائج المزامنة</div>
+          <div id="syncProgress" style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--t2);margin-bottom:6px;">
+              <span id="syncProgressText">جاري المزامنة...</span>
+              <span id="syncProgressPct">0%</span>
+            </div>
+            <div style="height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;">
+              <div id="syncProgressBar" style="height:100%;background:var(--accent);border-radius:3px;width:0%;transition:width 0.4s;"></div>
+            </div>
+          </div>
+          <div id="syncResultsList" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;"></div>
+          <div style="display:flex;gap:10px;margin-top:14px;" id="syncApplyRow" style="display:none;">
+            <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="applySyncedPrices()">✅ تطبيق الأسعار على المتجر</button>
+            <button class="btn btn-danger" style="flex:1;justify-content:center;" onclick="cancelSync()">إلغاء</button>
+          </div>
+        </div>
+
+        <!-- GLOBAL DISCOUNT -->
+        <div class="card">
+          <div class="card-title">🏷️ خصم شامل على جميع الألعاب</div>
+          <div class="form-row">
+            <span class="form-label">نسبة الخصم (%)</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="inp inp-sm" type="number" id="discountPct" value="10" min="0" max="90">
+              <button class="btn btn-gold btn-sm" onclick="applyDiscount()">🏷 تطبيق</button>
+              <button class="btn btn-danger btn-sm" onclick="resetPrices()">↩ إعادة الأسعار</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SINGLE GAME PRICE -->
+        <div class="card">
+          <div class="card-title">✏️ تعديل سعر لعبة بعينها</div>
+          <div class="form-row">
+            <span class="form-label">اللعبة</span>
+            <select class="inp" id="priceGameSelect" style="width:220px;cursor:pointer"></select>
+          </div>
+          <div class="form-row">
+            <span class="form-label">السعر الجديد ($)</span>
+            <div style="display:flex;gap:8px;">
+              <input class="inp inp-sm" type="number" id="priceGameVal" placeholder="0">
+              <button class="btn btn-blue btn-sm" onclick="applyOnePrice()">تطبيق</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ PROMO ═══ -->
+      <div class="panel" id="panel-promo">
+        <div class="page-header">
+          <div class="page-title">🎁 العروض والكودات</div>
+          <div class="page-sub">إدارة كود الخصم مع التحكم الكامل بظهوره في المتجر</div>
+        </div>
+
+        <!-- VISIBILITY CONTROL -->
+        <div class="card">
+          <div class="card-title">👁️ ظهور بانر الخصم في المتجر</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg4);border-radius:10px;border:1px solid var(--border);margin-bottom:10px;">
+            <div>
+              <div style="font-size:14px;font-weight:700;" id="promoBannerStatusLabel">البانر: ظاهر</div>
+              <div style="font-size:11px;color:var(--t3);margin-top:3px;">يتحكم بظهور شريط الكود الترويجي في صفحة المتجر</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span style="font-size:12px;color:var(--t3);" id="promoBannerStatusText">ظاهر الآن</span>
+              <div class="toggle on" id="promoBannerToggle" onclick="togglePromoBanner()">
+                <div class="toggle-thumb"></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-green btn-sm" onclick="showPromoBanner()">👁 إظهار البانر</button>
+            <button class="btn btn-danger btn-sm" onclick="hidePromoBanner()">🚫 إخفاء البانر</button>
+          </div>
+        </div>
+
+        <!-- PROMO CODE -->
+        <div class="card">
+          <div class="card-title">🏷️ كود الخصم النشط</div>
+          <div class="form-row">
+            <span class="form-label">الكود</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input class="inp inp-md" type="text" id="promoCode" value="GAME20" style="text-transform:uppercase;letter-spacing:2px;font-weight:700;">
+              <button class="btn btn-green btn-sm" onclick="applyPromo()">✓ تطبيق</button>
+            </div>
+          </div>
+          <div class="form-row">
+            <span class="form-label">نص العرض الرئيسي</span>
+            <input class="inp" type="text" id="promoMainText" value="🎉 عرض حصري! وفّر على أفضل الألعاب" style="width:300px;">
+          </div>
+          <div class="form-row">
+            <span class="form-label">النص التوضيحي</span>
+            <input class="inp" type="text" id="promoSubText" value="استخدم الكود عند الدفع للحصول على خصم" style="width:300px;">
+          </div>
+          <div style="margin-top:10px;">
+            <button class="btn btn-primary btn-full" onclick="applyPromoFull()">💾 حفظ وتطبيق جميع التغييرات</button>
+          </div>
+        </div>
+
+        <!-- PREVIEW -->
+        <div class="card">
+          <div class="card-title">🖼️ معاينة البانر</div>
+          <div id="promoPreview" style="background:linear-gradient(135deg,rgba(232,35,42,0.1),rgba(245,166,35,0.07));border:1px solid rgba(232,35,42,0.18);border-radius:12px;padding:16px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;">
+            <div>
+              <div style="font-size:14px;font-weight:700;" id="previewMainText">🎉 عرض حصري! وفّر على أفضل الألعاب</div>
+              <div style="font-size:12px;color:#8a8f9e;margin-top:3px;" id="previewSubText">استخدم الكود عند الدفع للحصول على خصم</div>
+            </div>
+            <div style="background:rgba(245,166,35,0.1);border:1px dashed rgba(245,166,35,0.4);border-radius:8px;padding:8px 16px;font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:#f5a623;letter-spacing:2px;" id="previewCode">GAME20</div>
+          </div>
+          <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--t3);">هكذا سيبدو البانر في المتجر</div>
+        </div>
+      </div>
+
+      <!-- ═══ USERS ═══ -->
+      <div class="panel" id="panel-users">
+        <div class="page-header">
+          <div class="page-title">👥 إدارة الأعضاء</div>
+          <div class="page-sub" id="usersPanelSub">جاري التحميل...</div>
+        </div>
+        <!-- Stats -->
+        <div class="user-stats-grid">
+          <div class="stat-card blue"><div class="stat-label">إجمالي الأعضاء</div><div class="stat-num" id="statTotalUsers">0</div></div>
+          <div class="stat-card green"><div class="stat-label">أعضاء نشطون</div><div class="stat-num" id="statActiveUsers">0</div></div>
+          <div class="stat-card red"><div class="stat-label">محظورون</div><div class="stat-num" id="statBannedUsers">0</div></div>
+          <div class="stat-card gold"><div class="stat-label">إجمالي المبيعات</div><div class="stat-num" id="statTotalSales">$0</div></div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+            <input class="inp" type="text" id="userSearch" placeholder="🔍 بحث بالاسم أو البريد..." style="flex:1;min-width:200px;" oninput="renderUsersTable()">
+            <select class="inp" id="userFilter" style="width:150px;cursor:pointer;" onchange="renderUsersTable()">
+              <option value="all">الكل</option>
+              <option value="active">نشط</option>
+              <option value="banned">محظور</option>
+            </select>
+            <button class="btn btn-blue btn-sm" onclick="refreshUsersData()">🔄 تحديث</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="user-table" style="width:100%;border-collapse:collapse;" id="usersTable">
+              <thead>
+                <tr>
+                  <th style="width:44px;"></th>
+                  <th>الاسم</th>
+                  <th>البريد الإلكتروني</th>
+                  <th>الهاتف</th>
+                  <th>تاريخ التسجيل</th>
+                  <th>الطلبات</th>
+                  <th>الإنفاق</th>
+                  <th>الحالة</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="usersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ ORDERS ═══ -->
+      <div class="panel" id="panel-orders">
+        <div class="page-header">
+          <div class="page-title">📦 إدارة الطلبات</div>
+          <div class="page-sub" id="ordersPanelSub">جاري التحميل...</div>
+        </div>
+        <div class="user-stats-grid">
+          <div class="stat-card blue"><div class="stat-label">إجمالي الطلبات</div><div class="stat-num" id="statTotalOrders">0</div></div>
+          <div class="stat-card gold"><div class="stat-label">قيد المراجعة</div><div class="stat-num" id="statPendingOrders">0</div></div>
+          <div class="stat-card green"><div class="stat-label">مفعّلة</div><div class="stat-num" id="statActiveOrders">0</div></div>
+          <div class="stat-card red"><div class="stat-label">ملغاة</div><div class="stat-num" id="statCancelledOrders">0</div></div>
+        </div>
+        <div class="card" style="padding:16px;">
+          <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+            <input class="inp" type="text" id="orderSearch" placeholder="🔍 بحث برقم الطلب أو الاسم..." style="flex:1;min-width:200px;" oninput="renderOrdersTable()">
+            <select class="inp" id="orderFilter" style="width:160px;cursor:pointer;" onchange="renderOrdersTable()">
+              <option value="all">جميع الطلبات</option>
+              <option value="قيد المراجعة">قيد المراجعة</option>
+              <option value="مفعّل">مفعّل</option>
+              <option value="ملغي">ملغي</option>
+            </select>
+            <button class="btn btn-blue btn-sm" onclick="refreshUsersData()">🔄 تحديث</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="order-table" style="width:100%;border-collapse:collapse;" id="ordersTable">
+              <thead>
+                <tr>
+                  <th>رقم الطلب</th>
+                  <th>العميل</th>
+                  <th>المنتجات</th>
+                  <th>المجموع</th>
+                  <th>طريقة الدفع</th>
+                  <th>التاريخ</th>
+                  <th>الحالة</th>
+                  <th>إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ LOGS ═══ -->
+      <div class="panel" id="panel-logs">
+        <div class="page-header">
+          <div class="page-title">📋 سجل الأحداث</div>
+          <div class="page-sub">جميع الأوامر المُرسلة للمتجر</div>
+        </div>
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+            <div class="card-title" style="margin:0">الأحداث الأخيرة</div>
+            <button class="btn btn-danger btn-sm" onclick="clearLog()">🗑 مسح السجل</button>
+          </div>
+          <div class="log-list" id="logList">
+            <div class="log-item"><span class="log-time">الآن</span><div class="log-msg">جاهز — في انتظار الاتصال بالمتجر الرئيسي</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SECURITY ═══ -->
+      <div class="panel" id="panel-security">
+        <div class="page-header">
+          <div class="page-title">🔐 الأمان</div>
+          <div class="page-sub">إدارة كلمة المرور وإعدادات الأمان</div>
+        </div>
+        <div class="card">
+          <div class="card-title">تغيير كلمة المرور</div>
+          <input class="inp inp-full" type="password" id="secCur" placeholder="كلمة المرور الحالية">
+          <input class="inp inp-full" type="password" id="secNew" placeholder="كلمة المرور الجديدة">
+          <input class="inp inp-full" type="password" id="secCfm" placeholder="تأكيد كلمة المرور الجديدة">
+          <div class="pwd-error" id="secErr" style="text-align:right"></div>
+          <button class="btn btn-primary btn-full" style="margin-top:8px;" onclick="doSecChangePwd()">حفظ كلمة المرور</button>
+        </div>
+        <div class="card">
+          <div class="card-title">إعدادات الأمان</div>
+          <div class="form-row"><span class="form-label">المصادقة الثنائية</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+          <div class="form-row"><span class="form-label">تسجيل عمليات الدخول</span><div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+          <div class="form-row"><span class="form-label">إشعارات الطلبات الجديدة</span><div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div></div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /layout -->
+</div><!-- /appRoot -->
+
+<script>
+// ===== STATE =====
+let adminPwd = 'asdasdFG12';
+let storeGames = [];
+let isConnected = false;
+let logEntries = [];
+
+const ch = new BroadcastChannel('pantheon_admin');
+
+// ===== PASSWORD =====
+function checkPwd() {
+  const v = document.getElementById('pwdInp').value;
+  const err = document.getElementById('pwdErr');
+  if(v === adminPwd) {
+    err.textContent = '';
+    document.getElementById('pwdScreen').style.display = 'none';
+    document.getElementById('appRoot').style.display = 'block';
+    log('✅ تم الدخول إلى لوحة التحكم', 'success');
+    syncStore();
+    startDashboardAutoRefresh();
+  } else {
+    err.textContent = '❌ كلمة المرور غير صحيحة';
+    document.getElementById('pwdInp').value = '';
+    document.getElementById('pwdInp').focus();
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('pwdInp').focus();
+  document.getElementById('pwdInp').addEventListener('keydown', e => { if(e.key==='Enter') checkPwd(); });
+});
+
+function showChangePwd() { document.getElementById('changePwdOverlay').classList.add('show'); }
+function doChangePwd() {
+  const c=document.getElementById('cpCur').value, n=document.getElementById('cpNew').value, f=document.getElementById('cpCfm').value;
+  const err=document.getElementById('cpErr');
+  if(c!==adminPwd){err.textContent='❌ كلمة المرور الحالية خاطئة';return;}
+  if(n.length<6){err.textContent='❌ يجب 6 أحرف على الأقل';return;}
+  if(n!==f){err.textContent='❌ كلمتا المرور غير متطابقتان';return;}
+  adminPwd=n; closeOverlay('changePwdOverlay');
+  notify('✓ تم تغيير كلمة المرور');
+  log('🔑 تم تغيير كلمة المرور','success');
+}
+function doSecChangePwd() {
+  const c=document.getElementById('secCur').value, n=document.getElementById('secNew').value, f=document.getElementById('secCfm').value;
+  const err=document.getElementById('secErr');
+  if(c!==adminPwd){err.textContent='❌ كلمة المرور الحالية خاطئة';return;}
+  if(n.length<6){err.textContent='❌ يجب 6 أحرف على الأقل';return;}
+  if(n!==f){err.textContent='❌ كلمتا المرور غير متطابقتان';return;}
+  adminPwd=n; err.textContent='';
+  notify('✓ تم تغيير كلمة المرور');
+  log('🔑 تم تغيير كلمة المرور من قسم الأمان','success');
+}
+
+// ===== MOBILE SIDEBAR =====
+function toggleAdminSidebar() {
+  const sb = document.getElementById('adminSidebar');
+  const bd = document.getElementById('adminSidebarBackdrop');
+  const isOpen = sb.classList.contains('mob-open');
+  sb.classList.toggle('mob-open', !isOpen);
+  bd.classList.toggle('show', !isOpen);
+  document.body.style.overflow = isOpen ? '' : 'hidden';
+}
+function closeAdminSidebar() {
+  document.getElementById('adminSidebar').classList.remove('mob-open');
+  document.getElementById('adminSidebarBackdrop').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ===== PANELS =====
+function showPanel(id, el) {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  if(id==='games')     renderGamesTable();
+  if(id==='pricing')   { populatePriceSelect(); renderSteamGamesList(); }
+  if(id==='users')     { renderUsersTable();  updateUserStats(); }
+  if(id==='orders')    { renderOrdersTable(); updateUserStats(); }
+  if(id==='banner')    { initBannerPanel(); }
+  if(id==='legal')     { initLegalPanel(); }
+  // Close sidebar on mobile after selection
+  if(window.innerWidth <= 900) closeAdminSidebar();
+}
+
+// ===== CHANNEL =====
+ch.onmessage = (e) => {
+  const d = e.data;
+
+  if(d.type === 'PONG') {
+    storeGames = d.games;
+    isConnected = true;
+    setStatus(true);
+    // Stop sync button spinning
+    const btn = document.querySelector('.sync-btn');
+    if(btn) btn.classList.remove('spinning');
+    document.getElementById('offlineNotice').classList.add('hidden');
+    document.getElementById('tGamesCount').textContent = d.games.length;
+    document.getElementById('tCartCount').textContent = d.cartCount;
+    document.getElementById('dGames').textContent = d.games.length;
+    document.getElementById('dCart').textContent = d.cartCount;
+    document.getElementById('gamesSubTitle').textContent = d.games.length + ' لعبة في المتجر';
+    document.getElementById('sName').value = d.storeName || 'باثيون';
+    document.getElementById('promoCode').value = d.promoCode || 'GAME20';
+    // Sync banner visibility state
+    if(typeof d.bannerVisible === 'boolean') {
+      promoBannerVisible = d.bannerVisible;
+      updatePromoBannerUI();
+    }
+    if(d.promoMainText) { const el=document.getElementById('promoMainText'); if(el) el.value=d.promoMainText; const pe=document.getElementById('previewMainText'); if(pe) pe.textContent=d.promoMainText; }
+    if(d.promoSubText)  { const el=document.getElementById('promoSubText');  if(el) el.value=d.promoSubText;  const pe=document.getElementById('previewSubText');  if(pe) pe.textContent=d.promoSubText; }
+    renderGamesTable();
+    populatePriceSelect();
+    renderGenreChart();
+    renderSteamGamesList();
+    if(document.getElementById('panel-banner').classList.contains('active')) initBannerPanel();
+    log('🔄 تم الاتصال بالمتجر الرئيسي (' + d.games.length + ' لعبة)', 'success');
+  }
+
+  if(d.type === 'USER_EVENT' || d.type === 'NEW_ORDER') {
+    updateUserStats();
+    if(document.getElementById('panel-users')?.classList.contains('active')) renderUsersTable();
+    if(document.getElementById('panel-orders')?.classList.contains('active')) renderOrdersTable();
+    if(d.type === 'NEW_ORDER') {
+      notify('🛒 طلب جديد من: ' + (d.order?.userName || 'عضو'));
+      log('🛒 طلب جديد #' + d.order?.orderId + ' من ' + d.order?.userName, 'success');
+      refreshDashboard();
+    }
+  }
+};
+
+// ===== SYNC & CONNECTION =====
+let syncRetryCount   = 0;
+const MAX_RETRIES    = 3;
+const RETRY_INTERVAL = 1500;
+
+function syncStore() {
+  const btn = document.querySelector('.sync-btn');
+  if(btn) btn.classList.add('spinning');
+  syncRetryCount = 0;
+  isConnected    = false;
+  setStatus(false);
+  trySendPing();
+}
+
+function trySendPing() {
+  ch.postMessage({ type: 'PING' });
+  syncRetryCount++;
+  if(syncRetryCount < MAX_RETRIES) {
+    setTimeout(() => {
+      if(!isConnected) trySendPing();
+    }, RETRY_INTERVAL);
+  } else {
+    setTimeout(() => {
+      const btn = document.querySelector('.sync-btn');
+      if(btn) btn.classList.remove('spinning');
+      if(!isConnected) {
+        setStatus(false);
+        const notice = document.getElementById('offlineNotice');
+        if(notice) notice.classList.remove('hidden');
+        log('⚠️ المتجر غير متصل — افتح gaming-venue.html في نافذة أخرى ثم زامن', 'error');
+      }
+    }, RETRY_INTERVAL);
+  }
+}
+
+function sendCmd(cmd) {
+  ch.postMessage(cmd);
+  // If we get a response, we know store is alive
+  const notice = document.getElementById('offlineNotice');
+  if(notice) notice.classList.toggle('hidden', isConnected);
+}
+
+function setStatus(on) {
+  const dot  = document.getElementById('statusDot');
+  const text = document.getElementById('statusText');
+  if(dot)  dot.className  = 'status-dot' + (on ? ' live' : '');
+  if(text) text.textContent = on ? 'متصل ✓' : 'غير متصل';
+}
+
+// Auto-ping every 20s to detect disconnection
+setInterval(() => {
+  if(document.getElementById('appRoot').style.display !== 'none') {
+    const wasConnected = isConnected;
+    isConnected = false; // assume disconnected until PONG
+    ch.postMessage({ type: 'PING' });
+    setTimeout(() => {
+      if(!isConnected && wasConnected) {
+        setStatus(false);
+        log('⚠️ انقطع الاتصال بالمتجر', 'error');
+      }
+    }, 1500);
+  }
+}, 20000);
+
+// ===== GAMES TABLE =====
+function renderGamesTable(filter='') {
+  const body = document.getElementById('gamesBody');
+  let list = filter ? storeGames.filter(g=>g.title.toLowerCase().includes(filter.toLowerCase())||g.genre.toLowerCase().includes(filter.toLowerCase())) : storeGames;
+  if(!list.length){ body.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--t3);padding:30px;">لا توجد منتجات أو المتجر غير متصل</td></tr>'; return; }
+  body.innerHTML = list.map(g=>{
+    const thumb = g.image
+      ? `<img src="${g.image}" style="width:36px;height:36px;border-radius:6px;object-fit:cover;">`
+      : `<span style="font-size:22px;">${g.emoji||'🎮'}</span>`;
+    const isCard = g.cardType && g.cardType!=='game';
+    const cardBadge = isCard ? `<span class="badge-pill" style="background:rgba(245,166,35,0.15);color:var(--gold);border:1px solid rgba(245,166,35,0.3);font-size:9px;">${g.cardType.toUpperCase()}</span>` : '';
+    return `<tr>
+      <td class="game-emoji-cell">${thumb}</td>
+      <td class="game-title-cell">${g.title} ${cardBadge}</td>
+      <td><span class="genre-tag">${g.genre||'—'}</span></td>
+      <td style="color:var(--t2);font-size:12px;">${g.platform||'—'}</td>
+      <td class="price-cell">${g.price===0?'<span style="color:var(--green);font-size:12px;">مجاني</span>':'$'+g.price}</td>
+      <td class="rating-cell">★ ${g.rating||4}</td>
+      <td>${(g.badges||[]).map(b=>`<span class="badge-pill bp-${b.toLowerCase()}">${b}</span>`).join('')}</td>
+      <td><div class="action-btns">
+        <button class="btn btn-blue btn-sm" onclick="openEditGame(${g.id})">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteGame(${g.id},'${g.title.replace(/'/g,"\\'")}')">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterTable(q) { renderGamesTable(q); }
+
+function openEditGame(id) {
+  const g = storeGames.find(x=>x.id===id); if(!g) return;
+
+  document.getElementById('editId').value    = g.id;
+  document.getElementById('editSubLabel').textContent = 'ID: '+g.id+' • '+g.title;
+  document.getElementById('editTitle').value  = g.title || '';
+  document.getElementById('editDesc').value   = g.desc  || '';
+  document.getElementById('editPrice').value  = g.price ?? '';
+  document.getElementById('editOldPrice').value = g.oldPrice || '';
+  document.getElementById('editGenre').value  = g.genre    || '';
+  document.getElementById('editPlatform').value= g.platform || 'PC';
+  document.getElementById('editEmoji').value  = g.emoji    || '🎮';
+  document.getElementById('editCardType').value= g.cardType || 'game';
+  document.getElementById('editDev').value    = g.dev  || '';
+  document.getElementById('editYear').value   = g.year || '';
+  document.getElementById('editRating').value = g.rating || 4.5;
+  document.getElementById('editRc').value     = g.rc    || 0;
+  document.getElementById('editCustomDiscount').value = '';
+
+  // Badges
+  document.getElementById('editBadgeTop').checked  = (g.badges||[]).includes('Top');
+  document.getElementById('editBadgeNew').checked  = (g.badges||[]).includes('New');
+  document.getElementById('editBadgeHot').checked  = (g.badges||[]).includes('Hot');
+  document.getElementById('editBadgeSale').checked = (g.badges||[]).includes('Sale');
+
+  // Visibility toggles
+  const setToggle = (id, on) => {
+    const el = document.getElementById(id);
+    if(on) el.classList.add('on'); else el.classList.remove('on');
+  };
+  setToggle('editShowHome', g.showHome !== false);
+  setToggle('editFeatured', !!g.featured);
+  setToggle('editActive',   g.active !== false);
+
+  // Discount display
+  calcDiscount();
+
+  // Image
+  const imgEl = document.getElementById('editImgPreview');
+  const placeholder = document.getElementById('editImgPlaceholder');
+  if(g.image) {
+    imgEl.src = g.image; imgEl.style.display='block'; placeholder.style.display='none';
+  } else {
+    imgEl.src=''; imgEl.style.display='none'; placeholder.style.display='flex';
+    placeholder.textContent = g.emoji||'🎮';
+  }
+  document.getElementById('editImgUrl').value = (!g.image || g.image.startsWith('data:')) ? '' : g.image;
+  editCurrentImage = g.image || null;
+
+  // Offline fields
+  toggleEditOffline(g.cardType||'game');
+  if(g.cardType==='steamoffline') {
+    document.getElementById('editSize').value        = g.size||'';
+    document.getElementById('editVersion').value     = g.version||'';
+    document.getElementById('editOfflineNote').value = g.offlineNote||'';
+    document.getElementById('editIncludes').value    = (g.includes||[]).join('\n');
+  }
+
+  document.getElementById('editOverlay').classList.add('show');
+}
+
+function toggleEditOffline(type) {
+  document.getElementById('editOfflineFields').style.display = type==='steamoffline' ? 'block' : 'none';
+}
+
+// Discount helpers
+function calcDiscount() {
+  const price = parseFloat(document.getElementById('editPrice').value)||0;
+  const old   = parseFloat(document.getElementById('editOldPrice').value)||0;
+  const el    = document.getElementById('editDiscountDisplay');
+  if(old>0 && price<old) {
+    const pct = Math.round((1 - price/old)*100);
+    el.textContent = pct+'% خصم';
+    el.style.color = 'var(--green)';
+    document.getElementById('editBadgeSale').checked = true;
+  } else {
+    el.textContent = '—';
+    el.style.color = 'var(--t3)';
+  }
+}
+
+function applyQuickDiscount(pct) {
+  const priceEl = document.getElementById('editPrice');
+  const oldEl   = document.getElementById('editOldPrice');
+  const price   = parseFloat(priceEl.value)||0;
+  if(pct===0) {
+    // Remove discount
+    const old = parseFloat(oldEl.value)||0;
+    if(old>0) priceEl.value = old;
+    oldEl.value = '';
+    document.getElementById('editBadgeSale').checked = false;
+    document.getElementById('editDiscountDisplay').textContent = '—';
+    document.getElementById('editDiscountDisplay').style.color = 'var(--t3)';
+    return;
+  }
+  if(!price && !parseFloat(oldEl.value)) { notify('❌ أدخل السعر أولاً', true); return; }
+  const base = parseFloat(oldEl.value)||price;
+  if(!oldEl.value) oldEl.value = base;
+  priceEl.value = (base*(1-pct/100)).toFixed(2);
+  document.getElementById('editBadgeSale').checked = true;
+  calcDiscount();
+}
+
+function confirmDeleteFromEdit() {
+  const id    = parseInt(document.getElementById('editId').value);
+  const title = document.getElementById('editTitle').value;
+  if(!confirm('حذف "'+title+'" نهائياً من المتجر؟')) return;
+  closeOverlay('editOverlay');
+  deleteGame(id, title);
+}
+
+// Edit image handling
+let editCurrentImage = null;
+
+function handleEditImage(input) {
+  if(!input.files||!input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    editCurrentImage = e.target.result;
+    const imgEl = document.getElementById('editImgPreview');
+    imgEl.src = editCurrentImage; imgEl.style.display='block';
+    document.getElementById('editImgPlaceholder').style.display='none';
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+function applyEditImgUrl(url) {
+  if(!url) return;
+  editCurrentImage = url;
+  const imgEl = document.getElementById('editImgPreview');
+  imgEl.src = url; imgEl.style.display='block';
+  document.getElementById('editImgPlaceholder').style.display='none';
+}
+
+function clearEditImage() {
+  editCurrentImage = null;
+  const imgEl = document.getElementById('editImgPreview');
+  imgEl.src=''; imgEl.style.display='none';
+  document.getElementById('editImgPlaceholder').style.display='flex';
+  document.getElementById('editImgUrl').value='';
+  document.getElementById('editImgFile').value='';
+}
+
+function saveEdit() {
+  const id = parseInt(document.getElementById('editId').value);
+  const title = document.getElementById('editTitle').value.trim();
+  if(!title){notify('❌ أدخل اسم المنتج',true);return;}
+
+  const badges = [];
+  if(document.getElementById('editBadgeTop').checked)  badges.push('Top');
+  if(document.getElementById('editBadgeNew').checked)  badges.push('New');
+  if(document.getElementById('editBadgeHot').checked)  badges.push('Hot');
+  if(document.getElementById('editBadgeSale').checked) badges.push('Sale');
+
+  const cardType = document.getElementById('editCardType').value;
+
+  const game = {
+    id,
+    title,
+    desc:     document.getElementById('editDesc').value.trim(),
+    price:    parseFloat(document.getElementById('editPrice').value)||0,
+    oldPrice: parseFloat(document.getElementById('editOldPrice').value)||null,
+    genre:    document.getElementById('editGenre').value.trim(),
+    platform: document.getElementById('editPlatform').value,
+    emoji:    document.getElementById('editEmoji').value,
+    cardType,
+    dev:      document.getElementById('editDev').value.trim(),
+    year:     parseInt(document.getElementById('editYear').value)||2024,
+    rating:   parseFloat(document.getElementById('editRating').value)||4.5,
+    rc:       parseInt(document.getElementById('editRc').value)||0,
+    badges,
+    image:    editCurrentImage,
+    showHome: document.getElementById('editShowHome').classList.contains('on'),
+    featured: document.getElementById('editFeatured').classList.contains('on'),
+    active:   document.getElementById('editActive').classList.contains('on'),
+    // Offline extras
+    ...(cardType==='steamoffline' && {
+      size:        document.getElementById('editSize').value.trim()||null,
+      version:     document.getElementById('editVersion').value.trim()||null,
+      offlineNote: document.getElementById('editOfflineNote').value.trim()||null,
+      includes:    document.getElementById('editIncludes').value.trim().split('\n').filter(Boolean),
+    }),
+  };
+
+  sendCmd({type:'UPDATE_GAME', game});
+  const idx = storeGames.findIndex(g=>g.id===id);
+  if(idx>=0) storeGames[idx] = {...storeGames[idx], ...game};
+
+  closeOverlay('editOverlay');
+  renderGamesTable();
+  populatePriceSelect();
+  log('✏️ تم تعديل "'+title+'"','success');
+  notify('✓ تم حفظ جميع التعديلات على "'+title+'"');
+}
+
+function deleteGame(id, title) {
+  if(!confirm('حذف "'+title+'" من المتجر؟')) return;
+  sendCmd({type:'DELETE_GAME', id});
+  storeGames = storeGames.filter(g=>g.id!==id);
+  renderGamesTable();
+  populatePriceSelect();
+  document.getElementById('tGamesCount').textContent = storeGames.length;
+  document.getElementById('dGames').textContent = storeGames.length;
+  document.getElementById('gamesSubTitle').textContent = storeGames.length + ' لعبة في المتجر';
+  log('🗑 تم حذف "'+title+'"','cmd');
+  notify('تم حذف اللعبة من المتجر');
+}
+
+// ===== PRODUCT TYPE SWITCHING =====
+let currentProductType = 'game';
+let currentCardType = 'steam';
+let currentImageData = null; // base64
+
+const CARD_META_ADMIN = {
+  steam:        { label:'Steam',             genre:'بطاقة رقمية', emoji:'🎮', platform:'PC',            dev:'Valve',        bg:'linear-gradient(135deg,#1b2838,#2a475e)' },
+  steamoffline: { label:'Steam أوفلاين',    genre:'أوفلاين',     emoji:'💻', platform:'PC',            dev:'—',            bg:'linear-gradient(135deg,#0e1419,#1b2838)' },
+  psn:          { label:'PlayStation',       genre:'بطاقة رقمية', emoji:'🎮', platform:'PS5',           dev:'Sony',         bg:'linear-gradient(135deg,#003087,#001a4d)' },
+  xbox:         { label:'Xbox',              genre:'بطاقة رقمية', emoji:'🟩', platform:'Xbox',          dev:'Microsoft',    bg:'linear-gradient(135deg,#107c10,#0a5a0a)' },
+  pubg:         { label:'PUBG UC',           genre:'بطاقة رقمية', emoji:'🪖', platform:'موبايل',        dev:'Krafton',      bg:'linear-gradient(135deg,#1a0f00,#2d1a00)' },
+  fortnite:     { label:'Fortnite V-Bucks',  genre:'بطاقة رقمية', emoji:'🏆', platform:'PC',            dev:'Epic Games',   bg:'linear-gradient(135deg,#001a2a,#002a40)' },
+  valorant:     { label:'Valorant Points',   genre:'بطاقة رقمية', emoji:'⚡', platform:'PC',            dev:'Riot Games',   bg:'linear-gradient(135deg,#1a0005,#380010)' },
+  roblox:       { label:'Roblox Robux',      genre:'بطاقة رقمية', emoji:'🧱', platform:'PC',            dev:'Roblox Corp',  bg:'linear-gradient(135deg,#1a0000,#2d0000)' },
+  itunes:       { label:'App Store',         genre:'بطاقة رقمية', emoji:'🍎', platform:'iOS',           dev:'Apple',        bg:'linear-gradient(135deg,#001a2a,#002a3d)' },
+  google:       { label:'Google Play',       genre:'بطاقة رقمية', emoji:'▶',  platform:'Android',      dev:'Google',       bg:'linear-gradient(135deg,#001a00,#002800)' },
+  netflix:      { label:'Netflix',           genre:'بطاقة رقمية', emoji:'🎬', platform:'جميع المنصات', dev:'Netflix',      bg:'linear-gradient(135deg,#1a0000,#2a0000)' },
+  asiacell:     { label:'Asiacell',          genre:'بطاقة رقمية', emoji:'📱', platform:'موبايل',        dev:'Asiacell',     bg:'linear-gradient(135deg,#1a0a00,#2a1500)' },
+  zain:         { label:'Zain Iraq',         genre:'بطاقة رقمية', emoji:'📱', platform:'موبايل',        dev:'Zain Iraq',    bg:'linear-gradient(135deg,#1a0000,#2a0000)' },
+  korek:        { label:'Korek Telecom',     genre:'بطاقة رقمية', emoji:'📱', platform:'موبايل',        dev:'Korek',        bg:'linear-gradient(135deg,#1a0020,#2a0035)' },
+  other:        { label:'بطاقة أخرى',       genre:'بطاقة رقمية', emoji:'💳', platform:'عام',           dev:'—',            bg:'linear-gradient(135deg,#0a0a0a,#1a1a1a)' },
+};
+
+function switchProductType(type) {
+  currentProductType = type;
+  document.querySelectorAll('.type-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab'+type.charAt(0).toUpperCase()+type.slice(1)).classList.add('active');
+  document.getElementById('cardTypeSection').style.display  = type==='card'   ? 'block' : 'none';
+  document.getElementById('creditTypeSection').style.display= type==='credit' ? 'block' : 'none';
+  document.getElementById('gameOnlyFields').style.display   = type==='game'   ? 'grid'  : 'none';
+  document.getElementById('gameEmojiField').style.display   = type==='game'   ? 'grid'  : 'none';
+  // Auto-select default card type
+  if(type==='card')   { currentCardType='steam';    document.querySelector('#cardTypeGrid .card-type-chip').click(); }
+  if(type==='credit') { currentCardType='asiacell'; document.querySelector('#creditTypeGrid .card-type-chip').click(); }
+  if(type==='game')   currentCardType='game';
+}
+
+function selectCardType(el, type) {
+  const grid = el.closest('.card-types-grid');
+  grid.querySelectorAll('.card-type-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentCardType = type;
+  // Show offline fields only for steamoffline
+  const offEl = document.getElementById('offlineFields');
+  if(offEl) offEl.style.display = type==='steamoffline' ? 'block' : 'none';
+  // Auto-fill developer & platform if empty
+  const meta = CARD_META_ADMIN[type];
+  if(meta) {
+    const devEl = document.getElementById('agDev');
+    if(!devEl.value) devEl.value = meta.dev==='—' ? '' : meta.dev;
+    const platEl = document.getElementById('agPlatform');
+    if(platEl) platEl.value = meta.platform.includes('PC')?'PC':meta.platform.includes('PS5')?'PS5':meta.platform.includes('Xbox')?'Xbox':meta.platform;
+  }
+}
+
+// ===== IMAGE HANDLING =====
+function handleImageUpload(input) {
+  if(!input.files||!input.files[0]) return;
+  const file = input.files[0];
+  if(file.size > 5*1024*1024) { notify('❌ الصورة أكبر من 5MB', true); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentImageData = e.target.result;
+    showPreview(currentImageData);
+  };
+  reader.readAsDataURL(file);
+}
+
+function previewUrl(url) {
+  if(!url) { clearImage(); return; }
+  currentImageData = url;
+  showPreview(url);
+}
+
+function showPreview(src) {
+  const img = document.getElementById('imgPreview');
+  const placeholder = document.getElementById('uploadPlaceholder');
+  img.src = src;
+  img.classList.add('show');
+  placeholder.style.display = 'none';
+}
+
+function clearImage() {
+  currentImageData = null;
+  document.getElementById('imgPreview').classList.remove('show');
+  document.getElementById('imgPreview').src = '';
+  document.getElementById('uploadPlaceholder').style.display = 'block';
+  document.getElementById('agImgUrl').value = '';
+  document.getElementById('imgFileInput').value = '';
+}
+
+// Drag & drop
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('uploadZone');
+  if(!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.style.borderColor='var(--accent)'; });
+  zone.addEventListener('dragleave', () => zone.style.borderColor='');
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.style.borderColor='';
+    const file = e.dataTransfer.files[0];
+    if(file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = ev => { currentImageData=ev.target.result; showPreview(currentImageData); };
+      reader.readAsDataURL(file);
+    }
+  });
+});
+
+// ===== ADD GAME =====
+function submitAddGame() {
+  const title = document.getElementById('agTitle').value.trim();
+  const price = parseFloat(document.getElementById('agPrice').value);
+  if(!title)            { notify('❌ أدخل اسم المنتج', true); return; }
+  if(isNaN(price))      { notify('❌ أدخل سعراً صحيحاً', true); return; }
+
+  const badges = [];
+  if(document.getElementById('badgeTop').checked)  badges.push('Top');
+  if(document.getElementById('badgeNew').checked)  badges.push('New');
+  if(document.getElementById('badgeHot').checked)  badges.push('Hot');
+  if(document.getElementById('badgeSale').checked) badges.push('Sale');
+
+  // Determine meta from card type
+  const isCard = currentProductType !== 'game';
+  const meta = isCard ? CARD_META_ADMIN[currentCardType] : null;
+
+  const game = {
+    id: Date.now(),
+    title,
+    desc:      document.getElementById('agDesc').value    || (meta?meta.label+' — '+title:'منتج جديد.'),
+    price,
+    oldPrice:  parseFloat(document.getElementById('agOldPrice').value) || null,
+    genre:     isCard ? (currentCardType==='steamoffline'?'أوفلاين':'بطاقة رقمية') : (document.getElementById('agGenre').value||'عام'),
+    platform:  isCard ? (meta?.platform||'PC') : document.getElementById('agPlatform').value,
+    emoji:     isCard ? (meta?.emoji||'💳') : document.getElementById('agEmoji').value,
+    year:      parseInt(document.getElementById('agYear').value) || 2024,
+    dev:       document.getElementById('agDev').value || (meta?.dev||'مجهول'),
+    rating: 4.5, rc: 0, badges,
+    cardType:  isCard ? currentCardType : 'game',
+    image:     currentImageData || null,
+    bg:        meta?.bg || 'linear-gradient(135deg,#0a0a0a,#1a1a1a)',
+    // Offline package extras
+    ...(currentCardType==='steamoffline' && {
+      size:        document.getElementById('agSize')?.value.trim() || null,
+      version:     document.getElementById('agVersion')?.value.trim() || null,
+      offlineNote: document.getElementById('agOfflineNote')?.value.trim() || null,
+      includes:    document.getElementById('agIncludes')?.value.trim().split('\n').filter(Boolean) || [],
+    }),
+  };
+
+  sendCmd({type:'ADD_GAME', game});
+  storeGames.push(game);
+  document.getElementById('tGamesCount').textContent = storeGames.length;
+  document.getElementById('dGames').textContent = storeGames.length;
+  document.getElementById('gamesSubTitle').textContent = storeGames.length + ' منتج في المتجر';
+
+  // Reset
+  ['agTitle','agDesc','agPrice','agOldPrice','agGenre','agDev','agImgUrl','agSize','agVersion','agOfflineNote','agIncludes'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('offlineFields').style.display='none';
+  ['badgeTop','badgeNew','badgeHot','badgeSale'].forEach(id => document.getElementById(id).checked = id==='badgeNew');
+  clearImage();
+
+  log('➕ تمت إضافة "'+title+'" ('+( isCard?CARD_META_ADMIN[currentCardType]?.label:'لعبة')+')', 'success');
+  notify('✓ تمت إضافة "'+title+'" للمتجر فوراً');
+  renderGamesTable();
+  populatePriceSelect();
+}
+
+// ===== SETTINGS =====
+function applyName() {
+  const v=document.getElementById('sName').value.trim(); if(!v) return;
+  sendCmd({type:'SET_NAME',value:v});
+  log('🏷 تم تغيير اسم المتجر إلى "'+v+'"','success');
+  notify('✓ تم تغيير الاسم إلى "'+v+'"');
+}
+function applyBannerText() {
+  const v=document.getElementById('sBannerText').value.trim(); if(!v) return;
+  sendCmd({type:'SET_PROMO_TEXT',value:v});
+  log('📢 تم تغيير نص البانر','cmd');
+  notify('✓ تم تحديث نص البانر');
+}
+function toggleBanner(el) {
+  el.classList.toggle('on');
+  const show = el.classList.contains('on');
+  sendCmd({type:'BANNER_TOGGLE',show});
+  log((show?'👁 إظهار':'🚫 إخفاء')+' البانر الترويجي','cmd');
+  notify(show?'✓ تم إظهار البانر':'تم إخفاء البانر');
+}
+
+// ===== PRICING =====
+function applyDiscount() {
+  const pct=parseFloat(document.getElementById('discountPct').value)||0;
+  if(pct<=0||pct>90){notify('❌ نسبة غير صحيحة',true);return;}
+  sendCmd({type:'GLOBAL_DISCOUNT',pct});
+  log('💰 تم تطبيق خصم '+pct+'% على جميع الألعاب','success');
+  notify('✓ تم تطبيق خصم '+pct+'%');
+}
+function resetPrices() {
+  sendCmd({type:'RESET_PRICES'});
+  log('↩ تم إعادة الأسعار الأصلية','cmd');
+  notify('✓ تم إعادة الأسعار');
+}
+function populatePriceSelect() {
+  const sel=document.getElementById('priceGameSelect');
+  sel.innerHTML = storeGames.map(g=>`<option value="${g.id}">${g.emoji||'🎮'} ${g.title} — $${g.price}</option>`).join('');
+}
+function applyOnePrice() {
+  const id=parseInt(document.getElementById('priceGameSelect').value);
+  const price=parseFloat(document.getElementById('priceGameVal').value)||0;
+  const g=storeGames.find(x=>x.id===id); if(!g) return;
+  sendCmd({type:'UPDATE_GAME',game:{id,price,oldPrice:g.price}});
+  const idx=storeGames.findIndex(x=>x.id===id);
+  if(idx>=0){storeGames[idx].oldPrice=storeGames[idx].price;storeGames[idx].price=price;}
+  populatePriceSelect();
+  log('💲 تم تغيير سعر "'+g.title+'" إلى $'+price,'success');
+  notify('✓ تم تغيير السعر إلى $'+price);
+}
+
+// ===== PROMO =====
+// ===== PROMO BANNER MANAGEMENT =====
+let promoBannerVisible = true;
+
+function togglePromoBanner() {
+  promoBannerVisible = !promoBannerVisible;
+  updatePromoBannerUI();
+  sendCmd({ type: 'BANNER_TOGGLE', show: promoBannerVisible });
+  log(promoBannerVisible ? '👁 تم إظهار البانر الترويجي' : '🚫 تم إخفاء البانر الترويجي',
+      promoBannerVisible ? 'success' : 'cmd');
+  notify(promoBannerVisible ? '✓ تم إظهار البانر في المتجر' : 'تم إخفاء البانر من المتجر');
+}
+
+function showPromoBanner() {
+  promoBannerVisible = true;
+  updatePromoBannerUI();
+  sendCmd({ type: 'BANNER_TOGGLE', show: true });
+  log('👁 تم إظهار البانر الترويجي', 'success');
+  notify('✓ تم إظهار البانر في المتجر');
+}
+
+function hidePromoBanner() {
+  promoBannerVisible = false;
+  updatePromoBannerUI();
+  sendCmd({ type: 'BANNER_TOGGLE', show: false });
+  log('🚫 تم إخفاء البانر الترويجي', 'cmd');
+  notify('تم إخفاء البانر من المتجر');
+}
+
+function updatePromoBannerUI() {
+  const toggle  = document.getElementById('promoBannerToggle');
+  const label   = document.getElementById('promoBannerStatusLabel');
+  const text    = document.getElementById('promoBannerStatusText');
+  const preview = document.getElementById('promoPreview');
+  if(!toggle) return;
+  if(promoBannerVisible) {
+    toggle.classList.add('on');
+    if(label) { label.textContent = 'البانر: ظاهر'; label.style.color = 'var(--green)'; }
+    if(text)  { text.textContent  = 'ظاهر الآن';   text.style.color  = 'var(--green)'; }
+    if(preview) preview.style.opacity = '1';
+  } else {
+    toggle.classList.remove('on');
+    if(label) { label.textContent = 'البانر: مخفي'; label.style.color = 'var(--accent)'; }
+    if(text)  { text.textContent  = 'مخفي الآن';   text.style.color  = 'var(--accent)'; }
+    if(preview) preview.style.opacity = '0.35';
+  }
+}
+
+function applyPromo() {
+  const code = document.getElementById('promoCode').value.trim().toUpperCase();
+  if(!code) return;
+  document.getElementById('promoCode').value = code;
+  const previewCode = document.getElementById('previewCode');
+  if(previewCode) previewCode.textContent = code;
+  sendCmd({ type: 'SET_PROMO', value: code });
+  log('🎁 تم تحديث كود الخصم إلى "' + code + '"', 'success');
+  notify('✓ تم تحديث كود الخصم: ' + code);
+}
+
+function applyPromoFull() {
+  const code     = document.getElementById('promoCode').value.trim().toUpperCase();
+  const mainText = document.getElementById('promoMainText')?.value.trim() || '';
+  const subText  = document.getElementById('promoSubText')?.value.trim()  || '';
+  if(!code) { notify('❌ أدخل كود الخصم', true); return; }
+
+  document.getElementById('promoCode').value = code;
+  const pc = document.getElementById('previewCode');     if(pc) pc.textContent = code;
+  const pm = document.getElementById('previewMainText'); if(pm) pm.textContent = mainText;
+  const ps = document.getElementById('previewSubText');  if(ps) ps.textContent = subText;
+
+  sendCmd({ type: 'SET_PROMO',       value: code });
+  if(mainText) sendCmd({ type: 'SET_PROMO_TEXT', value: mainText });
+  if(subText)  sendCmd({ type: 'SET_PROMO_SUB',  value: subText  });
+  sendCmd({ type: 'BANNER_TOGGLE', show: promoBannerVisible });
+
+  log('💾 تم تطبيق جميع إعدادات البانر الترويجي', 'success');
+  notify('✓ تم حفظ وتطبيق جميع التغييرات');
+}
+
+// ===== LOG =====
+function log(msg, type='cmd') {
+  const now=new Date();
+  const time=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0')+':'+now.getSeconds().toString().padStart(2,'0');
+  logEntries.unshift({msg,type,time});
+  if(logEntries.length>50) logEntries.pop();
+  renderLog();
+}
+function renderLog() {
+  document.getElementById('logList').innerHTML = logEntries.map(e=>`
+    <div class="log-item ${e.type}"><span class="log-time">${e.time}</span><div class="log-msg">${e.msg}</div></div>`).join('');
+}
+function clearLog() { logEntries=[]; renderLog(); notify('تم مسح السجل'); }
+
+// ===== REAL-TIME DASHBOARD =====
+function refreshDashboard() {
+  const orders  = getOrders();
+  const users   = getUsers();
+  const today   = new Date().toLocaleDateString('ar-IQ');
+
+  // Today's orders
+  const todayOrders  = orders.filter(o => o.date === today);
+  const todayActive  = todayOrders.filter(o => o.status === 'مفعّل');
+  const salesToday   = todayActive.reduce((s,o) => s + (o.total||0), 0);
+  const totalSales   = orders.filter(o => o.status === 'مفعّل').reduce((s,o) => s + (o.total||0), 0);
+  const activeOrders = orders.filter(o => o.status === 'مفعّل').length;
+  const pending      = orders.filter(o => o.status === 'قيد المراجعة').length;
+
+  // Update stat cards
+  document.getElementById('dSalesToday').textContent   = '$' + salesToday.toFixed(2);
+  document.getElementById('dOrdersToday').textContent  = todayOrders.length;
+  document.getElementById('dUsers').textContent        = users.length;
+  document.getElementById('dActiveOrders').textContent = activeOrders;
+  document.getElementById('dPendingOrders').textContent= pending;
+  document.getElementById('dTotalSales').textContent   = '$' + totalSales.toFixed(2);
+
+  // Sub labels
+  document.getElementById('dSalesSub').textContent  = todayActive.length + ' طلب مفعّل اليوم';
+  document.getElementById('dOrdersSub').textContent = todayActive.length + ' مفعّل • ' + pending + ' قيد المراجعة';
+  document.getElementById('dUsersSub').textContent  = users.filter(u=>!u.banned).length + ' نشط • ' + users.filter(u=>u.banned).length + ' محظور';
+  document.getElementById('dGamesSub').textContent  = storeGames.length ? storeGames.length + ' لعبة وبطاقة' : 'زامن المتجر لعرض البيانات';
+
+  // Pending alert badge color
+  const pendingEl = document.getElementById('dPendingOrders');
+  if(pending > 0) pendingEl.style.color = 'var(--gold)';
+
+  // Last 7 days chart
+  renderSalesChart(orders);
+
+  // Genre breakdown
+  renderGenreChart();
+
+  // Recent orders
+  renderRecentOrders(orders);
+
+  // Timestamp
+  const now = new Date();
+  document.getElementById('dashLastUpdate').textContent =
+    'آخر تحديث: ' + now.toLocaleTimeString('ar-IQ', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
+function renderSalesChart(orders) {
+  const days = [];
+  const labels = [];
+  const dayNames = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+
+  for(let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const label = d.toLocaleDateString('ar-IQ');
+    const dayOrders = orders.filter(o => o.date === label && o.status === 'مفعّل');
+    const total = dayOrders.reduce((s,o) => s+(o.total||0), 0);
+    days.push(total);
+    labels.push(i === 0 ? 'اليوم' : dayNames[d.getDay()]);
+  }
+
+  const max = Math.max(...days, 1);
+  const chart = document.getElementById('salesChart');
+  chart.innerHTML = days.map((v,i) => {
+    const h = Math.max((v/max)*100, 3);
+    const isToday = i === 6;
+    return `<div class="bar" style="height:${h}%;background:${isToday?'var(--accent)':'rgba(232,35,42,0.25)'};flex:1;border-radius:3px 3px 0 0;position:relative;cursor:pointer;" title="${labels[i]}: $${v.toFixed(2)}">
+      ${isToday && v>0 ? `<div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--accent);white-space:nowrap;font-weight:700;">$${v.toFixed(0)}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const labelsEl = document.getElementById('salesChartLabels');
+  if(labelsEl) labelsEl.innerHTML = labels.map(l=>`<span>${l}</span>`).join('');
+
+  const weekTotal = days.reduce((s,v)=>s+v,0);
+  const weekEl = document.getElementById('weekTotal');
+  const avgEl  = document.getElementById('dayAvg');
+  if(weekEl) weekEl.textContent = '$' + weekTotal.toFixed(2);
+  if(avgEl)  avgEl.textContent  = '$' + (weekTotal/7).toFixed(2);
+}
+
+function renderGenreChart() {
+  const counts = {};
+  storeGames.forEach(g => { counts[g.genre] = (counts[g.genre]||0) + 1; });
+  const total  = storeGames.length || 1;
+  const colors = {'FPS':'var(--accent)','RPG':'var(--blue)','مغامرة':'var(--green)','رعب':'var(--purple)','رياضة':'var(--gold)','أوفلاين':'#66c0f4','بطاقة رقمية':'var(--orange)'};
+  const el = document.getElementById('genreBreakdown');
+  if(!el) return;
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  el.innerHTML = sorted.map(([g,c]) => `
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="font-size:12px;color:var(--t2);width:80px;text-align:right;flex-shrink:0;">${g}</div>
+      <div style="flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;">
+        <div style="height:100%;width:${(c/total*100).toFixed(0)}%;background:${colors[g]||'var(--blue)'};border-radius:4px;transition:width 0.6s;"></div>
+      </div>
+      <div style="font-size:11px;color:var(--t3);width:20px;text-align:left;">${c}</div>
+    </div>`).join('');
+}
+
+function renderRecentOrders(orders) {
+  const el    = document.getElementById('recentOrdersList');
+  const badge = document.getElementById('recentOrdersBadge');
+  const recent = orders.slice().reverse().slice(0, 10);
+
+  if(badge) badge.textContent = orders.length;
+
+  if(!recent.length) {
+    el.innerHTML = '<div style="color:var(--t3);font-size:13px;padding:20px;text-align:center;">لا توجد طلبات بعد</div>';
+    return;
+  }
+
+  el.innerHTML = recent.map(o => {
+    const statusClass = o.status==='مفعّل'?'status-active':o.status==='قيد المراجعة'?'status-pending':'status-cancelled';
+    const items = (o.items||[]).map(i=>i.title).join('، ');
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg4);border-radius:8px;border:1px solid var(--border);">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+          <span style="font-family:'Orbitron',sans-serif;font-size:10px;color:var(--blue);">#${o.orderId}</span>
+          <span style="font-size:12px;font-weight:700;">${o.userName||'—'}</span>
+          <span class="status-chip ${statusClass}" style="font-size:9px;padding:2px 7px;">${o.status}</span>
+        </div>
+        <div style="font-size:11px;color:var(--t3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${items||'—'}</div>
+      </div>
+      <div style="text-align:left;flex-shrink:0;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--accent);">$${(o.total||0).toFixed(2)}</div>
+        <div style="font-size:10px;color:var(--t3);">${o.date||'—'}</div>
+      </div>
+      <div style="display:flex;gap:4px;">
+        <button class="btn btn-green btn-sm" style="padding:4px 8px;font-size:10px;" onclick="setOrderStatus('${o.orderId}','مفعّل');refreshDashboard()">✓</button>
+        <button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:10px;" onclick="setOrderStatus('${o.orderId}','ملغي');refreshDashboard()">✕</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// Auto-refresh dashboard every 30 seconds when active
+let dashboardInterval = null;
+function startDashboardAutoRefresh() {
+  refreshDashboard();
+  dashboardInterval = setInterval(() => {
+    if(document.getElementById('panel-dashboard').classList.contains('active')) {
+      refreshDashboard();
+    }
+  }, 30000);
+}
+
+// ===== STEAM PRICE SYNC =====
+
+// Steam App IDs for the games we know
+const STEAM_APP_IDS = {
+  'Grand Theft Auto V':           271590,
+  'Elden Ring':                   1245620,
+  'Red Dead Redemption 2':        1174180,
+  'Cyberpunk 2077':               1091500,
+  'The Witcher 3':                292030,
+  'Spider-Man Remastered':        1817070,
+  'God of War':                   1593500,
+  'Dark Souls 3':                 374320,
+  'Hogwarts Legacy':              990080,
+  'Resident Evil 4 Remake':       2050650,
+  'Starfield':                    1716740,
+  'Monster Hunter World':         582010,
+  'Counter-Strike 2':             730,
+  'DOTA 2':                       570,
+  'CoD: Warzone':                 1938090,
+  'DOOM Eternal':                 782330,
+  'Fallout 4':                    377160,
+  'Ghostwire: Tokyo':             1475810,
+  'Half-Life: Alyx':              546560,
+  'Nioh 2':                       1325200,
+  'Wasteland 3':                  846110,
+  'CoD: Infinite Warfare':        292730,
+};
+
+let syncedPrices = []; // [{id, title, steamPrice, finalPrice, appId, found}]
+let currentMarkup = 0;
+
+function setMarkup(pct) {
+  document.getElementById('steamMarkup').value = pct;
+  currentMarkup = pct;
+  previewMarkup();
+}
+
+function previewMarkup() {
+  currentMarkup = parseFloat(document.getElementById('steamMarkup').value) || 0;
+}
+
+function renderSteamGamesList() {
+  const container = document.getElementById('steamGamesList');
+  if(!container) return;
+
+  // Only games (not cards), prefer offline and regular games
+  const syncableGames = storeGames.filter(g =>
+    !g.cardType || g.cardType === 'game' || g.cardType === 'steamoffline'
+  );
+
+  if(!syncableGames.length) {
+    container.innerHTML = '<div style="text-align:center;color:var(--t3);padding:20px;font-size:13px;">قم بمزامنة المتجر أولاً لتحميل قائمة الألعاب</div>';
+    return;
+  }
+
+  container.innerHTML = syncableGames.map(g => {
+    const appId = findAppId(g.title);
+    const hasId = !!appId;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:7px;background:var(--bg3);border:1px solid var(--border);">
+      <input type="checkbox" class="steam-game-cb" data-id="${g.id}" ${hasId?'checked':''} style="cursor:pointer;flex-shrink:0;">
+      <span style="font-size:18px;flex-shrink:0;">${g.emoji||'🎮'}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.title}</div>
+        <div style="font-size:11px;color:var(--t3);">
+          ${hasId
+            ? `<span style="color:var(--green);">✓ App ID: ${appId}</span>`
+            : `<span style="color:var(--accent);">⚠ App ID غير معروف — سيُحدَّد تلقائياً</span>`}
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--t2);flex-shrink:0;">$${g.price}</div>
+    </div>`;
+  }).join('');
+}
+
+function findAppId(title) {
+  // Direct match
+  if(STEAM_APP_IDS[title]) return STEAM_APP_IDS[title];
+  // Partial match
+  const key = Object.keys(STEAM_APP_IDS).find(k =>
+    title.toLowerCase().includes(k.toLowerCase()) ||
+    k.toLowerCase().includes(title.toLowerCase().split(' ').slice(0,3).join(' '))
+  );
+  return key ? STEAM_APP_IDS[key] : null;
+}
+
+function selectAllSteamGames() {
+  document.querySelectorAll('.steam-game-cb').forEach(cb => cb.checked = true);
+}
+function deselectAllSteamGames() {
+  document.querySelectorAll('.steam-game-cb').forEach(cb => cb.checked = false);
+}
+
+async function startSteamSync() {
+  const markup = parseFloat(document.getElementById('steamMarkup').value) || 0;
+  currentMarkup = markup;
+
+  const selected = [...document.querySelectorAll('.steam-game-cb:checked')]
+    .map(cb => parseInt(cb.dataset.id))
+    .filter(Boolean);
+
+  if(!selected.length) { notify('❌ اختر لعبة واحدة على الأقل', true); return; }
+
+  // Show results card
+  document.getElementById('syncResultsCard').style.display = 'block';
+  document.getElementById('syncApplyRow').style.display = 'none';
+  document.getElementById('syncResultsList').innerHTML = '';
+  document.getElementById('syncProgressBar').style.width = '0%';
+  document.getElementById('syncBtn').disabled = true;
+  document.getElementById('syncBtn').textContent = '⏳ جاري المزامنة...';
+  syncedPrices = [];
+
+  const games = selected.map(id => storeGames.find(g => g.id === id)).filter(Boolean);
+
+  for(let i = 0; i < games.length; i++) {
+    const g = games[i];
+    const pct = Math.round(((i+1)/games.length)*100);
+    document.getElementById('syncProgressPct').textContent = pct + '%';
+    document.getElementById('syncProgressBar').style.width = pct + '%';
+    document.getElementById('syncProgressText').textContent = `جاري جلب: ${g.title}`;
+
+    const result = await fetchSteamPrice(g);
+    syncedPrices.push(result);
+    appendSyncResult(result, markup);
+
+    // Small delay to avoid rate limiting
+    if(i < games.length - 1) await sleep(800);
+  }
+
+  document.getElementById('syncProgressText').textContent = `✓ اكتملت المزامنة — ${games.length} لعبة`;
+  document.getElementById('syncBtn').disabled = false;
+  document.getElementById('syncBtn').textContent = '🔄 جلب أسعار Steam ومزامنتها';
+  document.getElementById('syncApplyRow').style.display = 'flex';
+
+  const found = syncedPrices.filter(r => r.found).length;
+  document.getElementById('syncStatusBadge').textContent = `${found}/${games.length} تم`;
+  document.getElementById('syncStatusBadge').style.background = found > 0 ? 'rgba(0,201,123,0.15)' : 'rgba(232,35,42,0.15)';
+  document.getElementById('syncStatusBadge').style.color = found > 0 ? 'var(--green)' : 'var(--accent)';
+
+  log(`🎮 مزامنة Steam اكتملت: ${found}/${games.length} لعبة (رفع ${markup}%)`, 'success');
+}
+
+async function fetchSteamPrice(game) {
+  const appId = findAppId(game.title);
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+        messages: [{
+          role: 'user',
+          content: `Search for the current Steam store price of "${game.title}" ${appId ? `(Steam App ID: ${appId})` : ''} in USD. Return ONLY a JSON object like this with no extra text:
+{"found": true, "price": 39.99, "original_price": 59.99, "on_sale": true, "sale_pct": 33, "app_id": ${appId||'null'}, "currency": "USD"}
+If the game is free return price 0. If not found on Steam return {"found": false, "price": null, "app_id": null}`
+        }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.map(c => c.text||'').join('') || '';
+
+    // Extract JSON from response
+    const jsonMatch = text.match(/\{[^{}]*"found"[^{}]*\}/);
+    if(jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      return { ...parsed, id: game.id, title: game.title, emoji: game.emoji||'🎮', currentPrice: game.price };
+    }
+  } catch(e) {
+    console.error('Steam fetch error:', e);
+  }
+
+  // Fallback: try direct Steam API via CORS proxy
+  try {
+    if(appId) {
+      const url = `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&filters=price_overview`;
+      const r = await fetch('https://corsproxy.io/?' + encodeURIComponent(url));
+      const d = await r.json();
+      const pd = d[appId]?.data?.price_overview;
+      if(pd) {
+        return {
+          found: true,
+          price: pd.final / 100,
+          original_price: pd.initial / 100,
+          on_sale: pd.discount_percent > 0,
+          sale_pct: pd.discount_percent,
+          app_id: appId,
+          currency: 'USD',
+          id: game.id, title: game.title, emoji: game.emoji||'🎮', currentPrice: game.price
+        };
+      }
+    }
+  } catch(e) {}
+
+  return { found: false, price: null, id: game.id, title: game.title, emoji: game.emoji||'🎮', currentPrice: game.price, app_id: appId };
+}
+
+function appendSyncResult(r, markup) {
+  const list = document.getElementById('syncResultsList');
+  const finalPrice = r.found && r.price !== null
+    ? parseFloat((r.price * (1 + markup/100)).toFixed(2))
+    : null;
+
+  const html = `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg4);border-radius:8px;border:1px solid ${r.found?'var(--border)':'rgba(232,35,42,0.2)'};">
+    <span style="font-size:20px;">${r.emoji}</span>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:13px;font-weight:600;">${r.title}</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:2px;">
+        ${r.found
+          ? `Steam: <span style="color:#66c0f4;">$${r.price}</span>${r.on_sale?` <span style="color:var(--green);">(-${r.sale_pct}%)</span>`:''}${markup>0?` → بعد الرفع ${markup}%: <span style="color:var(--gold);">$${finalPrice}</span>`:''}`
+          : `<span style="color:var(--accent);">⚠ لم يُعثر على سعر Steam</span>`}
+      </div>
+    </div>
+    <div style="text-align:left;flex-shrink:0;">
+      ${r.found
+        ? `<div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:${markup>0?'var(--gold)':'var(--green)'};">$${finalPrice ?? r.price}</div>
+           <div style="font-size:10px;color:var(--t3);">كان $${r.currentPrice}</div>`
+        : `<div style="font-size:12px;color:var(--t3);">$${r.currentPrice} (لم يتغير)</div>`}
+    </div>
+  </div>`;
+  list.insertAdjacentHTML('beforeend', html);
+  list.scrollTop = list.scrollHeight;
+}
+
+function applySyncedPrices() {
+  const markup = parseFloat(document.getElementById('steamMarkup').value) || 0;
+  let applied = 0;
+
+  syncedPrices.forEach(r => {
+    if(!r.found || r.price === null) return;
+    const finalPrice = parseFloat((r.price * (1 + markup/100)).toFixed(2));
+    const steamOriginal = r.price;
+
+    // Update local store copy
+    const idx = storeGames.findIndex(g => g.id === r.id);
+    if(idx >= 0) {
+      storeGames[idx].price = finalPrice;
+      storeGames[idx].oldPrice = r.original_price > r.price ? parseFloat((r.original_price * (1 + markup/100)).toFixed(2)) : null;
+      if(r.on_sale && !storeGames[idx].badges.includes('Sale')) storeGames[idx].badges.push('Sale');
+      storeGames[idx]._steamPrice = steamOriginal;
+      storeGames[idx]._markup = markup;
+    }
+
+    // Send to store
+    sendCmd({
+      type: 'UPDATE_GAME',
+      game: {
+        id: r.id,
+        price: finalPrice,
+        oldPrice: r.original_price > r.price ? parseFloat((r.original_price * (1 + markup/100)).toFixed(2)) : null,
+        badges: (storeGames.find(g=>g.id===r.id)?.badges || [])
+      }
+    });
+    applied++;
+  });
+
+  renderGamesTable();
+  populatePriceSelect();
+  document.getElementById('syncApplyRow').style.display = 'none';
+  document.getElementById('syncResultsCard').style.display = 'none';
+  notify(`✅ تم تطبيق أسعار ${applied} لعبة على المتجر (رفع ${markup}%)`);
+  log(`✅ تم تطبيق ${applied} سعر من Steam (رفع ${markup}%)`, 'success');
+}
+
+function cancelSync() {
+  syncedPrices = [];
+  document.getElementById('syncResultsCard').style.display = 'none';
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show')); });
+
+// ===== USERS & ORDERS MANAGEMENT =====
+const USERS_KEY  = 'pantheon_users';
+const ORDERS_KEY = 'pantheon_orders';
+
+function getUsers()  { try { return JSON.parse(localStorage.getItem(USERS_KEY))||[]; } catch { return []; } }
+function getOrders() { try { return JSON.parse(localStorage.getItem(ORDERS_KEY))||[]; } catch { return []; } }
+function saveUsers(u){ localStorage.setItem(USERS_KEY, JSON.stringify(u)); }
+function saveOrders(o){ localStorage.setItem(ORDERS_KEY, JSON.stringify(o)); }
+
+function refreshUsersData() {
+  renderUsersTable();
+  renderOrdersTable();
+  updateUserStats();
+  log('🔄 تم تحديث بيانات الأعضاء والطلبات','cmd');
+}
+
+function updateUserStats() {
+  const users  = getUsers();
+  const orders = getOrders();
+  document.getElementById('statTotalUsers').textContent  = users.length;
+  document.getElementById('statActiveUsers').textContent = users.filter(u=>!u.banned).length;
+  document.getElementById('statBannedUsers').textContent = users.filter(u=>u.banned).length;
+  const totalSales = orders.reduce((s,o)=>s+o.total,0);
+  document.getElementById('statTotalSales').textContent  = '$'+totalSales.toFixed(2);
+  document.getElementById('usersPanelSub').textContent   = users.length + ' عضو مسجّل';
+
+  document.getElementById('statTotalOrders').textContent     = orders.length;
+  document.getElementById('statPendingOrders').textContent   = orders.filter(o=>o.status==='قيد المراجعة').length;
+  document.getElementById('statActiveOrders').textContent    = orders.filter(o=>o.status==='مفعّل').length;
+  document.getElementById('statCancelledOrders').textContent = orders.filter(o=>o.status==='ملغي').length;
+  document.getElementById('ordersPanelSub').textContent      = orders.length + ' طلب إجمالي';
+  // Refresh dashboard if it's active
+  if(document.getElementById('panel-dashboard')?.classList.contains('active')) refreshDashboard();
+}
+
+function renderUsersTable() {
+  const q      = document.getElementById('userSearch')?.value.trim().toLowerCase()||'';
+  const filter = document.getElementById('userFilter')?.value||'all';
+  let users    = getUsers();
+  if(q) users  = users.filter(u=>u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q));
+  if(filter==='active') users = users.filter(u=>!u.banned);
+  if(filter==='banned') users = users.filter(u=>u.banned);
+
+  const body = document.getElementById('usersBody');
+  if(!users.length) { body.innerHTML='<tr><td colspan="9" style="text-align:center;color:var(--t3);padding:30px;">لا يوجد أعضاء مسجلون بعد</td></tr>'; return; }
+
+  body.innerHTML = users.map(u => {
+    const initials = u.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const orderCount = getOrders().filter(o=>o.userId===u.id).length;
+    return `<tr>
+      <td><div class="user-avatar-sm">${initials}</div></td>
+      <td style="font-weight:700;">${u.name}</td>
+      <td style="color:var(--t2);font-size:12px;">${u.email}</td>
+      <td style="color:var(--t2);font-size:12px;">${u.phone||'—'}</td>
+      <td style="color:var(--t3);font-size:11px;">${u.joinedAt||'—'}</td>
+      <td style="text-align:center;"><span style="font-family:'Orbitron',sans-serif;font-size:13px;color:var(--blue);">${orderCount}</span></td>
+      <td style="font-family:'Orbitron',sans-serif;font-size:12px;color:var(--gold);">$${(u.totalSpent||0).toFixed(2)}</td>
+      <td><span class="status-chip ${u.banned?'status-banned':'status-active'}">${u.banned?'محظور':'نشط'}</span></td>
+      <td>
+        <div class="action-btns">
+          <button class="btn btn-blue btn-sm" onclick="viewUserOrders('${u.id}','${u.name.replace(/'/g,"\\'")}')">📦</button>
+          ${u.banned
+            ? `<button class="btn btn-green btn-sm" onclick="toggleUserBan('${u.id}',false)">✓ رفع الحظر</button>`
+            : `<button class="btn btn-danger btn-sm" onclick="toggleUserBan('${u.id}',true)">🚫 حظر</button>`}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderOrdersTable() {
+  const q      = document.getElementById('orderSearch')?.value.trim().toLowerCase()||'';
+  const filter = document.getElementById('orderFilter')?.value||'all';
+  let orders   = getOrders();
+  if(q) orders = orders.filter(o=>o.orderId.toLowerCase().includes(q)||o.userName.toLowerCase().includes(q)||o.userEmail.toLowerCase().includes(q));
+  if(filter!=='all') orders = orders.filter(o=>o.status===filter);
+  orders = orders.slice().reverse();
+
+  const body = document.getElementById('ordersBody');
+  if(!orders.length){ body.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--t3);padding:30px;">لا توجد طلبات بعد</td></tr>'; return; }
+
+  body.innerHTML = orders.map(o => {
+    const sc    = o.status==='مفعّل'?'status-active':o.status==='قيد المراجعة'?'status-pending':o.status==='ملغي'?'status-cancelled':'status-pending';
+    const items = (o.items||[]).map(i=>i.title).join('، ');
+    const delivBadge = o.delivered
+      ? `<div style="margin-top:3px;"><span class="order-notif-badge">✓ تم التسليم</span></div>` : '';
+    return `<tr>
+      <td style="font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--blue);">#${o.orderId}</td>
+      <td>
+        <div style="font-weight:700;font-size:13px;">${o.userName||'—'}</div>
+        <div style="font-size:11px;color:var(--t3);">${o.userEmail||'—'}</div>
+      </td>
+      <td style="font-size:12px;color:var(--t2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${items}">${items||'—'}</td>
+      <td style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;color:var(--accent);">$${(o.total||0).toFixed(2)}</td>
+      <td style="font-size:12px;color:var(--t2);">${o.payMethod||'—'}</td>
+      <td style="font-size:11px;color:var(--t3);">${o.date||'—'}</td>
+      <td><span class="status-chip ${sc}">${o.status}</span>${delivBadge}</td>
+      <td>
+        <div class="action-btns" style="flex-direction:column;gap:4px;">
+          <button class="btn btn-green btn-sm" onclick="openDeliveryModal('${o.orderId}')" style="width:100%;justify-content:center;">📬 قبول وإرسال</button>
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-danger btn-sm" style="flex:1;justify-content:center;" onclick="setOrderStatus('${o.orderId}','ملغي')">✕ إلغاء</button>
+            <button class="btn btn-sm" style="background:rgba(100,100,100,0.12);border:1px solid rgba(100,100,100,0.2);color:var(--t2);" onclick="deleteOrder('${o.orderId}')">🗑</button>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── DELIVERY SYSTEM ──
+let currentDeliveryOrderId = null;
+let currentDeliveryType    = 'code';
+
+function openDeliveryModal(orderId) {
+  const orders = getOrders();
+  const o = orders.find(x=>x.orderId===orderId);
+  if(!o) return;
+  currentDeliveryOrderId = orderId;
+  currentDeliveryType    = 'code';
+
+  // Fill modal
+  document.getElementById('deliveryMeta').textContent =
+    `${o.userName} • ${o.userEmail} • ${o.date}`;
+
+  const items = (o.items||[]);
+  document.getElementById('deliveryOrderSummary').innerHTML = `
+    <div style="margin-bottom:8px;">
+      ${items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+        <span style="color:var(--t2);">${i.title}</span>
+        <span style="color:var(--accent);font-family:'Orbitron',sans-serif;font-size:11px;">${i.price===0?'مجاني':'$'+i.price}</span>
+      </div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;padding-top:6px;">
+      <span>الإجمالي</span>
+      <span style="color:var(--accent);font-family:'Orbitron',sans-serif;">$${(o.total||0).toFixed(2)}</span>
+    </div>`;
+
+  // Pre-fill previous delivery if exists
+  document.getElementById('deliveryCode').value = o.deliveryCode || '';
+  document.getElementById('deliveryMessage').value = o.deliveryMessage ||
+    `مرحباً ${o.userName}،\n\nتم قبول طلبك #${o.orderId}. إليك بيانات المنتج:`;
+
+  // Reset type buttons
+  document.querySelectorAll('.delivery-type-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector(`.delivery-type-btn[data-type="code"]`).classList.add('active');
+
+  openOverlay('deliveryOverlay');
+}
+
+function setDeliveryType(el, type) {
+  currentDeliveryType = type;
+  document.querySelectorAll('.delivery-type-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  // Update placeholder
+  const placeholders = {
+    code:    'XXXX-XXXX-XXXX-XXXX',
+    account: 'الإيميل: example@email.com\nكلمة المرور: P@ssw0rd123',
+    link:    'https://...',
+    file:    'رابط تنزيل الملف أو المحتوى',
+    manual:  'سيتم التسليم يدوياً عبر واتساب/تيليغرام...',
+  };
+  document.getElementById('deliveryCode').placeholder = placeholders[type]||'';
+}
+
+function genRandomCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const seg = () => Array.from({length:4},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  document.getElementById('deliveryCode').value = `${seg()}-${seg()}-${seg()}-${seg()}`;
+}
+
+function copyDeliveryCode() {
+  const val = document.getElementById('deliveryCode').value;
+  if(!val) return;
+  navigator.clipboard.writeText(val).catch(()=>{});
+  notify('✓ تم نسخ الكود');
+}
+
+function confirmDelivery() {
+  const code    = document.getElementById('deliveryCode').value.trim();
+  const message = document.getElementById('deliveryMessage').value.trim();
+  const orderId = currentDeliveryOrderId;
+  if(!orderId) return;
+  if(!code)    { notify('❌ أدخل الكود أو بيانات التسليم',true); return; }
+
+  // Update order in storage
+  const orders = getOrders();
+  const idx    = orders.findIndex(o=>o.orderId===orderId);
+  if(idx<0) return;
+  orders[idx].status          = 'مفعّل';
+  orders[idx].delivered       = true;
+  orders[idx].deliveryCode    = code;
+  orders[idx].deliveryMessage = message;
+  orders[idx].deliveryType    = currentDeliveryType;
+  orders[idx].deliveredAt     = new Date().toLocaleString('ar-IQ');
+  saveOrders(orders);
+
+  // Save notification for the user in localStorage
+  const notifKey  = 'pantheon_notifs_' + orders[idx].userId;
+  const userNotifs = JSON.parse(localStorage.getItem(notifKey)||'[]');
+  userNotifs.unshift({
+    id:         'notif_' + Date.now(),
+    orderId,
+    type:       'delivery',
+    deliveryType: currentDeliveryType,
+    code,
+    message,
+    items:      orders[idx].items||[],
+    total:      orders[idx].total||0,
+    sentAt:     new Date().toLocaleString('ar-IQ'),
+    read:       false,
+  });
+  localStorage.setItem(notifKey, JSON.stringify(userNotifs));
+
+  // Broadcast to store
+  ch.postMessage({
+    type:        'ORDER_DELIVERED',
+    orderId,
+    userId:      orders[idx].userId,
+    code,
+    message,
+    deliveryType: currentDeliveryType,
+    items:       orders[idx].items||[],
+    total:       orders[idx].total||0,
+    userName:    orders[idx].userName,
+  });
+
+  closeOverlay('deliveryOverlay');
+  renderOrdersTable();
+  refreshDashboard();
+  notify(`✅ تم إرسال الطلب #${orderId} للعضو بنجاح`);
+  log(`📬 تم تسليم الطلب #${orderId} → ${orders[idx].userName} (${currentDeliveryType})`, 'success');
+}
+
+function setOrderStatus(orderId, status) {
+  const orders = getOrders();
+  const idx    = orders.findIndex(o=>o.orderId===orderId);
+  if(idx<0) return;
+  orders[idx].status = status;
+  saveOrders(orders);
+  renderOrdersTable();
+  updateUserStats();
+  notify(`✓ تم تغيير حالة الطلب #${orderId} إلى "${status}"`);
+  log(`📦 طلب #${orderId} → ${status}`, 'success');
+  ch.postMessage({type:'ORDER_STATUS_CHANGED', orderId, status});
+}
+
+function deleteOrder(orderId) {
+  if(!confirm(`حذف الطلب #${orderId} نهائياً؟`)) return;
+  let orders = getOrders();
+  orders = orders.filter(o=>o.orderId !== orderId);
+  saveOrders(orders);
+  renderOrdersTable();
+  updateUserStats();
+  notify(`🗑 تم حذف الطلب #${orderId}`);
+  log(`🗑 تم حذف الطلب #${orderId}`, 'cmd');
+}
+
+function toggleUserBan(userId, ban) {
+  const users = getUsers();
+  const idx   = users.findIndex(u=>u.id===userId);
+  if(idx<0) return;
+  users[idx].banned = ban;
+  saveUsers(users);
+  renderUsersTable();
+  updateUserStats();
+  notify(ban ? '🚫 تم حظر المستخدم' : '✓ تم رفع الحظر عن المستخدم');
+  log(`👤 ${ban?'حظر':'رفع حظر'} المستخدم: ${users[idx].name}`, ban?'error':'success');
+}
+
+function viewUserOrders(userId, userName) {
+  showPanel('orders', document.querySelector('.sidebar-item:nth-child(2)'));
+  setTimeout(()=>{
+    document.getElementById('orderSearch').value = userName;
+    renderOrdersTable();
+  }, 100);
+}
+
+// Listen for new registrations/orders from store
+// ===== LEGAL PAGES SYSTEM =====
+const LEGAL_KEY = 'pantheon_legal_pages';
+let currentLegalPage = 'terms';
+let legalMode = 'edit';
+
+const LEGAL_PAGE_TITLES = {
+  terms:   '📋 الشروط والأحكام',
+  privacy: '🔒 سياسة الخصوصية',
+  refund:  '↩ سياسة الاسترجاع',
+  cookies: '🍪 ملفات الارتباط',
+  about:   'ℹ️ عن المتجر',
+  contact: '📞 تواصل معنا',
+};
+
+const LEGAL_DEFAULTS = {
+  terms: `# الشروط والأحكام
+
+**آخر تحديث:** {date}
+
+مرحباً بك في **{store}**. باستخدامك لهذا المتجر، فإنك توافق على الشروط والأحكام التالية:
+
+## 1. قبول الشروط
+باستخدام خدماتنا، فإنك توافق على الالتزام بهذه الشروط. إذا كنت لا توافق على أي من هذه الشروط، يرجى عدم استخدام المتجر.
+
+## 2. الخدمات المقدمة
+يقدم **{store}** ألعاباً رقمية وبطاقات شحن وخدمات اشتراك إلكتروني. جميع المنتجات رقمية ويتم تسليمها إلكترونياً فور الدفع والموافقة.
+
+## 3. الملكية الفكرية
+جميع المحتويات والعلامات التجارية والشعارات الموجودة على الموقع هي ملك لأصحابها المعنيين.
+
+## 4. سياسة الاسترجاع
+راجع صفحة سياسة الاسترجاع للاطلاع على التفاصيل الكاملة.
+
+## 5. التعديلات
+نحتفظ بحق تعديل هذه الشروط في أي وقت. سيتم إشعارك بأي تغييرات جوهرية.
+
+---
+© {year} {store}. جميع الحقوق محفوظة.`,
+
+  privacy: `# سياسة الخصوصية
+
+**آخر تحديث:** {date}
+
+نحن في **{store}** نلتزم بحماية خصوصيتك. توضح هذه السياسة كيفية جمع بياناتك واستخدامها.
+
+## 1. البيانات التي نجمعها
+- **بيانات الحساب:** الاسم، البريد الإلكتروني، رقم الهاتف.
+- **بيانات الطلبات:** تاريخ الشراء، المنتجات المشتراة، طريقة الدفع.
+- **البيانات التقنية:** نوع المتصفح، عنوان IP، الصفحات المزارة.
+
+## 2. كيف نستخدم بياناتك
+- معالجة طلباتك وتسليم المنتجات الرقمية.
+- إرسال إشعارات حالة الطلب.
+- تحسين تجربة المستخدم وخدماتنا.
+
+## 3. مشاركة البيانات
+**لا نبيع** بياناتك الشخصية لأي طرف ثالث. قد نشارك بيانات ضرورية مع مزودي خدمة الدفع فقط.
+
+## 4. حفظ البيانات
+يتم تخزين بياناتك محلياً في متصفحك (localStorage) ولا تُرسَل لخوادم خارجية.
+
+## 5. حقوقك
+يحق لك طلب حذف حسابك وبياناتك في أي وقت من خلال صفحة الإعدادات.
+
+---
+للاستفسار: تواصل معنا عبر صفحة التواصل.`,
+
+  refund: `# سياسة الاسترجاع
+
+**آخر تحديث:** {date}
+
+## المنتجات الرقمية
+نظراً للطبيعة الرقمية لمنتجاتنا، **لا يمكن استرجاع** المنتجات الرقمية بعد التسليم والتفعيل.
+
+## حالات يُقبل فيها الاسترجاع
+- إذا لم يتم تسليم المنتج خلال 24 ساعة من الدفع.
+- إذا كان الكود/الحساب المُرسَل غير صالح أو تالفاً.
+- في حالة وجود خطأ في المنتج الموصوف.
+
+## كيفية طلب الاسترجاع
+1. تواصل معنا خلال **48 ساعة** من الشراء.
+2. أرسل رقم الطلب وسبب طلب الاسترجاع.
+3. سيتم مراجعة طلبك خلال **3 أيام عمل**.
+
+## الاسترجاع المالي
+في حال الموافقة، يتم رد المبلغ خلال **5-7 أيام عمل** عبر نفس طريقة الدفع.`,
+
+  cookies: `# سياسة ملفات الارتباط (Cookies)
+
+**آخر تحديث:** {date}
+
+## ما هي ملفات الارتباط؟
+ملفات الارتباط هي بيانات صغيرة تُحفظ في متصفحك لتحسين تجربة استخدام الموقع.
+
+## ما الذي نحفظه؟
+يستخدم **{store}** **localStorage** (تخزين محلي) لحفظ:
+- **جلسة تسجيل الدخول** — لتذكّرك عند العودة.
+- **بيانات السلة** — لحفظ مشترياتك.
+- **تفضيلات العرض** — مثل حجم الخط.
+- **الإشعارات** — للحفاظ على طلباتك وإشعاراتك.
+
+## التحكم في التخزين
+يمكنك مسح كل البيانات المحفوظة في أي وقت من خلال إعدادات المتصفح ← مسح بيانات الموقع.
+
+## ملاحظة
+لا نستخدم ملفات تتبع خارجية أو إعلانية.`,
+
+  about: `# عن {store}
+
+**{store}** هو متجرك الأول للألعاب الإلكترونية والبطاقات الرقمية في المنطقة العربية.
+
+## رسالتنا
+نسعى إلى تقديم أفضل تجربة تسوق رقمية بأسعار منافسة وخدمة عملاء متميزة.
+
+## ما نقدمه
+- **ألعاب Steam أوفلاين** — العب بدون اتصال بالإنترنت.
+- **بطاقات شحن** — Steam، PlayStation، Xbox، وأكثر.
+- **رصيد الهاتف** — Asiacell، Zain، Korek.
+- **اشتراكات** — Netflix وخدمات أخرى.
+
+## قيمنا
+- الصدق والشفافية في التعامل.
+- الجودة والموثوقية في المنتجات.
+- الاستجابة السريعة لخدمة العملاء.
+
+## تواصل معنا
+نسعد بتلقي استفساراتك وملاحظاتك في أي وقت.`,
+
+  contact: `# تواصل معنا
+
+نسعد بمساعدتك في أي وقت!
+
+## طرق التواصل
+
+### 📧 البريد الإلكتروني
+support@{store_lower}.com
+
+### 📱 واتساب
+متاح من 9 صباحاً حتى 12 منتصف الليل
+
+### 💬 تيليغرام
+@{store_lower}_support
+
+## أوقات العمل
+- **السبت – الخميس:** 9:00 ص – 12:00 م
+- **الجمعة:** 2:00 م – 12:00 م
+
+## للشكاوى والاستفسارات
+- **وقت الرد المعتاد:** خلال ساعة إلى 4 ساعات.
+- **الطلبات العاجلة:** تواصل عبر واتساب مباشرة.
+
+---
+نحن هنا من أجلك! 💚`,
+};
+
+function getLegalPages() {
+  try { return JSON.parse(localStorage.getItem(LEGAL_KEY)) || {}; } catch { return {}; }
+}
+function saveLegalPages(p) { localStorage.setItem(LEGAL_KEY, JSON.stringify(p)); }
+
+function getStoreName() {
+  return document.getElementById('sName')?.value || 'باثيون';
+}
+
+function fillTemplate(text) {
+  const name  = getStoreName();
+  const today = new Date().toLocaleDateString('ar-IQ');
+  const year  = new Date().getFullYear();
+  return text
+    .replace(/{store}/g, name)
+    .replace(/{store_lower}/g, name.toLowerCase())
+    .replace(/{date}/g, today)
+    .replace(/{year}/g, year);
+}
+
+function initLegalPanel() {
+  currentLegalPage = 'terms';
+  legalMode = 'edit';
+  document.querySelectorAll('.legal-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+  setLegalMode('edit');
+  loadLegalPage('terms');
+}
+
+function switchLegalPage(page, el) {
+  // Save current before switching
+  const pages = getLegalPages();
+  const cur = document.getElementById('legalEditor').value;
+  if(cur.trim()) pages[currentLegalPage] = cur;
+  saveLegalPages(pages);
+
+  currentLegalPage = page;
+  document.querySelectorAll('.legal-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('legalPageTitle').textContent = LEGAL_PAGE_TITLES[page]||page;
+  loadLegalPage(page);
+}
+
+function loadLegalPage(page) {
+  const pages = getLegalPages();
+  const content = pages[page] || fillTemplate(LEGAL_DEFAULTS[page]||'');
+  document.getElementById('legalEditor').value = content;
+  updateCharCount();
+  if(legalMode === 'preview') renderPreview();
+}
+
+function setLegalMode(mode) {
+  legalMode = mode;
+  document.getElementById('editModeBtn').classList.toggle('active', mode==='edit');
+  document.getElementById('previewModeBtn').classList.toggle('active', mode==='preview');
+  document.getElementById('legalEditor').style.display    = mode==='edit'    ? 'block' : 'none';
+  document.getElementById('legalCharCount').style.display = mode==='edit'    ? 'block' : 'none';
+  document.getElementById('legalToolbar').style.display   = mode==='edit'    ? 'flex'  : 'none';
+  document.getElementById('legalPreview').style.display   = mode==='preview' ? 'block' : 'none';
+  if(mode === 'preview') renderPreview();
+}
+
+function renderPreview() {
+  const md = document.getElementById('legalEditor').value;
+  document.getElementById('legalPreview').innerHTML = markdownToHTML(md);
+}
+
+function markdownToHTML(md) {
+  return md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,  '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,   '<h1>$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,   '<em>$1</em>')
+    .replace(/^---$/gm,      '<hr>')
+    .replace(/^- (.+)$/gm,   '<li>$1</li>')
+    .replace(/(<li>.*<\/li>\n?)+/g, s => '<ul>'+s+'</ul>')
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank">$1</a>')
+    .replace(/\n\n+/g, '</p><p>')
+    .replace(/^(?!<[hul])(.+)$/gm, '$1')
+    .replace(/<\/p><p>/g, '</p>\n<p>')
+    .split('\n').map(l => l.match(/^<[hul]/) ? l : (l.trim() ? `<p>${l}</p>` : '')).join('\n');
+}
+
+function updateCharCount() {
+  const len = document.getElementById('legalEditor').value.length;
+  document.getElementById('legalCharCount').textContent = len.toLocaleString('ar-IQ') + ' حرف';
+}
+
+function legalFormat(type) {
+  const ta = document.getElementById('legalEditor');
+  const start = ta.selectionStart, end = ta.selectionEnd;
+  const sel = ta.value.substring(start, end);
+  const before = ta.value.substring(0, start), after = ta.value.substring(end);
+  let insert = '';
+  const today = new Date().toLocaleDateString('ar-IQ');
+  const name  = getStoreName();
+  switch(type) {
+    case 'h1':       insert = `\n# ${sel||'عنوان رئيسي'}\n`; break;
+    case 'h2':       insert = `\n## ${sel||'عنوان فرعي'}\n`; break;
+    case 'h3':       insert = `\n### ${sel||'عنوان ثالثي'}\n`; break;
+    case 'bold':     insert = `**${sel||'نص عريض'}**`; break;
+    case 'italic':   insert = `*${sel||'نص مائل'}*`; break;
+    case 'ul':       insert = `\n- ${sel||'عنصر'}\n- عنصر آخر\n`; break;
+    case 'ol':       insert = `\n1. ${sel||'أولاً'}\n2. ثانياً\n`; break;
+    case 'hr':       insert = `\n---\n`; break;
+    case 'date':     insert = today; break;
+    case 'storename':insert = name; break;
+  }
+  ta.value = before + insert + after;
+  ta.focus();
+  updateCharCount();
+  if(legalMode==='preview') renderPreview();
+}
+
+function insertLegalTemplate() {
+  const content = fillTemplate(LEGAL_DEFAULTS[currentLegalPage]||'');
+  document.getElementById('legalEditor').value = content;
+  updateCharCount();
+  if(legalMode==='preview') renderPreview();
+  notify('✓ تم تحميل القالب الافتراضي');
+}
+
+function clearLegalEditor() {
+  if(!confirm('مسح كل محتوى هذه الصفحة؟')) return;
+  document.getElementById('legalEditor').value = '';
+  updateCharCount();
+  notify('تم مسح المحتوى');
+}
+
+function saveLegalPage() {
+  const content = document.getElementById('legalEditor').value.trim();
+  const pages   = getLegalPages();
+  pages[currentLegalPage] = content;
+  saveLegalPages(pages);
+  // Send to store via broadcast
+  sendCmd({ type: 'SET_LEGAL', page: currentLegalPage, content });
+  notify('✓ تم حفظ "'+LEGAL_PAGE_TITLES[currentLegalPage]+'" وتطبيقها على المتجر');
+  log('📄 تم تحديث: '+LEGAL_PAGE_TITLES[currentLegalPage], 'success');
+}
+
+function resetLegalPage() {
+  if(!confirm('إعادة هذه الصفحة للمحتوى الافتراضي؟')) return;
+  const content = fillTemplate(LEGAL_DEFAULTS[currentLegalPage]||'');
+  document.getElementById('legalEditor').value = content;
+  const pages = getLegalPages();
+  pages[currentLegalPage] = content;
+  saveLegalPages(pages);
+  updateCharCount();
+  notify('↩ تمت إعادة الصفحة للمحتوى الافتراضي');
+}
+
+function exportLegalPage() {
+  const content = document.getElementById('legalEditor').value;
+  const blob    = new Blob([content], {type:'text/plain;charset=utf-8'});
+  const url     = URL.createObjectURL(blob);
+  const a       = document.createElement('a');
+  a.href = url; a.download = currentLegalPage + '.md'; a.click();
+  URL.revokeObjectURL(url);
+  notify('✓ تم تصدير الصفحة كملف Markdown');
+}
+let adminBannerIds = []; // game IDs selected for banner
+
+function initBannerPanel() {
+  // Populate game select
+  const sel = document.getElementById('bannerGameSelect');
+  if(!sel) return;
+  sel.innerHTML = storeGames.map(g=>`<option value="${g.id}">${g.emoji||'🎮'} ${g.title} — $${g.price}</option>`).join('');
+
+  // Default: pick top/hot games
+  if(!adminBannerIds.length) autoSelectBannerGames(false);
+  renderBannerSlidesList();
+}
+
+function autoSelectBannerGames(notify_=true) {
+  adminBannerIds = storeGames
+    .filter(g=>(g.badges||[]).some(b=>['Top','Hot','New'].includes(b)))
+    .slice(0,6).map(g=>g.id);
+  if(!adminBannerIds.length) adminBannerIds = storeGames.slice(0,5).map(g=>g.id);
+  renderBannerSlidesList();
+  if(notify_) notify('✓ تم تحديد '+adminBannerIds.length+' لعبة تلقائياً');
+}
+
+function addGameToBanner() {
+  const id = parseInt(document.getElementById('bannerGameSelect').value);
+  if(!id) return;
+  if(adminBannerIds.includes(id)) { notify('هذه اللعبة موجودة بالفعل في البنر',true); return; }
+  adminBannerIds.push(id);
+  renderBannerSlidesList();
+  notify('✓ تمت إضافة اللعبة للبنر');
+}
+
+function removeFromBanner(id) {
+  adminBannerIds = adminBannerIds.filter(i=>i!==id);
+  renderBannerSlidesList();
+}
+
+function moveBannerSlide(from, to) {
+  const arr = [...adminBannerIds];
+  const [item] = arr.splice(from,1);
+  arr.splice(to,0,item);
+  adminBannerIds = arr;
+  renderBannerSlidesList();
+}
+
+function renderBannerSlidesList() {
+  const container = document.getElementById('bannerSlidesList');
+  const countEl   = document.getElementById('bannerSlideCount');
+  const previewEl = document.getElementById('bannerPreviewGrid');
+  if(!container) return;
+  if(countEl) countEl.textContent = adminBannerIds.length + ' شرائح';
+
+  const slideGames = adminBannerIds.map(id=>storeGames.find(g=>g.id===id)).filter(Boolean);
+
+  container.innerHTML = slideGames.map((g,i) => {
+    const thumb = g.image
+      ? `<img src="${g.image}" style="width:36px;height:22px;border-radius:4px;object-fit:cover;">`
+      : `<div style="width:36px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;background:${g.bg||'#1a1a2e'}">${g.emoji||'🎮'}</div>`;
+    return `<div class="banner-game-item" draggable="true"
+      ondragstart="this.dataset.from='${i}'"
+      ondragover="event.preventDefault();this.classList.add('drag-over')"
+      ondragleave="this.classList.remove('drag-over')"
+      ondrop="this.classList.remove('drag-over');moveBannerSlide(parseInt(event.dataTransfer.getData('text')||event.srcElement.closest('[draggable]').dataset.from||0),${i})"
+      ondragstartcapture="event.dataTransfer.setData('text','${i}')">
+      <span class="banner-drag-handle">⠿</span>
+      <span style="font-size:12px;font-weight:700;color:var(--t3);min-width:18px;">${i+1}</span>
+      ${thumb}
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.title}</div>
+        <div style="font-size:10px;color:var(--t3);">${g.genre||''} • ${g.platform||''}</div>
+      </div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:11px;color:var(--accent);flex-shrink:0;">${g.price===0?'مجاني':'$'+g.price}</div>
+      <button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:11px;flex-shrink:0;" onclick="removeFromBanner(${g.id})">✕</button>
+    </div>`;
+  }).join('') || '<div style="color:var(--t3);text-align:center;padding:20px;font-size:13px;">لا توجد شرائح — أضف ألعاباً للبنر</div>';
+
+  // Preview grid
+  if(previewEl) {
+    previewEl.innerHTML = slideGames.map((g,i) => {
+      const inner = g.image
+        ? `<img src="${g.image}" style="width:100%;height:100%;object-fit:cover;">`
+        : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:${g.bg||'#1a1a2e'};font-size:28px;">${g.emoji||'🎮'}</div>`;
+      return `<div style="border-radius:8px;overflow:hidden;border:1px solid var(--border);aspect-ratio:460/215;position:relative;cursor:pointer;" title="${g.title}">
+        ${inner}
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%);"></div>
+        <div style="position:absolute;bottom:5px;left:6px;right:6px;font-size:10px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${i+1}. ${g.title}</div>
+      </div>`;
+    }).join('') || '<div style="color:var(--t3);font-size:12px;padding:12px;">أضف ألعاباً لرؤية المعاينة</div>';
+  }
+}
+
+function applyBannerAdmin() {
+  const config = {
+    autoPlay:      document.getElementById('bannerAutoPlay')?.classList.contains('on') ?? true,
+    interval:      (parseFloat(document.getElementById('bannerInterval')?.value)||6) * 1000,
+    showCounter:   document.getElementById('bannerShowCounter')?.classList.contains('on') ?? true,
+    showThumbs:    document.getElementById('bannerShowThumbs')?.classList.contains('on') ?? true,
+    showProgress:  document.getElementById('bannerShowProgress')?.classList.contains('on') ?? true,
+    slideIds:      adminBannerIds,
+  };
+  sendCmd({ type: 'BANNER_CONFIG', config });
+  log('🎬 تم تطبيق إعدادات البنر (' + adminBannerIds.length + ' شرائح)', 'success');
+  notify('✅ تم تطبيق البنر على المتجر فوراً');
+}
+
+function resetBannerAdmin() {
+  adminBannerIds = [];
+  autoSelectBannerGames(false);
+  const fields = ['bannerAutoPlay','bannerShowCounter','bannerShowThumbs','bannerShowProgress'];
+  fields.forEach(id => { const el=document.getElementById(id); if(el) el.classList.add('on'); });
+  const intEl = document.getElementById('bannerInterval');
+  if(intEl) intEl.value = 6;
+  notify('↩ تم إعادة ضبط البنر للإعدادات الافتراضية');
+}
+
+// ===== DOMAIN MANAGEMENT =====
+const DOMAIN_KEY = 'pantheon_domain';
+
+function loadDomainSettings() {
+  const saved = localStorage.getItem(DOMAIN_KEY) || 'vercelshop-murex.vercel.app';
+  document.getElementById('domainInput').value = saved;
+  updateDomainDisplay(saved);
+}
+
+function previewDomain(val) {
+  val = val.trim().replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  const preview = document.getElementById('domainPreview');
+  if(!val) { preview.style.display='none'; return; }
+  const base = 'https://' + val;
+  document.getElementById('previewHome').textContent  = base;
+  document.getElementById('previewStore').textContent = base + '/?page=store';
+  preview.style.display = 'block';
+}
+
+function saveDomain() {
+  let val = document.getElementById('domainInput').value.trim();
+  val = val.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  if(!val) { notify('❌ أدخل الدومين أولاً', true); return; }
+  localStorage.setItem(DOMAIN_KEY, val);
+  updateDomainDisplay(val);
+  sendCmd({ type: 'SET_DOMAIN', domain: 'https://' + val });
+  notify('✓ تم حفظ الدومين: https://' + val);
+  log('🌐 تم تعيين الدومين: https://' + val, 'success');
+}
+
+function updateDomainDisplay(val) {
+  if(!val) return;
+  val = val.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  const displayEl  = document.getElementById('currentDomainDisplay');
+  const openLinkEl = document.getElementById('domainOpenLink');
+  if(displayEl) displayEl.textContent = val;
+  if(openLinkEl) {
+    openLinkEl.href = 'https://' + val;
+    openLinkEl.style.display = 'flex';
+  }
+  previewDomain(val);
+}
+
+// Load domain on panel open
+const _showPanelOrig = showPanel;
+showPanel = function(id, el) {
+  _showPanelOrig(id, el);
+  if(id === 'settings') loadDomainSettings();
+};
+
+// ===== HELPERS =====
+function closeOverlay(id) {
+  const el = document.getElementById(id);
+  if(el) el.classList.remove('show');
+}
+function openOverlay(id) {
+  const el = document.getElementById(id);
+  if(el) el.classList.add('show');
+}
+
+let nTimer;
+function notify(msg,isErr=false) {
+  const el=document.getElementById('notif');
+  el.textContent=msg; el.className='notif show'+(isErr?' err':'');
+  clearTimeout(nTimer); nTimer=setTimeout(()=>el.classList.remove('show'),3000);
+}
+</script>
+</body>
+</html>
