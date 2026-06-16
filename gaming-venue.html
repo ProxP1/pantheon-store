@@ -2045,6 +2045,29 @@ let games = [
    year:2019,dev:'Capcom',bg:'linear-gradient(135deg,#0a1500,#152500)'},
 ];
 
+// ===== GAMES PERSISTENCE =====
+const GAMES_STORAGE_KEY = 'pantheon_games_data';
+
+function loadSavedGames() {
+  try {
+    const saved = localStorage.getItem(GAMES_STORAGE_KEY);
+    if(saved) {
+      const parsed = JSON.parse(saved);
+      if(Array.isArray(parsed) && parsed.length) return parsed;
+    }
+  } catch(e) { console.error('Error loading saved games:', e); }
+  return null;
+}
+
+function persistGames() {
+  try { localStorage.setItem(GAMES_STORAGE_KEY, JSON.stringify(games)); }
+  catch(e) { console.error('Error saving games:', e); }
+}
+
+// Override the default array with saved data if it exists
+const _savedGames = loadSavedGames();
+if(_savedGames) games = _savedGames;
+
 let cart=[], wishlist=new Set(), adminPwd='asdasdFG12';
 let genreFilter='all', platformFilter='all', cardTypeFilter='all', maxPrice=100, minRating=0, viewMode='grid';
 
@@ -3167,29 +3190,33 @@ ch.onmessage = (e) => {
 
   else if(cmd.type === 'ADD_GAME') {
     games.push(cmd.game);
+    persistGames();
     updateCounts(); renderHome(); renderStore(); renderBanner();
     notify('✓ تمت إضافة "'+cmd.game.title+'" للمتجر');
   }
 
   else if(cmd.type === 'DELETE_GAME') {
     games = games.filter(g=>g.id!==cmd.id);
+    persistGames();
     updateCounts(); renderHome(); renderStore(); renderBanner();
     notify('🗑 تم حذف اللعبة من المتجر');
   }
 
   else if(cmd.type === 'UPDATE_GAME') {
     const idx = games.findIndex(g=>g.id===cmd.game.id);
-    if(idx>=0){ games[idx]={...games[idx],...cmd.game}; updateCounts(); renderHome(); renderStore(); notify('✓ تم تحديث "'+cmd.game.title+'"'); }
+    if(idx>=0){ games[idx]={...games[idx],...cmd.game}; persistGames(); updateCounts(); renderHome(); renderStore(); notify('✓ تم تحديث "'+cmd.game.title+'"'); }
   }
 
   else if(cmd.type === 'GLOBAL_DISCOUNT') {
     games.forEach(g=>{ if(g.price>0){ if(!g._orig)g._orig=g.price; g.oldPrice=g._orig; g.price=parseFloat((g._orig*(1-cmd.pct/100)).toFixed(2)); if(!g.badges.includes('Sale'))g.badges.push('Sale'); }});
+    persistGames();
     renderHome(); renderStore();
     notify('✓ تم تطبيق خصم '+cmd.pct+'% على جميع الألعاب');
   }
 
   else if(cmd.type === 'RESET_PRICES') {
     games.forEach(g=>{ if(g._orig){ g.price=g._orig; g.oldPrice=null; g._orig=null; g.badges=g.badges.filter(b=>b!=='Sale'); }});
+    persistGames();
     renderHome(); renderStore(); notify('✓ تم إعادة الأسعار الأصلية');
   }
 

@@ -1712,12 +1712,38 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);min-hei
 
 <script>
 // ===== STATE =====
-let adminPwd = 'asdasdFG12';
+// ===== PERSISTENT STATE =====
+const ADMIN_PWD_KEY      = 'pantheon_admin_pwd';
+const ADMIN_SETTINGS_KEY = 'pantheon_admin_settings';
+
+// Load saved password (fallback to default)
+let adminPwd = localStorage.getItem(ADMIN_PWD_KEY) || 'asdasdFG12';
 let storeGames = [];
 let isConnected = false;
 let logEntries = [];
 
 const ch = new BroadcastChannel('pantheon_admin');
+
+// ===== LOAD GAMES DIRECTLY FROM LOCALSTORAGE =====
+// This works even if the venue tab is closed — localStorage is shared across tabs on the same origin.
+const GAMES_STORAGE_KEY = 'pantheon_games_data';
+function loadGamesFromLocalStorage() {
+  try {
+    const saved = localStorage.getItem(GAMES_STORAGE_KEY);
+    if(saved) {
+      const parsed = JSON.parse(saved);
+      if(Array.isArray(parsed) && parsed.length) {
+        storeGames = parsed;
+        return true;
+      }
+    }
+  } catch(e) { console.error('Failed to load games from localStorage:', e); }
+  return false;
+}
+function saveGamesToLocalStorage() {
+  try { localStorage.setItem(GAMES_STORAGE_KEY, JSON.stringify(storeGames)); }
+  catch(e) { console.error('Failed to save games to localStorage:', e); }
+}
 
 // ===== PASSWORD =====
 function checkPwd() {
@@ -1728,6 +1754,19 @@ function checkPwd() {
     document.getElementById('pwdScreen').style.display = 'none';
     document.getElementById('appRoot').style.display = 'block';
     log('✅ تم الدخول إلى لوحة التحكم', 'success');
+
+    // Load games immediately from localStorage (works even with venue tab closed)
+    const loaded = loadGamesFromLocalStorage();
+    if(loaded) {
+      document.getElementById('tGamesCount').textContent = storeGames.length;
+      document.getElementById('dGames').textContent = storeGames.length;
+      document.getElementById('gamesSubTitle').textContent = storeGames.length + ' لعبة في المتجر (من التخزين المحلي)';
+      renderGamesTable();
+      populatePriceSelect();
+      renderGenreChart();
+      log('📦 تم تحميل ' + storeGames.length + ' لعبة من التخزين المحلي', 'success');
+    }
+
     syncStore();
     startDashboardAutoRefresh();
   } else {
@@ -1748,7 +1787,9 @@ function doChangePwd() {
   if(c!==adminPwd){err.textContent='❌ كلمة المرور الحالية خاطئة';return;}
   if(n.length<6){err.textContent='❌ يجب 6 أحرف على الأقل';return;}
   if(n!==f){err.textContent='❌ كلمتا المرور غير متطابقتان';return;}
-  adminPwd=n; closeOverlay('changePwdOverlay');
+  adminPwd=n;
+  localStorage.setItem(ADMIN_PWD_KEY, n);
+  closeOverlay('changePwdOverlay');
   notify('✓ تم تغيير كلمة المرور');
   log('🔑 تم تغيير كلمة المرور','success');
 }
@@ -1758,7 +1799,9 @@ function doSecChangePwd() {
   if(c!==adminPwd){err.textContent='❌ كلمة المرور الحالية خاطئة';return;}
   if(n.length<6){err.textContent='❌ يجب 6 أحرف على الأقل';return;}
   if(n!==f){err.textContent='❌ كلمتا المرور غير متطابقتان';return;}
-  adminPwd=n; err.textContent='';
+  adminPwd=n;
+  localStorage.setItem(ADMIN_PWD_KEY, n);
+  err.textContent='';
   notify('✓ تم تغيير كلمة المرور');
   log('🔑 تم تغيير كلمة المرور من قسم الأمان','success');
 }
@@ -2120,6 +2163,7 @@ function saveEdit() {
   sendCmd({type:'UPDATE_GAME', game});
   const idx = storeGames.findIndex(g=>g.id===id);
   if(idx>=0) storeGames[idx] = {...storeGames[idx], ...game};
+  saveGamesToLocalStorage();
 
   closeOverlay('editOverlay');
   renderGamesTable();
@@ -2132,6 +2176,7 @@ function deleteGame(id, title) {
   if(!confirm('حذف "'+title+'" من المتجر؟')) return;
   sendCmd({type:'DELETE_GAME', id});
   storeGames = storeGames.filter(g=>g.id!==id);
+  saveGamesToLocalStorage();
   renderGamesTable();
   populatePriceSelect();
   document.getElementById('tGamesCount').textContent = storeGames.length;
@@ -2292,6 +2337,7 @@ function submitAddGame() {
 
   sendCmd({type:'ADD_GAME', game});
   storeGames.push(game);
+  saveGamesToLocalStorage();
   document.getElementById('tGamesCount').textContent = storeGames.length;
   document.getElementById('dGames').textContent = storeGames.length;
   document.getElementById('gamesSubTitle').textContent = storeGames.length + ' منتج في المتجر';
@@ -2314,12 +2360,14 @@ function submitAddGame() {
 function applyName() {
   const v=document.getElementById('sName').value.trim(); if(!v) return;
   sendCmd({type:'SET_NAME',value:v});
+  saveAdminSetting('storeName', v);
   log('🏷 تم تغيير اسم المتجر إلى "'+v+'"','success');
   notify('✓ تم تغيير الاسم إلى "'+v+'"');
 }
 function applyBannerText() {
   const v=document.getElementById('sBannerText').value.trim(); if(!v) return;
   sendCmd({type:'SET_PROMO_TEXT',value:v});
+  saveAdminSetting('bannerText', v);
   log('📢 تم تغيير نص البانر','cmd');
   notify('✓ تم تحديث نص البانر');
 }
@@ -2327,6 +2375,7 @@ function toggleBanner(el) {
   el.classList.toggle('on');
   const show = el.classList.contains('on');
   sendCmd({type:'BANNER_TOGGLE',show});
+  saveAdminSetting('bannerVisible', show);
   log((show?'👁 إظهار':'🚫 إخفاء')+' البانر الترويجي','cmd');
   notify(show?'✓ تم إظهار البانر':'تم إخفاء البانر');
 }
@@ -2336,11 +2385,35 @@ function applyDiscount() {
   const pct=parseFloat(document.getElementById('discountPct').value)||0;
   if(pct<=0||pct>90){notify('❌ نسبة غير صحيحة',true);return;}
   sendCmd({type:'GLOBAL_DISCOUNT',pct});
+  // Apply locally too, so it persists even if venue tab is closed
+  storeGames.forEach(g => {
+    if(g.price>0) {
+      if(!g._orig) g._orig = g.price;
+      g.oldPrice = g._orig;
+      g.price = parseFloat((g._orig*(1-pct/100)).toFixed(2));
+      if(!g.badges) g.badges = [];
+      if(!g.badges.includes('Sale')) g.badges.push('Sale');
+    }
+  });
+  saveGamesToLocalStorage();
+  renderGamesTable();
+  populatePriceSelect();
   log('💰 تم تطبيق خصم '+pct+'% على جميع الألعاب','success');
   notify('✓ تم تطبيق خصم '+pct+'%');
 }
 function resetPrices() {
   sendCmd({type:'RESET_PRICES'});
+  storeGames.forEach(g => {
+    if(g._orig) {
+      g.price = g._orig;
+      g.oldPrice = null;
+      g._orig = null;
+      g.badges = (g.badges||[]).filter(b => b!=='Sale');
+    }
+  });
+  saveGamesToLocalStorage();
+  renderGamesTable();
+  populatePriceSelect();
   log('↩ تم إعادة الأسعار الأصلية','cmd');
   notify('✓ تم إعادة الأسعار');
 }
@@ -2355,6 +2428,7 @@ function applyOnePrice() {
   sendCmd({type:'UPDATE_GAME',game:{id,price,oldPrice:g.price}});
   const idx=storeGames.findIndex(x=>x.id===id);
   if(idx>=0){storeGames[idx].oldPrice=storeGames[idx].price;storeGames[idx].price=price;}
+  saveGamesToLocalStorage();
   populatePriceSelect();
   log('💲 تم تغيير سعر "'+g.title+'" إلى $'+price,'success');
   notify('✓ تم تغيير السعر إلى $'+price);
@@ -2415,6 +2489,7 @@ function applyPromo() {
   const previewCode = document.getElementById('previewCode');
   if(previewCode) previewCode.textContent = code;
   sendCmd({ type: 'SET_PROMO', value: code });
+  saveAdminSetting('promoCode', code);
   log('🎁 تم تحديث كود الخصم إلى "' + code + '"', 'success');
   notify('✓ تم تحديث كود الخصم: ' + code);
 }
@@ -2435,8 +2510,62 @@ function applyPromoFull() {
   if(subText)  sendCmd({ type: 'SET_PROMO_SUB',  value: subText  });
   sendCmd({ type: 'BANNER_TOGGLE', show: promoBannerVisible });
 
+  saveAdminSetting('promoCode',     code);
+  saveAdminSetting('promoMainText', mainText);
+  saveAdminSetting('promoSubText',  subText);
+  saveAdminSetting('bannerVisible', promoBannerVisible);
+
   log('💾 تم تطبيق جميع إعدادات البانر الترويجي', 'success');
   notify('✓ تم حفظ وتطبيق جميع التغييرات');
+}
+
+// ===== ADMIN SETTINGS PERSISTENCE =====
+function saveAdminSetting(key, value) {
+  try {
+    const settings = JSON.parse(localStorage.getItem(ADMIN_SETTINGS_KEY) || '{}');
+    settings[key] = value;
+    localStorage.setItem(ADMIN_SETTINGS_KEY, JSON.stringify(settings));
+  } catch(e) {}
+}
+
+function getAdminSetting(key, defaultVal) {
+  try {
+    const settings = JSON.parse(localStorage.getItem(ADMIN_SETTINGS_KEY) || '{}');
+    return key in settings ? settings[key] : defaultVal;
+  } catch { return defaultVal; }
+}
+
+function loadAdminSettings() {
+  // Store name
+  const storeName = getAdminSetting('storeName', 'باثيون');
+  const sNameEl = document.getElementById('sName');
+  if(sNameEl) sNameEl.value = storeName;
+
+  // Promo code
+  const promoCode = getAdminSetting('promoCode', 'GAME20');
+  const promoEl   = document.getElementById('promoCode');
+  if(promoEl) promoEl.value = promoCode;
+
+  // Banner text
+  const bannerText = getAdminSetting('bannerText', '🎉 عرض حصري! وفّر على أفضل الألعاب');
+  const bannerEl   = document.getElementById('sBannerText');
+  if(bannerEl) bannerEl.value = bannerText;
+
+  // Promo texts
+  const mainText = getAdminSetting('promoMainText', '');
+  const subText  = getAdminSetting('promoSubText', '');
+  const pmEl = document.getElementById('promoMainText'); if(pmEl && mainText) pmEl.value = mainText;
+  const psEl = document.getElementById('promoSubText');  if(psEl && subText)  psEl.value = subText;
+
+  // Banner visible
+  const bannerVisible = getAdminSetting('bannerVisible', true);
+  promoBannerVisible  = bannerVisible;
+  if(typeof updatePromoBannerUI === 'function') updatePromoBannerUI();
+
+  // Domain
+  const domain = getAdminSetting('domainSaved', 'vercelshop-murex.vercel.app');
+  const domEl  = document.getElementById('domainInput');
+  if(domEl) { domEl.value = domain; updateDomainDisplay(domain); }
 }
 
 // ===== LOG =====
@@ -2858,6 +2987,7 @@ function applySyncedPrices() {
     applied++;
   });
 
+  saveGamesToLocalStorage();
   renderGamesTable();
   populatePriceSelect();
   document.getElementById('syncApplyRow').style.display = 'none';
