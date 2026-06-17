@@ -1376,9 +1376,9 @@ body.fs-large  .modal-title { font-size:22px; }
   </div>
   <div class="cart-items" id="cartItems"></div>
   <div class="cart-footer" id="cartFooter" style="display:none;">
-    <div class="cart-subtotal"><span>المجموع</span><span id="cartSubtotal">$0</span></div>
-    <div class="cart-subtotal"><span>رسوم الخدمة</span><span>$0.00</span></div>
-    <div class="cart-total"><span>الإجمالي</span><span class="cart-total-price" id="cartTotal">$0</span></div>
+    <div class="cart-subtotal"><span>المجموع</span><span id="cartSubtotal">0 د.ع</span></div>
+    <div class="cart-subtotal"><span>رسوم الخدمة</span><span>0 د.ع</span></div>
+    <div class="cart-total"><span>الإجمالي</span><span class="cart-total-price" id="cartTotal">0 د.ع</span></div>
     <button class="checkout-btn" onclick="openCheckout()">إتمام الشراء →</button>
   </div>
 </div>
@@ -1444,7 +1444,7 @@ body.fs-large  .modal-title { font-size:22px; }
       <div class="admin-section-title">📊 إحصائيات المتجر</div>
       <div class="admin-item"><span class="admin-label">إجمالي الألعاب</span><span class="admin-status" id="adminGameCount">18 لعبة</span></div>
       <div class="admin-item"><span class="admin-label">الطلبات اليوم</span><span class="admin-status">47 طلب</span></div>
-      <div class="admin-item"><span class="admin-label">المبيعات اليوم</span><span class="admin-status">$3,284</span></div>
+      <div class="admin-item"><span class="admin-label">المبيعات اليوم</span><span class="admin-status">4,762,000 د.ع</span></div>
       <div class="admin-item"><span class="admin-label">المستخدمون النشطون</span><span class="admin-status">312 مستخدم</span></div>
     </div>
 
@@ -1453,7 +1453,7 @@ body.fs-large  .modal-title { font-size:22px; }
       <div class="admin-item" style="flex-direction:column;align-items:stretch;gap:8px;">
         <input class="modal-input" type="text" id="newGameTitle" placeholder="اسم اللعبة" style="margin:0;">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          <input class="modal-input" type="number" id="newGamePrice" placeholder="السعر $" style="margin:0;">
+          <input class="modal-input" type="number" id="newGamePrice" placeholder="السعر (د.ع)" style="margin:0;">
           <input class="modal-input" type="text" id="newGameGenre" placeholder="النوع (FPS/RPG...)" style="margin:0;">
         </div>
         <select class="modal-input" id="newGameEmoji" style="margin:0;cursor:pointer;">
@@ -1826,8 +1826,8 @@ window.addEventListener('resize', () => {
       <div class="sidebar-section">
         <div class="sidebar-section-title">السعر الأقصى</div>
         <div style="padding:0 4px;">
-          <input type="range" min="0" max="100" value="100" style="width:100%;accent-color:var(--accent);" oninput="maxPrice=+this.value;document.getElementById('maxPriceVal').textContent='$'+this.value;renderStore()">
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;"><span>$0</span><span id="maxPriceVal">$100</span></div>
+          <input type="range" min="0" max="150000" step="5000" value="150000" style="width:100%;accent-color:var(--accent);" oninput="maxPrice=+this.value;document.getElementById('maxPriceVal').textContent=(+this.value).toLocaleString('en-US')+' د.ع';renderStore()">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;"><span>0 د.ع</span><span id="maxPriceVal">150,000 د.ع</span></div>
         </div>
       </div>
       <hr class="sidebar-divider">
@@ -1906,50 +1906,56 @@ window.addEventListener('resize', () => {
 </footer>
 
 <script>
+// ===== CURRENCY: IRAQI DINAR =====
+function fmtIQD(amount) {
+  if(amount === 0 || amount === null || amount === undefined) return 'مجاني';
+  return Math.round(amount).toLocaleString('en-US') + ' د.ع';
+}
+
 // DATA
 let games = [
-  {id:0,emoji:'🌆',title:'Cyberpunk 2077',genre:'RPG',platform:'PC',price:39.99,oldPrice:59.99,rating:4.8,rc:12400,badges:['Top'],desc:'استكشف مدينة Night City المستقبلية في لعبة RPG مفتوحة العالم.',year:2020,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#0d0020,#1a0030)'},
+  {id:0,emoji:'🌆',title:'Cyberpunk 2077',genre:'RPG',platform:'PC',price:58000,oldPrice:87000,rating:4.8,rc:12400,badges:['Top'],desc:'استكشف مدينة Night City المستقبلية في لعبة RPG مفتوحة العالم.',year:2020,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#0d0020,#1a0030)'},
   {id:1,emoji:'🔫',title:'Counter-Strike 2',genre:'FPS',platform:'PC',price:0,oldPrice:null,rating:4.9,rc:85000,badges:['Top','Hot'],desc:'أحدث إصدار من CS الكلاسيكية. رسومات محسّنة وفيزياء دخان جديدة.',year:2023,dev:'Valve',bg:'linear-gradient(135deg,#001a00,#003000)'},
   {id:2,emoji:'⚔️',title:'DOTA 2',genre:'RPG',platform:'PC',price:0,oldPrice:null,rating:4.6,rc:42000,badges:[],desc:'لعبة MOBA الأشهر في العالم. 100+ بطل بأسلوب لعب فريد.',year:2013,dev:'Valve',bg:'linear-gradient(135deg,#1a0000,#300000)'},
-  {id:3,emoji:'🌿',title:'The Last of Us II',genre:'مغامرة',platform:'PS5',price:49.99,oldPrice:69.99,rating:4.9,rc:31000,badges:['Top'],desc:'رحلة عاطفية في عالم مدمر. قصة مشاعر معقدة ورسومات استثنائية.',year:2020,dev:'Naughty Dog',bg:'linear-gradient(135deg,#001a10,#002818)'},
-  {id:4,emoji:'🪖',title:'Halo Infinite',genre:'FPS',platform:'Xbox',price:39.99,oldPrice:59.99,rating:4.5,rc:18000,badges:['New'],desc:'عودة Master Chief في أكبر خريطة مفتوحة في تاريخ السلسلة.',year:2021,dev:'343 Industries',bg:'linear-gradient(135deg,#001522,#001a2a)'},
-  {id:5,emoji:'🧟',title:'Resident Evil 3',genre:'رعب',platform:'PC',price:29.99,oldPrice:39.99,rating:4.3,rc:9200,badges:[],desc:'الرعب الكلاسيكي بمعالجة حديثة. نيمسيس يلاحقك في كل مكان.',year:2020,dev:'Capcom',bg:'linear-gradient(135deg,#1a0005,#2a0008)'},
-  {id:6,emoji:'🏯',title:'Ghost of Tsushima',genre:'مغامرة',platform:'PS5',price:44.99,oldPrice:59.99,rating:4.9,rc:27000,badges:['Top'],desc:'الساموراي الأخير يدافع عن جزيرة تسوشيما. من أجمل الألعاب بصرياً.',year:2020,dev:'Sucker Punch',bg:'linear-gradient(135deg,#1a0800,#280f00)'},
+  {id:3,emoji:'🌿',title:'The Last of Us II',genre:'مغامرة',platform:'PS5',price:72500,oldPrice:101500,rating:4.9,rc:31000,badges:['Top'],desc:'رحلة عاطفية في عالم مدمر. قصة مشاعر معقدة ورسومات استثنائية.',year:2020,dev:'Naughty Dog',bg:'linear-gradient(135deg,#001a10,#002818)'},
+  {id:4,emoji:'🪖',title:'Halo Infinite',genre:'FPS',platform:'Xbox',price:58000,oldPrice:87000,rating:4.5,rc:18000,badges:['New'],desc:'عودة Master Chief في أكبر خريطة مفتوحة في تاريخ السلسلة.',year:2021,dev:'343 Industries',bg:'linear-gradient(135deg,#001522,#001a2a)'},
+  {id:5,emoji:'🧟',title:'Resident Evil 3',genre:'رعب',platform:'PC',price:43500,oldPrice:58000,rating:4.3,rc:9200,badges:[],desc:'الرعب الكلاسيكي بمعالجة حديثة. نيمسيس يلاحقك في كل مكان.',year:2020,dev:'Capcom',bg:'linear-gradient(135deg,#1a0005,#2a0008)'},
+  {id:6,emoji:'🏯',title:'Ghost of Tsushima',genre:'مغامرة',platform:'PS5',price:65250,oldPrice:87000,rating:4.9,rc:27000,badges:['Top'],desc:'الساموراي الأخير يدافع عن جزيرة تسوشيما. من أجمل الألعاب بصرياً.',year:2020,dev:'Sucker Punch',bg:'linear-gradient(135deg,#1a0800,#280f00)'},
   {id:7,emoji:'💣',title:'CoD: Warzone',genre:'FPS',platform:'PC',price:0,oldPrice:null,rating:4.4,rc:56000,badges:['Hot'],desc:'Battle Royale مجانية. 150 لاعب في خريطة ضخمة مع تحديثات موسمية.',year:2020,dev:'Activision',bg:'linear-gradient(135deg,#0a0f1a,#101828)'},
-  {id:8,emoji:'🐺',title:'The Witcher 3',genre:'RPG',platform:'PC',price:19.99,oldPrice:39.99,rating:5.0,rc:48000,badges:['Top'],desc:'الفائز بأكثر من 800 جائزة لعبة العام. عالم مفتوح ضخم لا مثيل له.',year:2015,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#001400,#002000)'},
-  {id:9,emoji:'😈',title:'DOOM Eternal',genre:'FPS',platform:'PC',price:24.99,oldPrice:49.99,rating:4.8,rc:21000,badges:['Hot'],desc:'أسرع وأضخم. DOOM Slayer يجوب الكون لإبادة جحافل الشياطين.',year:2020,dev:'id Software',bg:'linear-gradient(135deg,#1a0000,#2a0000)'},
+  {id:8,emoji:'🐺',title:'The Witcher 3',genre:'RPG',platform:'PC',price:29000,oldPrice:58000,rating:5.0,rc:48000,badges:['Top'],desc:'الفائز بأكثر من 800 جائزة لعبة العام. عالم مفتوح ضخم لا مثيل له.',year:2015,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#001400,#002000)'},
+  {id:9,emoji:'😈',title:'DOOM Eternal',genre:'FPS',platform:'PC',price:36250,oldPrice:72500,rating:4.8,rc:21000,badges:['Hot'],desc:'أسرع وأضخم. DOOM Slayer يجوب الكون لإبادة جحافل الشياطين.',year:2020,dev:'id Software',bg:'linear-gradient(135deg,#1a0000,#2a0000)'},
   {id:10,emoji:'🏆',title:'Fortnite',genre:'رياضة',platform:'PC',price:0,oldPrice:null,rating:4.2,rc:93000,badges:['Hot'],desc:'Battle Royale الأشهر في العالم. بناء وقتال وتعاون مستمر.',year:2017,dev:'Epic Games',bg:'linear-gradient(135deg,#0a001a,#120030)'},
-  {id:11,emoji:'☢️',title:'Fallout 4',genre:'RPG',platform:'PC',price:14.99,oldPrice:29.99,rating:4.5,rc:32000,badges:[],desc:'استكشف بوسطن ما بعد الحرب النووية. بناء مستوطنات وصنع أسلحة.',year:2015,dev:'Bethesda',bg:'linear-gradient(135deg,#0a1400,#101e00)'},
-  {id:12,emoji:'👻',title:'Ghostwire: Tokyo',genre:'مغامرة',platform:'PS5',price:34.99,oldPrice:49.99,rating:4.3,rc:7800,badges:[],desc:'مدينة طوكيو الفارغة. استخدم قوى خارقة لمحاربة الكيانات الشريرة.',year:2022,dev:'Tango Gameworks',bg:'linear-gradient(135deg,#0d0a1a,#18133a)'},
-  {id:13,emoji:'🥽',title:'Half-Life: Alyx',genre:'مغامرة',platform:'PC',price:59.99,oldPrice:null,rating:4.9,rc:15000,badges:[],desc:'أفضل تجربة VR على الإطلاق. قصة جديدة في عالم Half-Life.',year:2020,dev:'Valve',bg:'linear-gradient(135deg,#001a1a,#003030)'},
-  {id:14,emoji:'🗡️',title:'Nioh 2',genre:'RPG',platform:'PS5',price:39.99,oldPrice:59.99,rating:4.7,rc:11000,badges:[],desc:'أصعب ألعاب الساموراي. نظام قتال عميق مع أرواح شريرة.',year:2020,dev:'Team Ninja',bg:'linear-gradient(135deg,#1a1000,#2a1a00)'},
-  {id:15,emoji:'🏜️',title:'Wasteland 3',genre:'RPG',platform:'PC',price:19.99,oldPrice:44.99,rating:4.4,rc:6500,badges:[],desc:'RPG تكتيكي في كولورادو ما بعد الكارثة. قرارات أخلاقية صعبة.',year:2020,dev:'inXile',bg:'linear-gradient(135deg,#1a1a00,#2a2a00)'},
-  {id:16,emoji:'🚀',title:'CoD: Infinite Warfare',genre:'FPS',platform:'Xbox',price:24.99,oldPrice:49.99,rating:4.1,rc:14000,badges:[],desc:'حرب الفضاء في مستقبل بعيد. مهمات فضائية ومعارك جاذبية صفرية.',year:2016,dev:'Infinity Ward',bg:'linear-gradient(135deg,#0a0f1a,#0f1620)'},
-  {id:17,emoji:'😱',title:'Resident Evil Village',genre:'رعب',platform:'PS5',price:44.99,oldPrice:59.99,rating:4.7,rc:19000,badges:['New'],desc:'Ethan Winters في قرية مسكونة. كوابيس ومفاجآت لا تنتهي.',year:2021,dev:'Capcom',bg:'linear-gradient(135deg,#0d0a00,#1a1000)'},
+  {id:11,emoji:'☢️',title:'Fallout 4',genre:'RPG',platform:'PC',price:21750,oldPrice:43500,rating:4.5,rc:32000,badges:[],desc:'استكشف بوسطن ما بعد الحرب النووية. بناء مستوطنات وصنع أسلحة.',year:2015,dev:'Bethesda',bg:'linear-gradient(135deg,#0a1400,#101e00)'},
+  {id:12,emoji:'👻',title:'Ghostwire: Tokyo',genre:'مغامرة',platform:'PS5',price:50750,oldPrice:72500,rating:4.3,rc:7800,badges:[],desc:'مدينة طوكيو الفارغة. استخدم قوى خارقة لمحاربة الكيانات الشريرة.',year:2022,dev:'Tango Gameworks',bg:'linear-gradient(135deg,#0d0a1a,#18133a)'},
+  {id:13,emoji:'🥽',title:'Half-Life: Alyx',genre:'مغامرة',platform:'PC',price:87000,oldPrice:null,rating:4.9,rc:15000,badges:[],desc:'أفضل تجربة VR على الإطلاق. قصة جديدة في عالم Half-Life.',year:2020,dev:'Valve',bg:'linear-gradient(135deg,#001a1a,#003030)'},
+  {id:14,emoji:'🗡️',title:'Nioh 2',genre:'RPG',platform:'PS5',price:58000,oldPrice:87000,rating:4.7,rc:11000,badges:[],desc:'أصعب ألعاب الساموراي. نظام قتال عميق مع أرواح شريرة.',year:2020,dev:'Team Ninja',bg:'linear-gradient(135deg,#1a1000,#2a1a00)'},
+  {id:15,emoji:'🏜️',title:'Wasteland 3',genre:'RPG',platform:'PC',price:29000,oldPrice:65250,rating:4.4,rc:6500,badges:[],desc:'RPG تكتيكي في كولورادو ما بعد الكارثة. قرارات أخلاقية صعبة.',year:2020,dev:'inXile',bg:'linear-gradient(135deg,#1a1a00,#2a2a00)'},
+  {id:16,emoji:'🚀',title:'CoD: Infinite Warfare',genre:'FPS',platform:'Xbox',price:36250,oldPrice:72500,rating:4.1,rc:14000,badges:[],desc:'حرب الفضاء في مستقبل بعيد. مهمات فضائية ومعارك جاذبية صفرية.',year:2016,dev:'Infinity Ward',bg:'linear-gradient(135deg,#0a0f1a,#0f1620)'},
+  {id:17,emoji:'😱',title:'Resident Evil Village',genre:'رعب',platform:'PS5',price:65250,oldPrice:87000,rating:4.7,rc:19000,badges:['New'],desc:'Ethan Winters في قرية مسكونة. كوابيس ومفاجآت لا تنتهي.',year:2021,dev:'Capcom',bg:'linear-gradient(135deg,#0d0a00,#1a1000)'},
   // DIGITAL CARDS
-  {id:100,emoji:'🎮',title:'بطاقة Steam $10',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:10,oldPrice:null,rating:4.9,rc:5200,badges:['Hot'],desc:'بطاقة هدية Steam بقيمة 10 دولار. صالحة لجميع المنتجات على منصة Steam.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
-  {id:101,emoji:'🎮',title:'بطاقة Steam $20',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:20,oldPrice:null,rating:4.9,rc:8100,badges:['Top'],desc:'بطاقة هدية Steam بقيمة 20 دولار. صالحة لجميع المنتجات على منصة Steam.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
-  {id:102,emoji:'🎮',title:'بطاقة Steam $50',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:50,oldPrice:null,rating:4.9,rc:4300,badges:[],desc:'بطاقة هدية Steam بقيمة 50 دولار. أفضل قيمة للاعبين المخلصين.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
-  {id:103,emoji:'🎮',title:'PSN Card $10',genre:'بطاقة رقمية',platform:'PS5',cardType:'psn',price:10,oldPrice:null,rating:4.8,rc:6700,badges:[],desc:'بطاقة PlayStation Network بقيمة 10 دولار. للعاب والإضافات على PS4/PS5.',year:2024,dev:'Sony',bg:'linear-gradient(135deg,#003087,#001a4d)'},
-  {id:104,emoji:'🎮',title:'PSN Card $25',genre:'بطاقة رقمية',platform:'PS5',cardType:'psn',price:25,oldPrice:null,rating:4.8,rc:9200,badges:['Hot'],desc:'بطاقة PlayStation Network بقيمة 25 دولار.',year:2024,dev:'Sony',bg:'linear-gradient(135deg,#003087,#001a4d)'},
-  {id:105,emoji:'🟩',title:'Xbox Gift Card $15',genre:'بطاقة رقمية',platform:'Xbox',cardType:'xbox',price:15,oldPrice:null,rating:4.7,rc:4100,badges:[],desc:'بطاقة هدية Xbox بقيمة 15 دولار. للألعاب والإضافات على Xbox وPC.',year:2024,dev:'Microsoft',bg:'linear-gradient(135deg,#107c10,#0a5a0a)'},
-  {id:106,emoji:'🪖',title:'PUBG UC 660',genre:'بطاقة رقمية',platform:'PC',cardType:'pubg',price:9.99,oldPrice:null,rating:4.8,rc:12000,badges:['Hot'],desc:'660 UC لعبة PUBG Mobile. استخدمها للحصول على أزياء وأسلحة حصرية.',year:2024,dev:'Krafton',bg:'linear-gradient(135deg,#1a0f00,#2d1a00)'},
-  {id:107,emoji:'🪖',title:'PUBG UC 1800',genre:'بطاقة رقمية',platform:'PC',cardType:'pubg',price:24.99,oldPrice:29.99,rating:4.8,rc:8900,badges:['Top'],desc:'1800 UC لعبة PUBG Mobile بسعر مخفض. أفضل قيمة للشراء.',year:2024,dev:'Krafton',bg:'linear-gradient(135deg,#1a0f00,#2d1a00)'},
-  {id:108,emoji:'⚡',title:'Valorant Points 1000 VP',genre:'بطاقة رقمية',platform:'PC',cardType:'valorant',price:9.99,oldPrice:null,rating:4.7,rc:7600,badges:[],desc:'1000 نقطة Valorant لشراء الأعوان والأسلحة الجمالية.',year:2024,dev:'Riot Games',bg:'linear-gradient(135deg,#1a0005,#380010)'},
-  {id:109,emoji:'🏆',title:'Fortnite V-Bucks 1000',genre:'بطاقة رقمية',platform:'PC',cardType:'fortnite',price:7.99,oldPrice:null,rating:4.6,rc:15000,badges:[],desc:'1000 V-Bucks للعبة Fortnite. احصل على أزياء وعبوات المعركة.',year:2024,dev:'Epic Games',bg:'linear-gradient(135deg,#001a2a,#002a40)'},
-  {id:110,emoji:'🧱',title:'Roblox 400 Robux',genre:'بطاقة رقمية',platform:'PC',cardType:'roblox',price:4.99,oldPrice:null,rating:4.7,rc:22000,badges:[],desc:'400 Robux لعبة Roblox. للحصول على أزياء وتحسينات في اللعبة.',year:2024,dev:'Roblox Corp',bg:'linear-gradient(135deg,#1a0000,#2d0000)'},
-  {id:111,emoji:'📱',title:'شحن Asiacell 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'asiacell',price:3.5,oldPrice:null,rating:4.9,rc:31000,badges:['Hot'],desc:'شحن رصيد Asiacell بقيمة 5000 دينار عراقي. فوري ومضمون.',year:2024,dev:'Asiacell',bg:'linear-gradient(135deg,#1a0a00,#ff6b0020)'},
-  {id:112,emoji:'📱',title:'شحن Asiacell 10000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'asiacell',price:7,oldPrice:null,rating:4.9,rc:28000,badges:['Top'],desc:'شحن رصيد Asiacell بقيمة 10000 دينار عراقي.',year:2024,dev:'Asiacell',bg:'linear-gradient(135deg,#1a0a00,#ff6b0020)'},
-  {id:113,emoji:'📱',title:'شحن Zain 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'zain',price:3.5,oldPrice:null,rating:4.8,rc:18000,badges:[],desc:'شحن رصيد Zain Iraq بقيمة 5000 دينار عراقي. فوري ومضمون.',year:2024,dev:'Zain Iraq',bg:'linear-gradient(135deg,#1a0000,#cc000022)'},
-  {id:114,emoji:'📱',title:'شحن Zain 15000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'zain',price:10.5,oldPrice:null,rating:4.8,rc:12000,badges:[],desc:'شحن رصيد Zain Iraq بقيمة 15000 دينار عراقي.',year:2024,dev:'Zain Iraq',bg:'linear-gradient(135deg,#1a0000,#cc000022)'},
-  {id:115,emoji:'📱',title:'شحن Korek 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'korek',price:3.5,oldPrice:null,rating:4.7,rc:9000,badges:[],desc:'شحن رصيد Korek Telecom بقيمة 5000 دينار عراقي.',year:2024,dev:'Korek Telecom',bg:'linear-gradient(135deg,#1a0020,#e2007422)'},
-  {id:116,emoji:'🍎',title:'iTunes Gift Card $15',genre:'بطاقة رقمية',platform:'iOS',cardType:'itunes',price:15,oldPrice:null,rating:4.8,rc:11000,badges:[],desc:'بطاقة iTunes/App Store بقيمة 15 دولار. للتطبيقات والألعاب والاشتراكات.',year:2024,dev:'Apple',bg:'linear-gradient(135deg,#001a2a,#0071e322)'},
-  {id:117,emoji:'▶',title:'Google Play $10',genre:'بطاقة رقمية',platform:'Android',cardType:'google',price:10,oldPrice:null,rating:4.7,rc:14000,badges:[],desc:'بطاقة Google Play بقيمة 10 دولار. للتطبيقات والألعاب والاشتراكات.',year:2024,dev:'Google',bg:'linear-gradient(135deg,#001a00,#34a85322)'},
-  {id:118,emoji:'🎬',title:'Netflix شهر واحد',genre:'بطاقة رقمية',platform:'جميع المنصات',cardType:'netflix',price:12.99,oldPrice:15.99,rating:4.6,rc:7800,badges:['Sale'],desc:'اشتراك Netflix لمدة شهر كامل. وصول لآلاف الأفلام والمسلسلات.',year:2024,dev:'Netflix',bg:'linear-gradient(135deg,#1a0000,#e5091422)'},
+  {id:100,emoji:'🎮',title:'بطاقة Steam $10',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:14500,oldPrice:null,rating:4.9,rc:5200,badges:['Hot'],desc:'بطاقة هدية Steam بقيمة 10 دولار. صالحة لجميع المنتجات على منصة Steam.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
+  {id:101,emoji:'🎮',title:'بطاقة Steam $20',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:29000,oldPrice:null,rating:4.9,rc:8100,badges:['Top'],desc:'بطاقة هدية Steam بقيمة 20 دولار. صالحة لجميع المنتجات على منصة Steam.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
+  {id:102,emoji:'🎮',title:'بطاقة Steam $50',genre:'بطاقة رقمية',platform:'PC',cardType:'steam',price:72500,oldPrice:null,rating:4.9,rc:4300,badges:[],desc:'بطاقة هدية Steam بقيمة 50 دولار. أفضل قيمة للاعبين المخلصين.',year:2024,dev:'Valve',bg:'linear-gradient(135deg,#1b2838,#2a475e)'},
+  {id:103,emoji:'🎮',title:'PSN Card $10',genre:'بطاقة رقمية',platform:'PS5',cardType:'psn',price:14500,oldPrice:null,rating:4.8,rc:6700,badges:[],desc:'بطاقة PlayStation Network بقيمة 10 دولار. للعاب والإضافات على PS4/PS5.',year:2024,dev:'Sony',bg:'linear-gradient(135deg,#003087,#001a4d)'},
+  {id:104,emoji:'🎮',title:'PSN Card $25',genre:'بطاقة رقمية',platform:'PS5',cardType:'psn',price:36250,oldPrice:null,rating:4.8,rc:9200,badges:['Hot'],desc:'بطاقة PlayStation Network بقيمة 25 دولار.',year:2024,dev:'Sony',bg:'linear-gradient(135deg,#003087,#001a4d)'},
+  {id:105,emoji:'🟩',title:'Xbox Gift Card $15',genre:'بطاقة رقمية',platform:'Xbox',cardType:'xbox',price:21750,oldPrice:null,rating:4.7,rc:4100,badges:[],desc:'بطاقة هدية Xbox بقيمة 15 دولار. للألعاب والإضافات على Xbox وPC.',year:2024,dev:'Microsoft',bg:'linear-gradient(135deg,#107c10,#0a5a0a)'},
+  {id:106,emoji:'🪖',title:'PUBG UC 660',genre:'بطاقة رقمية',platform:'PC',cardType:'pubg',price:14500,oldPrice:null,rating:4.8,rc:12000,badges:['Hot'],desc:'660 UC لعبة PUBG Mobile. استخدمها للحصول على أزياء وأسلحة حصرية.',year:2024,dev:'Krafton',bg:'linear-gradient(135deg,#1a0f00,#2d1a00)'},
+  {id:107,emoji:'🪖',title:'PUBG UC 1800',genre:'بطاقة رقمية',platform:'PC',cardType:'pubg',price:36250,oldPrice:43500,rating:4.8,rc:8900,badges:['Top'],desc:'1800 UC لعبة PUBG Mobile بسعر مخفض. أفضل قيمة للشراء.',year:2024,dev:'Krafton',bg:'linear-gradient(135deg,#1a0f00,#2d1a00)'},
+  {id:108,emoji:'⚡',title:'Valorant Points 1000 VP',genre:'بطاقة رقمية',platform:'PC',cardType:'valorant',price:14500,oldPrice:null,rating:4.7,rc:7600,badges:[],desc:'1000 نقطة Valorant لشراء الأعوان والأسلحة الجمالية.',year:2024,dev:'Riot Games',bg:'linear-gradient(135deg,#1a0005,#380010)'},
+  {id:109,emoji:'🏆',title:'Fortnite V-Bucks 1000',genre:'بطاقة رقمية',platform:'PC',cardType:'fortnite',price:11500,oldPrice:null,rating:4.6,rc:15000,badges:[],desc:'1000 V-Bucks للعبة Fortnite. احصل على أزياء وعبوات المعركة.',year:2024,dev:'Epic Games',bg:'linear-gradient(135deg,#001a2a,#002a40)'},
+  {id:110,emoji:'🧱',title:'Roblox 400 Robux',genre:'بطاقة رقمية',platform:'PC',cardType:'roblox',price:7250,oldPrice:null,rating:4.7,rc:22000,badges:[],desc:'400 Robux لعبة Roblox. للحصول على أزياء وتحسينات في اللعبة.',year:2024,dev:'Roblox Corp',bg:'linear-gradient(135deg,#1a0000,#2d0000)'},
+  {id:111,emoji:'📱',title:'شحن Asiacell 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'asiacell',price:5000,oldPrice:null,rating:4.9,rc:31000,badges:['Hot'],desc:'شحن رصيد Asiacell بقيمة 5000 دينار عراقي. فوري ومضمون.',year:2024,dev:'Asiacell',bg:'linear-gradient(135deg,#1a0a00,#ff6b0020)'},
+  {id:112,emoji:'📱',title:'شحن Asiacell 10000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'asiacell',price:10250,oldPrice:null,rating:4.9,rc:28000,badges:['Top'],desc:'شحن رصيد Asiacell بقيمة 10000 دينار عراقي.',year:2024,dev:'Asiacell',bg:'linear-gradient(135deg,#1a0a00,#ff6b0020)'},
+  {id:113,emoji:'📱',title:'شحن Zain 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'zain',price:5000,oldPrice:null,rating:4.8,rc:18000,badges:[],desc:'شحن رصيد Zain Iraq بقيمة 5000 دينار عراقي. فوري ومضمون.',year:2024,dev:'Zain Iraq',bg:'linear-gradient(135deg,#1a0000,#cc000022)'},
+  {id:114,emoji:'📱',title:'شحن Zain 15000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'zain',price:15250,oldPrice:null,rating:4.8,rc:12000,badges:[],desc:'شحن رصيد Zain Iraq بقيمة 15000 دينار عراقي.',year:2024,dev:'Zain Iraq',bg:'linear-gradient(135deg,#1a0000,#cc000022)'},
+  {id:115,emoji:'📱',title:'شحن Korek 5000 د.ع',genre:'بطاقة رقمية',platform:'موبايل',cardType:'korek',price:5000,oldPrice:null,rating:4.7,rc:9000,badges:[],desc:'شحن رصيد Korek Telecom بقيمة 5000 دينار عراقي.',year:2024,dev:'Korek Telecom',bg:'linear-gradient(135deg,#1a0020,#e2007422)'},
+  {id:116,emoji:'🍎',title:'iTunes Gift Card $15',genre:'بطاقة رقمية',platform:'iOS',cardType:'itunes',price:21750,oldPrice:null,rating:4.8,rc:11000,badges:[],desc:'بطاقة iTunes/App Store بقيمة 15 دولار. للتطبيقات والألعاب والاشتراكات.',year:2024,dev:'Apple',bg:'linear-gradient(135deg,#001a2a,#0071e322)'},
+  {id:117,emoji:'▶',title:'Google Play $10',genre:'بطاقة رقمية',platform:'Android',cardType:'google',price:14500,oldPrice:null,rating:4.7,rc:14000,badges:[],desc:'بطاقة Google Play بقيمة 10 دولار. للتطبيقات والألعاب والاشتراكات.',year:2024,dev:'Google',bg:'linear-gradient(135deg,#001a00,#34a85322)'},
+  {id:118,emoji:'🎬',title:'Netflix شهر واحد',genre:'بطاقة رقمية',platform:'جميع المنصات',cardType:'netflix',price:18750,oldPrice:23250,rating:4.6,rc:7800,badges:['Sale'],desc:'اشتراك Netflix لمدة شهر كامل. وصول لآلاف الأفلام والمسلسلات.',year:2024,dev:'Netflix',bg:'linear-gradient(135deg,#1a0000,#e5091422)'},
 
   // ── STEAM OFFLINE PACKAGES ──
   {id:200,emoji:'💻',title:'Grand Theft Auto V — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:8.99,oldPrice:14.99,rating:4.8,rc:210000,badges:['Top','Hot'],
+   price:13000,oldPrice:21750,rating:4.8,rc:210000,badges:['Top','Hot'],
    offlineNote:'تثبيت محلي بدون إنترنت. حساب Steam مؤقت مُرفق.',
    includes:['GTA V Story Mode','GTA Online (Offline Crack)','جميع DLCs'],
    size:'95 GB',version:'v1.0.3179.0',
@@ -1957,7 +1963,7 @@ let games = [
    year:2013,dev:'Rockstar Games',bg:'linear-gradient(135deg,#0a1a0a,#0f2a0f)'},
 
   {id:201,emoji:'🧙',title:'Elden Ring — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:12.99,oldPrice:24.99,rating:4.9,rc:89000,badges:['Top'],
+   price:18750,oldPrice:36250,rating:4.9,rc:89000,badges:['Top'],
    offlineNote:'تثبيت كامل أوفلاين. يشمل التحديث الأخير.',
    includes:['Elden Ring Base Game','Shadow of the Erdtree DLC','آخر تحديث مثبّت'],
    size:'60 GB',version:'v1.14.0',
@@ -1965,7 +1971,7 @@ let games = [
    year:2022,dev:'FromSoftware',bg:'linear-gradient(135deg,#1a1000,#2a1a00)'},
 
   {id:202,emoji:'🌿',title:'Red Dead Redemption 2 — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:11.99,oldPrice:19.99,rating:4.9,rc:145000,badges:['Top'],
+   price:17500,oldPrice:29000,rating:4.9,rc:145000,badges:['Top'],
    offlineNote:'نسخة أوفلاين كاملة بدون Rockstar Launcher.',
    includes:['RDR2 Story Mode','جميع التحديثات','تعديلات مجتمعية مثبّتة'],
    size:'120 GB',version:'v1491.50',
@@ -1973,7 +1979,7 @@ let games = [
    year:2019,dev:'Rockstar Games',bg:'linear-gradient(135deg,#1a0500,#2a0a00)'},
 
   {id:203,emoji:'🌆',title:'Cyberpunk 2077 + Phantom Liberty — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:13.99,oldPrice:22.99,rating:4.8,rc:72000,badges:['Hot','New'],
+   price:20250,oldPrice:33250,rating:4.8,rc:72000,badges:['Hot','New'],
    offlineNote:'الإصدار 2.2 الكامل مع إضافة Phantom Liberty.',
    includes:['Cyberpunk 2077','Phantom Liberty DLC','REDmod أداة تعديل'],
    size:'75 GB',version:'v2.21',
@@ -1981,7 +1987,7 @@ let games = [
    year:2023,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#0d0020,#1a0035)'},
 
   {id:204,emoji:'🏔️',title:'The Witcher 3 GOTY — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:6.99,oldPrice:12.99,rating:5.0,rc:180000,badges:['Top'],
+   price:10250,oldPrice:18750,rating:5.0,rc:180000,badges:['Top'],
    offlineNote:'نسخة GOTY الكاملة مع جميع الإضافات.',
    includes:['The Witcher 3: Wild Hunt','Hearts of Stone DLC','Blood and Wine DLC','Next-Gen Update مثبّت'],
    size:'50 GB',version:'v4.04',
@@ -1989,7 +1995,7 @@ let games = [
    year:2022,dev:'CD Projekt Red',bg:'linear-gradient(135deg,#001400,#002a00)'},
 
   {id:205,emoji:'🔴',title:'Spider-Man Remastered — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:10.99,oldPrice:18.99,rating:4.8,rc:53000,badges:[],
+   price:16000,oldPrice:27500,rating:4.8,rc:53000,badges:[],
    offlineNote:'نسخة PC الكاملة بدون PSN.',
    includes:['Spider-Man Remastered','The City That Never Sleeps DLC','ثلاث قصص إضافية'],
    size:'75 GB',version:'v1.1223.0.0',
@@ -1997,7 +2003,7 @@ let games = [
    year:2022,dev:'Insomniac / Nixxes',bg:'linear-gradient(135deg,#1a0000,#380000)'},
 
   {id:206,emoji:'🌍',title:'God of War — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:9.99,oldPrice:16.99,rating:4.9,rc:98000,badges:['Top'],
+   price:14500,oldPrice:24750,rating:4.9,rc:98000,badges:['Top'],
    offlineNote:'نسخة PC الكاملة بدون PSN مطلوب.',
    includes:['God of War (2018)','جميع التحديثات','دعم 4K + Ultrawide'],
    size:'34 GB',version:'v1.0.15',
@@ -2005,7 +2011,7 @@ let games = [
    year:2022,dev:'Santa Monica Studio',bg:'linear-gradient(135deg,#1a0800,#300f00)'},
 
   {id:207,emoji:'⚔️',title:'Dark Souls 3 + DLCs — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:7.99,oldPrice:13.99,rating:4.7,rc:67000,badges:[],
+   price:11500,oldPrice:20250,rating:4.7,rc:67000,badges:[],
    offlineNote:'النسخة الكاملة مع جميع الإضافات. تشغيل أوفلاين.',
    includes:['Dark Souls III','Ashes of Ariandel DLC','The Ringed City DLC'],
    size:'22 GB',version:'v1.15.2',
@@ -2013,7 +2019,7 @@ let games = [
    year:2016,dev:'FromSoftware',bg:'linear-gradient(135deg,#0a0a1a,#15152a)'},
 
   {id:208,emoji:'🏰',title:'Hogwarts Legacy — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:11.99,oldPrice:20.99,rating:4.7,rc:84000,badges:['Hot'],
+   price:17500,oldPrice:30500,rating:4.7,rc:84000,badges:['Hot'],
    offlineNote:'نسخة كاملة بدون WB Games Launcher.',
    includes:['Hogwarts Legacy','جميع المحتوى الإضافي','Deluxe Edition Items'],
    size:'85 GB',version:'v1116523',
@@ -2021,7 +2027,7 @@ let games = [
    year:2023,dev:'Avalanche Software',bg:'linear-gradient(135deg,#0a0020,#180040)'},
 
   {id:209,emoji:'🧟',title:'Resident Evil 4 Remake — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:9.99,oldPrice:17.99,rating:4.9,rc:61000,badges:['New'],
+   price:14500,oldPrice:26000,rating:4.9,rc:61000,badges:['New'],
    offlineNote:'Denuvo مزال. تشغيل مباشر أوفلاين.',
    includes:['RE4 Remake','Separate Ways DLC (Ada Wong)','Deluxe Weapons Pack'],
    size:'67 GB',version:'v1.1.1',
@@ -2029,7 +2035,7 @@ let games = [
    year:2023,dev:'Capcom',bg:'linear-gradient(135deg,#1a0005,#2a000a)'},
 
   {id:210,emoji:'🚀',title:'Starfield — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:13.99,oldPrice:23.99,rating:4.3,rc:39000,badges:[],
+   price:20250,oldPrice:34750,rating:4.3,rc:39000,badges:[],
    offlineNote:'بدون Xbox App. نسخة Steam أوفلاين.',
    includes:['Starfield Base Game','Shattered Space DLC','جميع التحديثات'],
    size:'140 GB',version:'v1.14.74',
@@ -2037,7 +2043,7 @@ let games = [
    year:2023,dev:'Bethesda',bg:'linear-gradient(135deg,#000a1a,#00102a)'},
 
   {id:211,emoji:'🐉',title:'Monster Hunter World: Iceborne — أوفلاين',genre:'أوفلاين',platform:'PC',cardType:'steamoffline',
-   price:9.99,oldPrice:16.99,rating:4.8,rc:74000,badges:['Top'],
+   price:14500,oldPrice:24750,rating:4.8,rc:74000,badges:['Top'],
    offlineNote:'نسخة Master Edition الكاملة أوفلاين.',
    includes:['Monster Hunter: World','Iceborne Expansion','جميع الـ DLCs الكبرى'],
    size:'48 GB',version:'v15.21.01',
@@ -2143,7 +2149,7 @@ function saveLegalPagesVenue(pages) {
 }
 
 let cart=[], wishlist=new Set(), adminPwd='asdasdFG12';
-let genreFilter='all', platformFilter='all', cardTypeFilter='all', maxPrice=100, minRating=0, viewMode='grid';
+let genreFilter='all', platformFilter='all', cardTypeFilter='all', maxPrice=150000, minRating=0, viewMode='grid';
 
 // PAGES
 function showPage(p) {
@@ -2189,7 +2195,7 @@ function cardHTML(g, lv) {
   // Price
   const priceHTML = g.price===0
     ? `<span class="price-free">مجاني</span>`
-    : `${g.oldPrice?`<span class="price-old">$${g.oldPrice}</span>`:''}<span class="price">$${g.price}</span>`;
+    : `${g.oldPrice?`<span class="price-old">${fmtIQD(g.oldPrice)}</span>`:''}<span class="price">${fmtIQD(g.price)}</span>`;
 
   const badges = (g.badges||[]).map(b=>`<span class="badge badge-${b==='Top'?'top':b==='New'?'new':b==='Hot'?'hot':'sale'}">${b}</span>`).join('');
   const stars = '★'.repeat(Math.floor(g.rating||4));
@@ -2321,10 +2327,10 @@ function updateCartUI() {
   document.getElementById('cartBadge').textContent=cart.length;
   const el=document.getElementById('cartItems'), fe=document.getElementById('cartFooter');
   if(!cart.length) { el.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div>سلتك فارغة</div><div style="font-size:12px;">أضف بعض الألعاب لتبدأ التسوق</div></div>'; fe.style.display='none'; return; }
-  el.innerHTML=cart.map(g=>`<div class="cart-item"><div class="cart-item-img" style="background:${g.bg}">${g.emoji}</div><div class="cart-item-info"><div class="cart-item-title">${g.title}</div><div class="cart-item-platform">${g.platform} • ${g.genre}</div><div class="cart-item-price">${g.price===0?'مجاني':'$'+g.price}</div></div><button class="cart-item-remove" onclick="removeFromCart(${g.id})">✕</button></div>`).join('');
+  el.innerHTML=cart.map(g=>`<div class="cart-item"><div class="cart-item-img" style="background:${g.bg}">${g.emoji}</div><div class="cart-item-info"><div class="cart-item-title">${g.title}</div><div class="cart-item-platform">${g.platform} • ${g.genre}</div><div class="cart-item-price">${g.price===0?'مجاني':fmtIQD(g.price)}</div></div><button class="cart-item-remove" onclick="removeFromCart(${g.id})">✕</button></div>`).join('');
   const t=cart.reduce((s,g)=>s+g.price,0);
-  document.getElementById('cartSubtotal').textContent='$'+t.toFixed(2);
-  document.getElementById('cartTotal').textContent='$'+t.toFixed(2);
+  document.getElementById('cartSubtotal').textContent=fmtIQD(t);
+  document.getElementById('cartTotal').textContent=fmtIQD(t);
   fe.style.display='block';
 }
 function openCart() { document.getElementById('cartPanel').classList.add('active'); document.getElementById('cartOverlay').classList.add('active'); }
@@ -2400,8 +2406,8 @@ function openProduct(id) {
     :`<div><div class="pm-meta-label">التقييم</div><div class="pm-meta-val">⭐ ${g.rating} (${g.rc?(g.rc/1000).toFixed(1)+'k':'جديد'})</div></div>
     <div><div class="pm-meta-label">${isCard?'نوع البطاقة':'المنصة'}</div><div class="pm-meta-val">${isCard?cm.label:(g.platform||'—')}</div></div>`}`;
 
-  document.getElementById('pmOld').textContent=g.oldPrice?'$'+g.oldPrice:'';
-  document.getElementById('pmPrice').textContent=g.price===0?'مجاني':'$'+g.price;
+  document.getElementById('pmOld').textContent=g.oldPrice?fmtIQD(g.oldPrice):'';
+  document.getElementById('pmPrice').textContent=g.price===0?'مجاني':fmtIQD(g.price);
   const btn=document.getElementById('pmAddBtn');
   btn.textContent=cart.some(c=>c.id===id)?'✓ في السلة':'🛒 '+(isOffline?'اطلب الباكج':'أضف للسلة');
   btn.onclick=()=>{addToCart(id);closeModal('productModal');};
@@ -2414,8 +2420,8 @@ function openProduct(id) {
 function openCheckout() {
   closeCart();
   const t=cart.reduce((s,g)=>s+g.price,0);
-  document.getElementById('chkSummary').innerHTML=cart.map(g=>`<div class="chk-item"><span>${g.title}</span><span>${g.price===0?'مجاني':'$'+g.price}</span></div>`).join('');
-  document.getElementById('chkTotal').innerHTML=`<span>الإجمالي</span><span class="chk-total-price">$${t.toFixed(2)}</span>`;
+  document.getElementById('chkSummary').innerHTML=cart.map(g=>`<div class="chk-item"><span>${g.title}</span><span>${g.price===0?'مجاني':fmtIQD(g.price)}</span></div>`).join('');
+  document.getElementById('chkTotal').innerHTML=`<span>الإجمالي</span><span class="chk-total-price">${fmtIQD(t)}</span>`;
   openModal('checkoutModal');
 }
 function selPay(el) { document.querySelectorAll('.pay-method').forEach(e=>e.classList.remove('active')); el.classList.add('active'); }
@@ -2542,7 +2548,7 @@ function buildSlideHTML(g, idx) {
 
   const priceHTML = g.price===0
     ? `<span class="hb-free">مجاني</span>`
-    : `${g.oldPrice?`<span class="hb-old-price">$${g.oldPrice}</span>`:''}<span class="hb-price">$${g.price}</span>`;
+    : `${g.oldPrice?`<span class="hb-old-price">${fmtIQD(g.oldPrice)}</span>`:''}<span class="hb-price">${fmtIQD(g.price)}</span>`;
 
   const coverInner = g.image
     ? `<img src="${g.image}" alt="${g.title}">`
@@ -2964,10 +2970,10 @@ function showDeliveryDetail(n) {
   document.getElementById('ddItemsList').innerHTML = items.length ? `
     <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">المنتجات المشتراة</div>
     ${items.map(i=>`<div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-secondary);padding:4px 0;border-bottom:1px solid var(--border);">
-      <span>${i.title}</span><span style="color:var(--accent);font-family:'Orbitron',sans-serif;font-size:12px;">${i.price===0?'مجاني':'$'+i.price}</span>
+      <span>${i.title}</span><span style="color:var(--accent);font-family:'Orbitron',sans-serif;font-size:12px;">${i.price===0?'مجاني':fmtIQD(i.price)}</span>
     </div>`).join('')}
     <div style="display:flex;justify-content:space-between;font-size:14px;font-weight:700;padding-top:8px;">
-      <span>الإجمالي</span><span style="color:var(--accent);font-family:'Orbitron',sans-serif;">$${(n.total||0).toFixed(2)}</span>
+      <span>الإجمالي</span><span style="color:var(--accent);font-family:'Orbitron',sans-serif;">${fmtIQD(n.total||0)}</span>
     </div>` : '';
   openModal('deliveryDetailModal');
 }
@@ -3153,9 +3159,9 @@ function loadProfileModal() {
         <span class="order-status ${o.status==='مفعّل'?'active':o.status==='قيد المراجعة'?'pending':'cancelled'}">${o.status}</span>
       </div>
       <div class="order-items">
-        ${o.items.map(i=>`<div class="order-item-row"><span>${i.title}</span><span>${i.price===0?'مجاني':'$'+i.price}</span></div>`).join('')}
+        ${o.items.map(i=>`<div class="order-item-row"><span>${i.title}</span><span>${i.price===0?'مجاني':fmtIQD(i.price)}</span></div>`).join('')}
       </div>
-      <div class="order-total"><span>الإجمالي</span><span class="order-total-price">$${o.total.toFixed(2)}</span></div>
+      <div class="order-total"><span>الإجمالي</span><span class="order-total-price">${fmtIQD(o.total)}</span></div>
     </div>`).join('');
 }
 
