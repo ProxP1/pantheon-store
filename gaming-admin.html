@@ -1645,9 +1645,14 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);min-hei
 const ADMIN_PWD_KEY      = 'pantheon_admin_pwd';
 
 // ===== CURRENCY: IRAQI DINAR =====
+const ARABIC_DIGITS = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+function toArabicDigits(str) {
+  return String(str).replace(/[0-9]/g, d => ARABIC_DIGITS[d]);
+}
 function fmtIQD(amount) {
   if(amount === 0 || amount === null || amount === undefined) return 'مجاني';
-  return Math.round(amount).toLocaleString('en-US') + ' د.ع';
+  const withCommas = Math.round(amount).toLocaleString('en-US');
+  return toArabicDigits(withCommas) + ' د.ع';
 }
 const ADMIN_SETTINGS_KEY = 'pantheon_admin_settings';
 

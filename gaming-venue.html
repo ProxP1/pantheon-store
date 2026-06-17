@@ -1826,8 +1826,8 @@ window.addEventListener('resize', () => {
       <div class="sidebar-section">
         <div class="sidebar-section-title">السعر الأقصى</div>
         <div style="padding:0 4px;">
-          <input type="range" min="0" max="150000" step="5000" value="150000" style="width:100%;accent-color:var(--accent);" oninput="maxPrice=+this.value;document.getElementById('maxPriceVal').textContent=(+this.value).toLocaleString('en-US')+' د.ع';renderStore()">
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;"><span>0 د.ع</span><span id="maxPriceVal">150,000 د.ع</span></div>
+          <input type="range" min="0" max="150000" step="5000" value="150000" style="width:100%;accent-color:var(--accent);" oninput="maxPrice=+this.value;document.getElementById('maxPriceVal').textContent=toArabicDigits((+this.value).toLocaleString('en-US'))+' د.ع';renderStore()">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);margin-top:6px;"><span>٠ د.ع</span><span id="maxPriceVal">١٥٠,٠٠٠ د.ع</span></div>
         </div>
       </div>
       <hr class="sidebar-divider">
@@ -1907,9 +1907,14 @@ window.addEventListener('resize', () => {
 
 <script>
 // ===== CURRENCY: IRAQI DINAR =====
+const ARABIC_DIGITS = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+function toArabicDigits(str) {
+  return String(str).replace(/[0-9]/g, d => ARABIC_DIGITS[d]);
+}
 function fmtIQD(amount) {
   if(amount === 0 || amount === null || amount === undefined) return 'مجاني';
-  return Math.round(amount).toLocaleString('en-US') + ' د.ع';
+  const withCommas = Math.round(amount).toLocaleString('en-US');
+  return toArabicDigits(withCommas) + ' د.ع';
 }
 
 // DATA
