@@ -3701,6 +3701,7 @@ function applyBannerAdmin() {
     slideIds:      adminBannerIds,
   };
   sendCmd({ type: 'BANNER_CONFIG', config });
+  saveAdminSetting('bannerConfig', config);
   log('🎬 تم تطبيق إعدادات البنر (' + adminBannerIds.length + ' شرائح)', 'success');
   notify('✅ تم تطبيق البنر على المتجر فوراً');
 }

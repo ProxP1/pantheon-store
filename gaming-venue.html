@@ -2068,6 +2068,80 @@ function persistGames() {
 const _savedGames = loadSavedGames();
 if(_savedGames) games = _savedGames;
 
+// ===== ADMIN SETTINGS PERSISTENCE =====
+// Reads the same key the admin panel writes to, so settings survive page reloads
+const ADMIN_SETTINGS_KEY_VENUE = 'pantheon_admin_settings';
+
+function getAdminSettingVenue(key, defaultVal) {
+  try {
+    const settings = JSON.parse(localStorage.getItem(ADMIN_SETTINGS_KEY_VENUE) || '{}');
+    return key in settings ? settings[key] : defaultVal;
+  } catch { return defaultVal; }
+}
+
+function applyStoredAdminSettings() {
+  // Store name
+  const storeName = getAdminSettingVenue('storeName', null);
+  if(storeName) {
+    const logoEl = document.getElementById('logoName');
+    if(logoEl) logoEl.textContent = storeName;
+    const fn = document.getElementById('footerName'); if(fn) fn.textContent = storeName.toUpperCase();
+    const fy = document.getElementById('footerYear'); if(fy) fy.textContent = storeName;
+    document.title = storeName + ' - متجر الألعاب الإلكترونية';
+  }
+
+  // Promo code
+  const promoCode = getAdminSettingVenue('promoCode', null);
+  if(promoCode) {
+    const el = document.getElementById('promoDisplay');
+    if(el) el.textContent = promoCode;
+  }
+
+  // Promo banner main/sub text
+  const mainText = getAdminSettingVenue('promoMainText', null);
+  if(mainText) {
+    const el = document.getElementById('promoMainTextDisplay') || document.querySelector('.promo-text');
+    if(el) el.textContent = mainText;
+  }
+  const subText = getAdminSettingVenue('promoSubText', null);
+  if(subText) {
+    const el = document.getElementById('promoSubTextDisplay') || document.querySelector('.promo-sub');
+    if(el) el.textContent = subText;
+  }
+
+  // Banner visibility
+  const bannerVisible = getAdminSettingVenue('bannerVisible', null);
+  if(bannerVisible !== null) {
+    const el = document.getElementById('promoBanner') || document.querySelector('.promo-banner');
+    if(el) el.style.display = bannerVisible ? 'flex' : 'none';
+  }
+
+  // Domain / canonical link
+  const domain = localStorage.getItem('pantheon_domain');
+  if(domain) {
+    let can = document.querySelector('link[rel="canonical"]');
+    if(!can) { can = document.createElement('link'); can.rel = 'canonical'; document.head.appendChild(can); }
+    can.href = 'https://' + domain;
+  }
+
+  // Hero banner config (slides selection + display options)
+  const bannerConfigSaved = getAdminSettingVenue('bannerConfig', null);
+  if(bannerConfigSaved) {
+    Object.assign(bannerConfig, bannerConfigSaved);
+  }
+}
+
+// ===== LEGAL PAGES (Terms / Privacy) =====
+const LEGAL_KEY_VENUE = 'pantheon_legal_pages';
+function getLegalPagesVenue() {
+  try { return JSON.parse(localStorage.getItem(LEGAL_KEY_VENUE)) || {}; }
+  catch { return {}; }
+}
+function saveLegalPagesVenue(pages) {
+  try { localStorage.setItem(LEGAL_KEY_VENUE, JSON.stringify(pages)); }
+  catch(e) { console.error('Failed to save legal pages:', e); }
+}
+
 let cart=[], wishlist=new Set(), adminPwd='asdasdFG12';
 let genreFilter='all', platformFilter='all', cardTypeFilter='all', maxPrice=100, minRating=0, viewMode='grid';
 
@@ -3134,7 +3208,7 @@ function loadRatingsIntoGames() {
 }
 
 // INIT
-loadRatingsIntoGames(); renderHome(); renderBanner(); updateCartUI(); updateCounts();
+loadRatingsIntoGames(); applyStoredAdminSettings(); renderHome(); renderBanner(); updateCartUI(); updateCounts();
 
 // ===== ADMIN PANEL COMMUNICATION =====
 function openAdminPanel() {
