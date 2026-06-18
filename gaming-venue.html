@@ -60,7 +60,7 @@ body.fs-large  .modal-title { font-size:22px; }
 ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
 
 /* NAVBAR */
-.navbar { position:fixed; top:0; left:0; right:0; height:60px; background:rgba(8,10,14,0.97); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 28px; gap:20px; z-index:200; }
+.navbar { position:fixed; top:0; left:0; right:0; height:60px; background:rgba(8,10,14,0.97); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 28px; gap:20px; z-index:200; transform: translateZ(0); -webkit-transform: translateZ(0); will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .logo { font-family:'Orbitron',sans-serif; font-size:19px; font-weight:900; color:var(--text-primary); letter-spacing:2px; display:flex; align-items:center; gap:8px; cursor:pointer; white-space:nowrap; }
 .logo span { color:var(--accent); }
 .nav-links { display:flex; gap:2px; flex:1; }
@@ -963,6 +963,30 @@ body.fs-large  .modal-title { font-size:22px; }
   font-weight: 700;
 }
 .reviews-list { max-height: 280px; overflow-y: auto; }
+
+/* ===== LEGAL PAGES MODAL ===== */
+.legal-modal { width: min(640px, calc(100vw - 24px)); max-height: calc(100vh - 32px); overflow-y: auto; padding: 0; }
+.legal-modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: var(--bg-panel); z-index: 5;
+}
+.legal-modal-title { font-size: 18px; font-weight: 700; }
+.legal-modal-close {
+  background: rgba(255,255,255,0.06); border: none; border-radius: 8px;
+  width: 32px; height: 32px; color: var(--text-secondary); cursor: pointer;
+  font-size: 16px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.legal-modal-close:hover { background: rgba(232,35,42,0.15); color: var(--accent); }
+.legal-modal-body {
+  padding: 24px; font-size: 14px; line-height: 1.9; color: var(--text-secondary);
+  white-space: pre-wrap;
+}
+.legal-modal-body h3 { color: var(--text-primary); font-size: 15px; margin: 18px 0 8px; }
+.legal-modal-body p { margin-bottom: 12px; }
+.legal-empty { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+.legal-empty-icon { font-size: 36px; margin-bottom: 12px; }
 .user-btn { display:flex; align-items:center; gap:8px; background:rgba(61,139,255,0.1); border:1px solid rgba(61,139,255,0.2); border-radius:10px; padding:7px 14px; color:var(--text-primary); font-family:'Cairo',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all 0.2s; }
 .user-btn:hover { background:rgba(61,139,255,0.18); }
 .user-avatar { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent-dark)); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:900; color:#fff; flex-shrink:0; }
@@ -1067,7 +1091,7 @@ body.fs-large  .modal-title { font-size:22px; }
   .admin-btn { padding: 7px 10px; font-size: 11px; gap: 4px; }
   .user-btn { padding: 6px 9px; font-size: 12px; }
   .user-btn span#userNavLabel { display: none; }
-  .nav-actions { gap: 6px; }
+  .nav-actions { gap: 6px; flex-direction: row-reverse; margin-inline-start: auto; }
 
   /* Ticker */
   .ticker-label { padding: 0 10px; font-size: 10px; }
@@ -1262,7 +1286,7 @@ body.fs-large  .modal-title { font-size:22px; }
 .navbar           { z-index: 200 !important; }
 .user-wrap        { z-index: 210; }
 .user-dropdown    { z-index: 210; }
-#mobileSearchBar  { z-index: 190; }
+#mobileSearchBar  { z-index: 190; transform: translateZ(0); -webkit-transform: translateZ(0); will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .sidebar-backdrop { z-index: 149; }
 .cart-overlay     { z-index: 300; }
 .cart-panel       { z-index: 301; }
@@ -1345,12 +1369,12 @@ body.fs-large  .modal-title { font-size:22px; }
    RESPONSIVE OVERRIDES
 ════════════════════════════════════ */
 @media (max-width: 600px) {
-  /* Mobile: navbar is 54px */
-  .hero-banner    { margin-top: 54px; }
+  /* Mobile: navbar is 54px. Search bar shows on both home and store pages */
+  .hero-banner    { margin-top: 100px; } /* 54px navbar + 46px search bar */
   #storePage      { padding-top: 100px; } /* 54px navbar + 46px search bar */
-  .sidebar        { top: 54px; height: calc(100vh - 54px); }
+  .sidebar        { top: 100px; height: calc(100vh - 100px); }
   #mobileSearchBar { top: 54px; }
-  .sidebar.mobile-open { top: 54px; }
+  .sidebar.mobile-open { top: 100px; }
 
   .categories-strip,
   .home-section   { padding-left: 14px; padding-right: 14px; }
@@ -1661,6 +1685,17 @@ body.fs-large  .modal-title { font-size:22px; }
   </div>
 </div>
 
+<!-- LEGAL PAGES MODAL -->
+<div class="modal-overlay" id="legalModal" onclick="if(event.target===this)closeModal('legalModal')">
+  <div class="modal legal-modal" onclick="event.stopPropagation()">
+    <div class="legal-modal-header">
+      <div class="legal-modal-title" id="legalModalTitle">الشروط والأحكام</div>
+      <button class="legal-modal-close" onclick="closeModal('legalModal')">✕</button>
+    </div>
+    <div class="legal-modal-body" id="legalModalBody"></div>
+  </div>
+</div>
+
 <!-- DELIVERY DETAIL MODAL -->
 <div class="modal-overlay" id="deliveryDetailModal" onclick="closeModal('deliveryDetailModal')">
   <div class="modal delivery-detail-modal" onclick="event.stopPropagation()">
@@ -1734,19 +1769,24 @@ body.fs-large  .modal-title { font-size:22px; }
   </div>
 </nav>
 
-<!-- MOBILE SEARCH BAR -->
-<div id="mobileSearchBar" style="display:none;position:sticky;z-index:190;background:rgba(8,10,14,0.97);border-bottom:1px solid var(--border);padding:8px 12px;top:60px;">
+<!-- MOBILE SEARCH BAR — fixed above hero banner, home page only -->
+<div id="mobileSearchBar" style="display:none;position:fixed;left:0;right:0;z-index:190;background:rgba(8,10,14,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:8px 12px;top:54px;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;contain:layout style;">
   <div style="position:relative;">
     <input class="nav-search" type="text" placeholder="🔍 ابحث عن لعبة أو بطاقة..." id="mobileSearchInput" style="width:100%;" oninput="syncSearch(this.value)">
   </div>
 </div>
 <script>
-// Show mobile search on small screens
-if(window.innerWidth <= 600) {
-  document.getElementById('mobileSearchBar').style.display = 'block';
+// Show mobile search bar on both home page (above hero banner) and store page (above games grid), on small screens
+function updateMobileSearchVisibility(page) {
+  const bar = document.getElementById('mobileSearchBar');
+  if(!bar) return;
+  const isMobile = window.innerWidth <= 600;
+  bar.style.display = isMobile ? 'block' : 'none';
 }
+updateMobileSearchVisibility('home');
 window.addEventListener('resize', () => {
-  document.getElementById('mobileSearchBar').style.display = window.innerWidth<=600 ? 'block' : 'none';
+  const isHome = document.getElementById('homePage').style.display !== 'none';
+  updateMobileSearchVisibility(isHome ? 'home' : 'store');
 });
 </script>
 
@@ -1783,7 +1823,14 @@ window.addEventListener('resize', () => {
   <div class="main-layout">
     <aside class="sidebar" id="storeSidebar">
       <div class="sidebar-section">
-        <div class="sidebar-section-title">التصنيف</div>
+        <div class="sidebar-section-title">نوع المحتوى</div>
+        <div class="filter-option active" onclick="setContentType(this,'all')"><span>🎮 الكل</span><span class="filter-count" id="cAllContent">18</span></div>
+        <div class="filter-option" onclick="setContentType(this,'games')"><span>🕹️ الألعاب فقط</span><span class="filter-count" id="cGamesOnly">0</span></div>
+        <div class="filter-option" onclick="setContentType(this,'cards')"><span>💳 البطاقات الرقمية</span><span class="filter-count" id="cCards">0</span></div>
+      </div>
+      <hr class="sidebar-divider" id="genreFilterDivider" style="display:none;">
+      <div class="sidebar-section" id="genreFilterSection" style="display:none;">
+        <div class="sidebar-section-title">تصنيف اللعبة</div>
         <div class="filter-option active" onclick="setGenre(this,'all')"><span>🎮 الكل</span><span class="filter-count" id="cAll">18</span></div>
         <div class="filter-option" onclick="setGenre(this,'FPS')"><span>🔫 FPS</span><span class="filter-count" id="cFPS">4</span></div>
         <div class="filter-option" onclick="setGenre(this,'RPG')"><span>⚔️ RPG</span><span class="filter-count" id="cRPG">5</span></div>
@@ -1791,11 +1838,10 @@ window.addEventListener('resize', () => {
         <div class="filter-option" onclick="setGenre(this,'رياضة')"><span>⚽ رياضة</span><span class="filter-count" id="cSport">2</span></div>
         <div class="filter-option" onclick="setGenre(this,'رعب')"><span>😱 رعب</span><span class="filter-count" id="cHorror">2</span></div>
         <div class="filter-option" onclick="setGenre(this,'مجانية')"><span>🎁 مجانية</span><span class="filter-count" id="cFree">1</span></div>
-        <div class="filter-option" onclick="setGenre(this,'بطاقة')"><span>💳 بطاقات رقمية</span><span class="filter-count" id="cCards">0</span></div>
-        <div class="filter-option" onclick="setCardType(this,'steamoffline')"><span>💻 Steam أوفلاين</span><span class="filter-count" id="cSteamOff">0</span></div>
+        <div class="filter-option" onclick="setGenre(this,'أوفلاين')"><span>💻 Steam أوفلاين</span><span class="filter-count" id="cOfflineGenre">0</span></div>
       </div>
-      <hr class="sidebar-divider">
-      <div class="sidebar-section">
+      <hr class="sidebar-divider" id="cardTypeSectionDivider" style="display:none;">
+      <div class="sidebar-section" id="cardTypeSection" style="display:none;">
         <div class="sidebar-section-title">نوع البطاقة</div>
         <div class="filter-option" onclick="setCardType(this,'all')"><span>🃏 الكل</span></div>
         <div class="filter-option" onclick="setCardType(this,'steam')"><span>🎮 Steam</span></div>
@@ -1880,23 +1926,23 @@ window.addEventListener('resize', () => {
     </div>
     <div>
       <div class="footer-col-title">المتجر</div>
-      <div class="footer-link">جميع الألعاب</div>
-      <div class="footer-link">العروض</div>
-      <div class="footer-link">الأكثر مبيعاً</div>
-      <div class="footer-link">الجديد</div>
+      <div class="footer-link" onclick="setNav(document.querySelectorAll('.nav-link')[1]);showPage('store')">جميع الألعاب</div>
+      <div class="footer-link" onclick="goToCards()">البطاقات</div>
+      <div class="footer-link" onclick="setNav(document.querySelectorAll('.nav-link')[1]);showPage('store')">العروض</div>
+      <div class="footer-link" onclick="setNav(document.querySelectorAll('.nav-link')[1]);showPage('store')">الأكثر مبيعاً</div>
+      <div class="footer-link" onclick="setNav(document.querySelectorAll('.nav-link')[1]);showPage('store')">الجديد</div>
     </div>
     <div>
       <div class="footer-col-title">الدعم</div>
       <div class="footer-link">مركز المساعدة</div>
-      <div class="footer-link">سياسة الاسترجاع</div>
-      <div class="footer-link">تتبع الطلب</div>
-      <div class="footer-link">تواصل معنا</div>
+      <div class="footer-link" onclick="openLegalModal('refund')">سياسة الاسترجاع</div>
+      <div class="footer-link" onclick="openLegalModal('contact')">تواصل معنا</div>
     </div>
     <div>
       <div class="footer-col-title">قانوني</div>
-      <div class="footer-link">الشروط والأحكام</div>
-      <div class="footer-link">سياسة الخصوصية</div>
-      <div class="footer-link">ملفات الارتباط</div>
+      <div class="footer-link" onclick="openLegalModal('terms')">الشروط والأحكام</div>
+      <div class="footer-link" onclick="openLegalModal('privacy')">سياسة الخصوصية</div>
+      <div class="footer-link" onclick="openLegalModal('cookies')">ملفات الارتباط</div>
     </div>
   </div>
   <div class="footer-bottom">
@@ -2153,8 +2199,66 @@ function saveLegalPagesVenue(pages) {
   catch(e) { console.error('Failed to save legal pages:', e); }
 }
 
+const LEGAL_TITLES_VENUE = {
+  terms:   'الشروط والأحكام',
+  privacy: 'سياسة الخصوصية',
+  refund:  'سياسة الاسترجاع',
+  cookies: 'ملفات الارتباط',
+  about:   'عن المتجر',
+  contact: 'تواصل معنا',
+};
+
+const LEGAL_DEFAULTS_VENUE = {
+  terms: `مرحباً بك في باثيون. باستخدامك لهذا المتجر فإنك توافق على الشروط التالية:
+
+١. جميع المنتجات الرقمية (الألعاب، البطاقات، الباكجات) تُسلَّم عبر حسابك بعد تأكيد الدفع وقبول الطلب من الإدارة.
+٢. الأسعار المعروضة قابلة للتغيير دون إشعار مسبق، ولا تؤثر على الطلبات المؤكدة سابقاً.
+٣. يلتزم العضو بعدم مشاركة بيانات حسابه أو الأكواد المُستلَمة مع أي طرف ثالث.
+٤. يحق للإدارة تعليق أو حظر أي حساب يثبت تورطه في عمليات احتيال أو إساءة استخدام.
+٥. باستخدامك للموقع فإنك تقر بأنك بلغت السن القانونية المسموح بها في بلدك للتعامل التجاري الرقمي.
+
+للاستفسار حول أي بند من هذه الشروط، يرجى التواصل معنا عبر صفحة "تواصل معنا".`,
+  privacy: `نحن في باثيون نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية.
+
+١. المعلومات التي نجمعها: الاسم، البريد الإلكتروني، رقم الهاتف (اختياري)، وسجل الطلبات.
+٢. لا نشارك بياناتك مع أي طرف ثالث لأغراض تسويقية دون موافقتك.
+٣. تُستخدم بياناتك فقط لإتمام عمليات الشراء والتواصل بخصوص طلباتك.
+٤. يحق لك في أي وقت طلب حذف حسابك وكل البيانات المرتبطة به.
+٥. نستخدم تقنيات تخزين محلية (localStorage) لحفظ تفضيلاتك وسلة التسوق على جهازك فقط.
+
+إذا كانت لديك أي استفسارات بخصوص خصوصيتك، تواصل معنا في أي وقت.`,
+  cookies: `يستخدم هذا الموقع تقنيات تخزين محلية بدلاً من ملفات تعريف الارتباط التقليدية:
+
+١. نستخدم localStorage لحفظ بيانات حسابك، سلة التسوق، وتفضيلاتك (مثل حجم الخط).
+٢. هذه البيانات تبقى محفوظة على متصفحك فقط ولا تُرسَل لأي خادم خارجي.
+٣. يمكنك حذف هذه البيانات في أي وقت من إعدادات المتصفح (مسح بيانات الموقع).
+٤. تسجيل الخروج من حسابك لا يحذف بيانات السلة المحفوظة محلياً تلقائياً.
+
+استخدامك المستمر للموقع يعني موافقتك على هذه الآلية.`,
+  refund: `سياسة الاسترجاع لمنتجات باثيون الرقمية:
+
+١. لطبيعة المنتجات الرقمية (أكواد، حسابات، بطاقات)، لا يمكن استرجاعها بعد تسليم الكود أو بيانات الحساب.
+٢. في حال وجود خلل في المنتج المُسلَّم (كود غير صالح مثلاً)، يُستبدَل فوراً بعد التحقق من الإدارة.
+٣. الطلبات "قيد المراجعة" التي لم تُسلَّم بعد يمكن إلغاؤها بالتواصل مع الدعم.`,
+  about: `باثيون هو متجر إلكتروني متخصص ببيع الألعاب الرقمية، باكجات الستيم الأوفلاين، وبطاقات الشحن المختلفة (Steam، PlayStation، Xbox، شبكات الهاتف المحلية) بأفضل الأسعار وأسرع وقت تسليم.`,
+  contact: `للتواصل معنا واستفساراتك، يرجى استخدام معلومات التواصل المتوفرة في صفحة "تواصل معنا" أو عبر قنوات التواصل الاجتماعي الخاصة بالمتجر.`,
+};
+
+function openLegalModal(page) {
+  const saved = getLegalPagesVenue();
+  const text  = (saved[page] && saved[page].trim()) ? saved[page] : LEGAL_DEFAULTS_VENUE[page];
+  document.getElementById('legalModalTitle').textContent = LEGAL_TITLES_VENUE[page] || 'معلومات';
+  const bodyEl = document.getElementById('legalModalBody');
+  if(text) {
+    bodyEl.textContent = text;
+  } else {
+    bodyEl.innerHTML = `<div class="legal-empty"><div class="legal-empty-icon">📄</div><div>لم يتم إضافة محتوى لهذه الصفحة بعد</div></div>`;
+  }
+  openModal('legalModal');
+}
+
 let cart=[], wishlist=new Set(), adminPwd='asdasdFG12';
-let genreFilter='all', platformFilter='all', cardTypeFilter='all', maxPrice=150000, minRating=0, viewMode='grid';
+let genreFilter='all', platformFilter='all', cardTypeFilter='all', contentType='all', maxPrice=150000, minRating=0, viewMode='grid';
 
 // PAGES
 function showPage(p) {
@@ -2162,6 +2266,7 @@ function showPage(p) {
   document.getElementById('storePage').style.display = p==='store'?'block':'none';
   document.getElementById('siteFooter').style.display = p==='home'?'block':'none';
   if(p==='store') renderStore();
+  updateMobileSearchVisibility(p);
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function setNav(el) {
@@ -2260,7 +2365,14 @@ function renderStore() {
   let f = [...games];
   const q = document.getElementById('searchInput').value.trim().toLowerCase();
   if(q) f = f.filter(g=>g.title.toLowerCase().includes(q)||g.genre.toLowerCase().includes(q));
-  if(genreFilter!=='all') { if(genreFilter==='مجانية') f=f.filter(g=>g.price===0); else if(genreFilter==='بطاقة') f=f.filter(g=>g.cardType&&g.cardType!=='game'); else f=f.filter(g=>g.genre===genreFilter); }
+
+  // Content type separation: games (includes steam-offline) / cards / all
+  if(contentType==='games')   f = f.filter(g=>!g.cardType || g.cardType==='game' || g.cardType==='steamoffline');
+  else if(contentType==='cards')   f = f.filter(g=>g.cardType && g.cardType!=='game' && g.cardType!=='steamoffline');
+
+  // Genre filter only applies within games (sidebar hides this section otherwise)
+  if(genreFilter!=='all') { if(genreFilter==='مجانية') f=f.filter(g=>g.price===0); else f=f.filter(g=>g.genre===genreFilter); }
+
   if(platformFilter!=='all') f=f.filter(g=>g.platform===platformFilter);
   if(cardTypeFilter!=='all') f=f.filter(g=>g.cardType===cardTypeFilter);
   f=f.filter(g=>g.price<=maxPrice);
@@ -2279,15 +2391,17 @@ function renderStore() {
 }
 
 function updateCounts() {
-  document.getElementById('cAll').textContent=games.length;
+  document.getElementById('cAllContent').textContent=games.length;
+  document.getElementById('cGamesOnly').textContent=games.filter(g=>!g.cardType||g.cardType==='game'||g.cardType==='steamoffline').length;
+  document.getElementById('cAll').textContent=games.filter(g=>!g.cardType||g.cardType==='game'||g.cardType==='steamoffline').length;
   document.getElementById('cFPS').textContent=games.filter(g=>g.genre==='FPS').length;
   document.getElementById('cRPG').textContent=games.filter(g=>g.genre==='RPG').length;
   document.getElementById('cAdv').textContent=games.filter(g=>g.genre==='مغامرة').length;
   document.getElementById('cSport').textContent=games.filter(g=>g.genre==='رياضة').length;
   document.getElementById('cHorror').textContent=games.filter(g=>g.genre==='رعب').length;
   document.getElementById('cFree').textContent=games.filter(g=>g.price===0).length;
+  document.getElementById('cOfflineGenre').textContent=games.filter(g=>g.cardType==='steamoffline').length;
   document.getElementById('cCards').textContent=games.filter(g=>g.cardType&&g.cardType!=='game'&&g.cardType!=='steamoffline').length;
-  document.getElementById('cSteamOff').textContent=games.filter(g=>g.cardType==='steamoffline').length;
 }
 
 function syncSearch(val) {
@@ -2302,14 +2416,68 @@ function syncSearch(val) {
     document.getElementById('siteFooter').style.display = 'none';
     document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
     document.querySelectorAll('.nav-link')[1]?.classList.add('active');
+    updateMobileSearchVisibility('store');
   }
   renderStore();
 }
 function filterGames() { renderStore(); }
 
-function setGenre(el,g) { document.querySelectorAll('.sidebar .filter-option').forEach(e=>e.classList.remove('active')); el.classList.add('active'); genreFilter=g; cardTypeFilter='all'; renderStore(); }
+function setGenre(el,g) {
+  document.querySelectorAll('#genreFilterSection .filter-option').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  genreFilter = g;
+  renderStore();
+}
+
+function setContentType(el,type) {
+  document.querySelectorAll('.sidebar > .sidebar-section:first-of-type .filter-option').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  contentType = type;
+  genreFilter = 'all';
+  cardTypeFilter = 'all';
+
+  const genreSection     = document.getElementById('genreFilterSection');
+  const genreDivider     = document.getElementById('genreFilterDivider');
+  const cardTypeSection  = document.getElementById('cardTypeSection');
+  const cardTypeDivider  = document.getElementById('cardTypeSectionDivider');
+
+  if(type === 'games') {
+    // Show game genre filters only
+    genreSection.style.display    = 'block';
+    genreDivider.style.display    = 'block';
+    cardTypeSection.style.display = 'none';
+    cardTypeDivider.style.display = 'none';
+  } else if(type === 'cards') {
+    // Show card type filters only
+    genreSection.style.display    = 'none';
+    genreDivider.style.display    = 'none';
+    cardTypeSection.style.display = 'block';
+    cardTypeDivider.style.display = 'block';
+  } else {
+    // 'all': no sub-filter section is relevant — hide both
+    genreSection.style.display    = 'none';
+    genreDivider.style.display    = 'none';
+    cardTypeSection.style.display = 'none';
+    cardTypeDivider.style.display = 'none';
+  }
+
+  // Reset genre section active state to "all"
+  document.querySelectorAll('#genreFilterSection .filter-option').forEach((e,i)=>e.classList.toggle('active', i===0));
+  document.querySelectorAll('#cardTypeSection .filter-option').forEach((e,i)=>e.classList.toggle('active', i===0));
+
+  renderStore();
+}
+
+function goToCards() {
+  setNav(document.querySelectorAll('.nav-link')[1]);
+  showPage('store');
+  const cardsOption = document.querySelector('.sidebar > .sidebar-section:first-of-type .filter-option[onclick*="\'cards\'"]');
+  if(cardsOption) setContentType(cardsOption, 'cards');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
 function setPlatform(el,p) { document.querySelectorAll('.platform-chip').forEach(e=>e.classList.remove('active')); el.classList.add('active'); platformFilter=p; renderStore(); }
-function setCardType(el,t) { document.querySelectorAll('.sidebar .filter-option').forEach(e=>e.classList.remove('active')); el.classList.add('active'); cardTypeFilter=t; genreFilter='all'; renderStore(); }
+function setCardType(el,t) { document.querySelectorAll('#cardTypeSection .filter-option').forEach(e=>e.classList.remove('active')); el.classList.add('active'); cardTypeFilter=t; renderStore(); }
 function setRating(el,r) { document.querySelectorAll('.sidebar-section:last-child .filter-option').forEach(e=>e.classList.remove('active')); el.classList.add('active'); minRating=r; renderStore(); }
 function setView(v) { viewMode=v; document.getElementById('gvBtn').classList.toggle('active',v==='grid'); document.getElementById('lvBtn').classList.toggle('active',v==='list'); renderStore(); }
 
@@ -2883,6 +3051,8 @@ setInterval(() => {
 
 // ===== FONT SIZE =====
 
+const NOTIF_KEY_PREFIX = 'pantheon_notifs_';
+
 function getUserNotifs() {
   if(!currentUser) return [];
   try { return JSON.parse(localStorage.getItem(NOTIF_KEY_PREFIX + currentUser.id)) || []; }
@@ -3331,6 +3501,30 @@ ch.onmessage = (e) => {
       updateBellBadge();
       notify('✅ تم قبول طلبك #'+cmd.orderId+' — اضغط 🔔 للتفاصيل');
       setTimeout(()=>showDeliveryDetail(notifs[0]), 1500);
+    }
+  }
+
+  else if(cmd.type === 'ORDER_STATUS_CHANGED') {
+    const orders = getOrders();
+    const idx = orders.findIndex(o=>o.orderId===cmd.orderId);
+    if(idx>=0) {
+      orders[idx].status = cmd.status;
+      saveOrders(orders);
+      // Notify the owner if they're currently logged in and it's a cancellation
+      if(currentUser && orders[idx].userId===currentUser.id && cmd.status==='ملغي') {
+        const notifs = getUserNotifs();
+        notifs.unshift({
+          id: 'notif_'+Date.now(), orderId:cmd.orderId, type:'cancelled',
+          message: 'تم إلغاء طلبك رقم #'+cmd.orderId+'. للاستفسار يرجى التواصل مع الدعم.',
+          items:orders[idx].items||[], total:orders[idx].total||0,
+          sentAt: new Date().toLocaleString('ar-IQ'), read:false,
+        });
+        saveUserNotifs(notifs);
+        updateBellBadge();
+        notify('⚠️ تم إلغاء طلبك #'+cmd.orderId);
+      }
+      // Refresh profile modal order list if currently open
+      if(document.getElementById('profileModal')?.classList.contains('active')) loadProfileModal();
     }
   }
 

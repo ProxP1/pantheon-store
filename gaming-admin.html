@@ -1820,6 +1820,16 @@ ch.onmessage = (e) => {
       refreshDashboard();
     }
   }
+
+  // Incoming UPDATE_GAME from venue (e.g. a member submitted a rating) — sync local copy
+  if(d.type === 'UPDATE_GAME' && d.game && d.game.id !== undefined) {
+    const idx = storeGames.findIndex(g => g.id === d.game.id);
+    if(idx >= 0) {
+      storeGames[idx] = { ...storeGames[idx], ...d.game };
+      saveGamesToLocalStorage();
+      if(document.getElementById('panel-games')?.classList.contains('active')) renderGamesTable();
+    }
+  }
 };
 
 // ===== SYNC & CONNECTION =====
