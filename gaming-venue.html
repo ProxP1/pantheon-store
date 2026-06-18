@@ -599,9 +599,9 @@ body.fs-large  .modal-title { font-size:22px; }
   backdrop-filter: blur(4px);
 }
 .hb-nav:hover { background: rgba(232,35,42,0.5); border-color: var(--accent); transform: translateY(-50%) scale(1.08); }
-.hb-prev { left: 20px; }
-.hb-next { right: 20px; }
-@media(max-width:600px){ .hb-prev{left:8px;} .hb-next{right:8px;} .hb-nav{width:34px;height:34px;font-size:13px;} }
+.hb-prev { right: 20px; }
+.hb-next { left: 20px; }
+@media(max-width:600px){ .hb-prev{right:8px;} .hb-next{left:8px;} .hb-nav{width:34px;height:34px;font-size:13px;} }
 
 /* Dots */
 .hb-dots {
@@ -651,13 +651,26 @@ body.fs-large  .modal-title { font-size:22px; }
 
 /* Thumbnails strip */
 .hb-thumbs {
-  position: absolute;
-  bottom: 44px; right: 24px;
+  position: relative;
+  margin-top: -80px;
+  margin-right: 24px;
   z-index: 10;
   display: flex;
+  justify-content: flex-end;
   gap: 8px;
+  pointer-events: none;
 }
-@media(max-width:600px){ .hb-thumbs{ display:none; } }
+.hb-thumbs .hb-thumb { pointer-events: auto; }
+@media(max-width:600px){
+  .hb-thumbs {
+    position: relative;
+    margin-top: 10px;
+    margin-right: 0;
+    justify-content: center;
+    padding: 0 12px;
+    flex-wrap: wrap;
+  }
+}
 .hb-thumb {
   width: 56px; height: 36px;
   border-radius: 6px;
@@ -1358,8 +1371,8 @@ body.fs-large  .modal-title { font-size:22px; }
 .cart-panel { top: 0; }
 
 /* ─── HERO BANNER NAV BUTTONS ─── */
-.hb-prev { left: 16px; }
-.hb-next { right: 16px; }
+.hb-prev { right: 16px; }
+.hb-next { left: 16px; }
 
 /* ─── STAR RATING IN MODAL ─── */
 .rating-section { position: relative; z-index: 1; }
@@ -1369,12 +1382,12 @@ body.fs-large  .modal-title { font-size:22px; }
    RESPONSIVE OVERRIDES
 ════════════════════════════════════ */
 @media (max-width: 600px) {
-  /* Mobile: navbar is 54px. Search bar shows on both home and store pages */
-  .hero-banner    { margin-top: 100px; } /* 54px navbar + 46px search bar */
-  #storePage      { padding-top: 100px; } /* 54px navbar + 46px search bar */
-  .sidebar        { top: 100px; height: calc(100vh - 100px); }
+  /* Mobile: navbar is 54px, search bar is exactly 56px. Total fixed header = 110px */
+  .hero-banner    { margin-top: 110px; }
+  #storePage      { padding-top: 110px; }
+  .sidebar        { top: 110px; height: calc(100vh - 110px); }
   #mobileSearchBar { top: 54px; }
-  .sidebar.mobile-open { top: 100px; }
+  .sidebar.mobile-open { top: 110px; }
 
   .categories-strip,
   .home-section   { padding-left: 14px; padding-right: 14px; }
@@ -1770,8 +1783,8 @@ body.fs-large  .modal-title { font-size:22px; }
 </nav>
 
 <!-- MOBILE SEARCH BAR — fixed above hero banner, home page only -->
-<div id="mobileSearchBar" style="display:none;position:fixed;left:0;right:0;z-index:190;background:rgba(8,10,14,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:8px 12px;top:54px;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;contain:layout style;">
-  <div style="position:relative;">
+<div id="mobileSearchBar" style="display:none;position:fixed;left:0;right:0;z-index:190;background:rgba(8,10,14,0.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);top:54px;height:56px;box-sizing:border-box;transform:translateZ(0);-webkit-transform:translateZ(0);will-change:transform;backface-visibility:hidden;-webkit-backface-visibility:hidden;contain:layout style;">
+  <div style="position:relative;height:100%;display:flex;align-items:center;padding:8px 12px;box-sizing:border-box;">
     <input class="nav-search" type="text" placeholder="🔍 ابحث عن لعبة أو بطاقة..." id="mobileSearchInput" style="width:100%;" oninput="syncSearch(this.value)">
   </div>
 </div>
@@ -1797,23 +1810,30 @@ window.addEventListener('resize', () => {
   <div class="hero-banner" id="heroBanner">
     <div class="hb-track" id="hbTrack"></div>
     <!-- Nav buttons -->
-    <button class="hb-nav hb-prev" onclick="hbPrev()">&#8250;</button>
-    <button class="hb-nav hb-next" onclick="hbNext()">&#8249;</button>
+    <button class="hb-nav hb-prev" onclick="hbPrev()">&#8249;</button>
+    <button class="hb-nav hb-next" onclick="hbNext()">&#8250;</button>
     <!-- Dots -->
     <div class="hb-dots" id="hbDots"></div>
     <!-- Counter -->
     <div class="hb-counter" id="hbCounter"><span id="hbCurNum">1</span> / <span id="hbTotNum">1</span></div>
-    <!-- Thumbnails -->
-    <div class="hb-thumbs" id="hbThumbs"></div>
     <!-- Progress bar -->
     <div class="hb-progress" id="hbProgress" style="width:0%"></div>
   </div>
+  <!-- Thumbnails — desktop: floating inside banner / mobile: below banner -->
+  <div class="hb-thumbs" id="hbThumbs"></div>
   <div class="home-section">
     <div class="home-section-header">
       <div><div class="home-section-title">الألعاب المميزة</div><div class="home-section-sub">أبرز الألعاب هذا الأسبوع</div></div>
       <button class="btn-outline" style="padding:9px 20px;font-size:13px;" onclick="setNav(document.querySelectorAll('.nav-link')[1]);showPage('store')">عرض الكل →</button>
     </div>
     <div class="games-grid" id="homeGrid"></div>
+  </div>
+  <div class="home-section">
+    <div class="home-section-header">
+      <div><div class="home-section-title">البطاقات</div><div class="home-section-sub">بطاقات الألعاب والشحن الرقمية</div></div>
+      <button class="btn-outline" style="padding:9px 20px;font-size:13px;" onclick="goToCards()">عرض الكل →</button>
+    </div>
+    <div class="games-grid" id="homeCardsGrid"></div>
   </div>
 </div>
 
@@ -2358,6 +2378,9 @@ function cardHTML(g, lv) {
 
 function renderHome() {
   document.getElementById('homeGrid').innerHTML = games.slice(0,6).map(g=>cardHTML(g,false)).join('');
+  const cardsOnly = games.filter(g=>g.cardType && g.cardType!=='game' && g.cardType!=='steamoffline');
+  const cardsGridEl = document.getElementById('homeCardsGrid');
+  if(cardsGridEl) cardsGridEl.innerHTML = cardsOnly.slice(0,6).map(g=>cardHTML(g,false)).join('');
   const hcEl = document.getElementById('heroCount'); if(hcEl) hcEl.textContent = games.length+'+';
 }
 
