@@ -2377,10 +2377,27 @@ function cardHTML(g, lv) {
 }
 
 function renderHome() {
-  document.getElementById('homeGrid').innerHTML = games.slice(0,6).map(g=>cardHTML(g,false)).join('');
+  const featuredGameIds = getAdminSettingVenue('featuredGameIds', null);
+  const featuredCardIds = getAdminSettingVenue('featuredCardIds', null);
+
+  let featuredGames;
+  if(Array.isArray(featuredGameIds) && featuredGameIds.length) {
+    featuredGames = featuredGameIds.map(id=>games.find(g=>g.id===id)).filter(Boolean);
+  } else {
+    featuredGames = games.slice(0,6);
+  }
+  document.getElementById('homeGrid').innerHTML = featuredGames.map(g=>cardHTML(g,false)).join('');
+
   const cardsOnly = games.filter(g=>g.cardType && g.cardType!=='game' && g.cardType!=='steamoffline');
+  let featuredCards;
+  if(Array.isArray(featuredCardIds) && featuredCardIds.length) {
+    featuredCards = featuredCardIds.map(id=>games.find(g=>g.id===id)).filter(Boolean);
+  } else {
+    featuredCards = cardsOnly.slice(0,6);
+  }
   const cardsGridEl = document.getElementById('homeCardsGrid');
-  if(cardsGridEl) cardsGridEl.innerHTML = cardsOnly.slice(0,6).map(g=>cardHTML(g,false)).join('');
+  if(cardsGridEl) cardsGridEl.innerHTML = featuredCards.map(g=>cardHTML(g,false)).join('');
+
   const hcEl = document.getElementById('heroCount'); if(hcEl) hcEl.textContent = games.length+'+';
 }
 
@@ -3500,6 +3517,10 @@ ch.onmessage = (e) => {
 
   else if(cmd.type === 'BANNER_CONFIG') {
     applyBannerConfig(cmd.config);
+  }
+
+  else if(cmd.type === 'FEATURED_CONFIG') {
+    renderHome();
   }
 
   else if(cmd.type === 'BANNER_REFRESH') {

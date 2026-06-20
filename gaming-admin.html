@@ -911,6 +911,8 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);min-hei
         <div class="sidebar-item" onclick="showPanel('settings',this)"><span class="ico">🏷️</span>إعدادات المتجر</div>
         <div class="sidebar-item" onclick="showPanel('legal',this)"><span class="ico">📄</span>الشروط والسياسات</div>
         <div class="sidebar-item" onclick="showPanel('banner',this)"><span class="ico">🎬</span>البنر المتحرك</div>
+        <div class="sidebar-item" onclick="showPanel('featured',this)"><span class="ico">⭐</span>المحتوى المميز</div>
+        <div class="sidebar-item" onclick="showPanel('homeFeatured',this)"><span class="ico">⭐</span>محتوى الصفحة الرئيسية</div>
         <div class="sidebar-item" onclick="showPanel('pricing',this)"><span class="ico">💰</span>إدارة الأسعار</div>
         <div class="sidebar-item" onclick="showPanel('promo',this)"><span class="ico">🎁</span>العروض والكودات</div>
       </div>
@@ -1239,6 +1241,62 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);min-hei
         <div style="display:flex;gap:10px;margin-top:4px;">
           <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="applyBannerAdmin()">✅ تطبيق على المتجر فوراً</button>
           <button class="btn btn-danger btn-sm" onclick="resetBannerAdmin()">↩ إعادة ضبط</button>
+        </div>
+      </div>
+
+      <!-- ═══ FEATURED CONTENT (Home page) ═══ -->
+      <div class="panel" id="panel-featured">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <div class="page-title">⭐ المحتوى المميز (الصفحة الرئيسية)</div>
+            <div class="page-sub">تحكم بالألعاب والبطاقات الظاهرة في الصفحة الرئيسية</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="applyFeaturedAdmin()">✅ تطبيق على المتجر</button>
+        </div>
+
+        <div class="two-col">
+          <!-- FEATURED GAMES -->
+          <div>
+            <div class="card">
+              <div class="card-title">🕹️ الألعاب المميزة <span class="badge" id="featuredGamesCount">0 لعبة</span></div>
+              <div style="margin-bottom:10px;font-size:12px;color:var(--t3);">اسحب لترتيب الظهور • حذف أو إضافة ألعاب</div>
+              <div id="featuredGamesList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+              <div style="margin-top:8px;">
+                <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">إضافة لعبة</div>
+                <div style="display:flex;gap:8px;">
+                  <select class="inp" id="featuredGameSelect" style="flex:1;cursor:pointer;"></select>
+                  <button class="btn btn-green btn-sm" onclick="addFeaturedGame()">+ إضافة</button>
+                </div>
+              </div>
+              <div style="margin-top:10px;">
+                <button class="btn btn-blue btn-sm btn-full" onclick="autoSelectFeaturedGames()">🤖 تحديد تلقائي (أول 6)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- FEATURED CARDS -->
+          <div>
+            <div class="card">
+              <div class="card-title">💳 البطاقات المميزة <span class="badge" id="featuredCardsCount">0 بطاقة</span></div>
+              <div style="margin-bottom:10px;font-size:12px;color:var(--t3);">اسحب لترتيب الظهور • حذف أو إضافة بطاقات</div>
+              <div id="featuredCardsList" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+              <div style="margin-top:8px;">
+                <div style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">إضافة بطاقة</div>
+                <div style="display:flex;gap:8px;">
+                  <select class="inp" id="featuredCardSelect" style="flex:1;cursor:pointer;"></select>
+                  <button class="btn btn-green btn-sm" onclick="addFeaturedCard()">+ إضافة</button>
+                </div>
+              </div>
+              <div style="margin-top:10px;">
+                <button class="btn btn-blue btn-sm btn-full" onclick="autoSelectFeaturedCards()">🤖 تحديد تلقائي (أول 6)</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:4px;">
+          <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="applyFeaturedAdmin()">✅ تطبيق على المتجر فوراً</button>
+          <button class="btn btn-danger btn-sm" onclick="resetFeaturedAdmin()">↩ إعادة ضبط (تلقائي)</button>
         </div>
       </div>
 
@@ -1767,6 +1825,7 @@ function showPanel(id, el) {
   if(id==='users')     { renderUsersTable();  updateUserStats(); }
   if(id==='orders')    { renderOrdersTable(); updateUserStats(); }
   if(id==='banner')    { initBannerPanel(); }
+  if(id==='featured')  { initFeaturedPanel(); }
   if(id==='legal')     { initLegalPanel(); }
   // Close sidebar on mobile after selection
   if(window.innerWidth <= 900) closeAdminSidebar();
@@ -3385,6 +3444,122 @@ function resetBannerAdmin() {
   const intEl = document.getElementById('bannerInterval');
   if(intEl) intEl.value = 6;
   notify('↩ تم إعادة ضبط البنر للإعدادات الافتراضية');
+}
+
+// ===== FEATURED CONTENT (Home page) =====
+let adminFeaturedGameIds = [];
+let adminFeaturedCardIds = [];
+
+function isCardType(g) { return g.cardType && g.cardType!=='game' && g.cardType!=='steamoffline'; }
+function isGameType(g) { return !g.cardType || g.cardType==='game' || g.cardType==='steamoffline'; }
+
+function initFeaturedPanel() {
+  // Populate selects
+  const gameSel = document.getElementById('featuredGameSelect');
+  const cardSel = document.getElementById('featuredCardSelect');
+  if(gameSel) gameSel.innerHTML = storeGames.filter(isGameType).map(g=>`<option value="${g.id}">${g.emoji||'🎮'} ${g.title} — ${fmtIQD(g.price)}</option>`).join('');
+  if(cardSel) cardSel.innerHTML = storeGames.filter(isCardType).map(g=>`<option value="${g.id}">${g.emoji||'💳'} ${g.title} — ${fmtIQD(g.price)}</option>`).join('');
+
+  // Load saved selection or auto-select
+  const savedGames = getAdminSetting('featuredGameIds');
+  const savedCards = getAdminSetting('featuredCardIds');
+  adminFeaturedGameIds = Array.isArray(savedGames) && savedGames.length ? savedGames : storeGames.filter(isGameType).slice(0,6).map(g=>g.id);
+  adminFeaturedCardIds = Array.isArray(savedCards) && savedCards.length ? savedCards : storeGames.filter(isCardType).slice(0,6).map(g=>g.id);
+
+  renderFeaturedGamesList();
+  renderFeaturedCardsList();
+}
+
+function autoSelectFeaturedGames() {
+  adminFeaturedGameIds = storeGames.filter(isGameType).slice(0,6).map(g=>g.id);
+  renderFeaturedGamesList();
+  notify('✓ تم تحديد أول 6 ألعاب تلقائياً');
+}
+function autoSelectFeaturedCards() {
+  adminFeaturedCardIds = storeGames.filter(isCardType).slice(0,6).map(g=>g.id);
+  renderFeaturedCardsList();
+  notify('✓ تم تحديد أول 6 بطاقات تلقائياً');
+}
+
+function addFeaturedGame() {
+  const id = parseInt(document.getElementById('featuredGameSelect').value);
+  if(!id) return;
+  if(adminFeaturedGameIds.includes(id)) { notify('هذه اللعبة موجودة بالفعل', true); return; }
+  adminFeaturedGameIds.push(id);
+  renderFeaturedGamesList();
+  notify('✓ تمت الإضافة للمميزة');
+}
+function addFeaturedCard() {
+  const id = parseInt(document.getElementById('featuredCardSelect').value);
+  if(!id) return;
+  if(adminFeaturedCardIds.includes(id)) { notify('هذه البطاقة موجودة بالفعل', true); return; }
+  adminFeaturedCardIds.push(id);
+  renderFeaturedCardsList();
+  notify('✓ تمت الإضافة للمميزة');
+}
+
+function removeFeaturedGame(id) { adminFeaturedGameIds = adminFeaturedGameIds.filter(i=>i!==id); renderFeaturedGamesList(); }
+function removeFeaturedCard(id) { adminFeaturedCardIds = adminFeaturedCardIds.filter(i=>i!==id); renderFeaturedCardsList(); }
+
+function moveFeaturedGame(from, to) { const a=[...adminFeaturedGameIds]; const [it]=a.splice(from,1); a.splice(to,0,it); adminFeaturedGameIds=a; renderFeaturedGamesList(); }
+function moveFeaturedCard(from, to) { const a=[...adminFeaturedCardIds]; const [it]=a.splice(from,1); a.splice(to,0,it); adminFeaturedCardIds=a; renderFeaturedCardsList(); }
+
+function renderFeaturedItemRow(g, i, type) {
+  const thumb = g.image
+    ? `<img src="${g.image}" style="width:36px;height:22px;border-radius:4px;object-fit:cover;">`
+    : `<div style="width:36px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:16px;background:${g.bg||'#1a1a2e'}">${g.emoji||'🎮'}</div>`;
+  const removeFn = type==='game' ? 'removeFeaturedGame' : 'removeFeaturedCard';
+  const moveFn   = type==='game' ? 'moveFeaturedGame'   : 'moveFeaturedCard';
+  return `<div class="banner-game-item" draggable="true"
+    ondragstart="event.dataTransfer.setData('text','${i}')"
+    ondragover="event.preventDefault();this.classList.add('drag-over')"
+    ondragleave="this.classList.remove('drag-over')"
+    ondrop="this.classList.remove('drag-over');${moveFn}(parseInt(event.dataTransfer.getData('text')),${i})">
+    <span class="banner-drag-handle">⠿</span>
+    <span style="font-size:12px;font-weight:700;color:var(--t3);min-width:18px;">${i+1}</span>
+    ${thumb}
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.title}</div>
+      <div style="font-size:10px;color:var(--t3);">${g.genre||''} • ${g.platform||''}</div>
+    </div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:11px;color:var(--accent);flex-shrink:0;">${fmtIQD(g.price)}</div>
+    <button class="btn btn-danger btn-sm" style="padding:4px 8px;font-size:11px;flex-shrink:0;" onclick="${removeFn}(${g.id})">✕</button>
+  </div>`;
+}
+
+function renderFeaturedGamesList() {
+  const container = document.getElementById('featuredGamesList');
+  const countEl    = document.getElementById('featuredGamesCount');
+  if(!container) return;
+  const list = adminFeaturedGameIds.map(id=>storeGames.find(g=>g.id===id)).filter(Boolean);
+  if(countEl) countEl.textContent = list.length + ' لعبة';
+  container.innerHTML = list.map((g,i)=>renderFeaturedItemRow(g,i,'game')).join('')
+    || '<div style="color:var(--t3);text-align:center;padding:20px;font-size:13px;">لا توجد ألعاب مميزة محدَّدة</div>';
+}
+function renderFeaturedCardsList() {
+  const container = document.getElementById('featuredCardsList');
+  const countEl    = document.getElementById('featuredCardsCount');
+  if(!container) return;
+  const list = adminFeaturedCardIds.map(id=>storeGames.find(g=>g.id===id)).filter(Boolean);
+  if(countEl) countEl.textContent = list.length + ' بطاقة';
+  container.innerHTML = list.map((g,i)=>renderFeaturedItemRow(g,i,'card')).join('')
+    || '<div style="color:var(--t3);text-align:center;padding:20px;font-size:13px;">لا توجد بطاقات مميزة محدَّدة</div>';
+}
+
+function applyFeaturedAdmin() {
+  saveAdminSetting('featuredGameIds', adminFeaturedGameIds);
+  saveAdminSetting('featuredCardIds', adminFeaturedCardIds);
+  sendCmd({ type: 'FEATURED_CONFIG' });
+  log('⭐ تم تحديث المحتوى المميز (' + adminFeaturedGameIds.length + ' لعبة، ' + adminFeaturedCardIds.length + ' بطاقة)', 'success');
+  notify('✅ تم تطبيق المحتوى المميز على المتجر فوراً');
+}
+
+function resetFeaturedAdmin() {
+  adminFeaturedGameIds = storeGames.filter(isGameType).slice(0,6).map(g=>g.id);
+  adminFeaturedCardIds = storeGames.filter(isCardType).slice(0,6).map(g=>g.id);
+  renderFeaturedGamesList();
+  renderFeaturedCardsList();
+  notify('↩ تم إعادة الضبط التلقائي');
 }
 
 // ===== DOMAIN MANAGEMENT =====
