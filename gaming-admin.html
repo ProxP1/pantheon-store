@@ -912,7 +912,6 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);min-hei
         <div class="sidebar-item" onclick="showPanel('legal',this)"><span class="ico">📄</span>الشروط والسياسات</div>
         <div class="sidebar-item" onclick="showPanel('banner',this)"><span class="ico">🎬</span>البنر المتحرك</div>
         <div class="sidebar-item" onclick="showPanel('featured',this)"><span class="ico">⭐</span>المحتوى المميز</div>
-        <div class="sidebar-item" onclick="showPanel('homeFeatured',this)"><span class="ico">⭐</span>محتوى الصفحة الرئيسية</div>
         <div class="sidebar-item" onclick="showPanel('pricing',this)"><span class="ico">💰</span>إدارة الأسعار</div>
         <div class="sidebar-item" onclick="showPanel('promo',this)"><span class="ico">🎁</span>العروض والكودات</div>
       </div>
@@ -3454,13 +3453,11 @@ function isCardType(g) { return g.cardType && g.cardType!=='game' && g.cardType!
 function isGameType(g) { return !g.cardType || g.cardType==='game' || g.cardType==='steamoffline'; }
 
 function initFeaturedPanel() {
-  // Populate selects
   const gameSel = document.getElementById('featuredGameSelect');
   const cardSel = document.getElementById('featuredCardSelect');
   if(gameSel) gameSel.innerHTML = storeGames.filter(isGameType).map(g=>`<option value="${g.id}">${g.emoji||'🎮'} ${g.title} — ${fmtIQD(g.price)}</option>`).join('');
   if(cardSel) cardSel.innerHTML = storeGames.filter(isCardType).map(g=>`<option value="${g.id}">${g.emoji||'💳'} ${g.title} — ${fmtIQD(g.price)}</option>`).join('');
 
-  // Load saved selection or auto-select
   const savedGames = getAdminSetting('featuredGameIds');
   const savedCards = getAdminSetting('featuredCardIds');
   adminFeaturedGameIds = Array.isArray(savedGames) && savedGames.length ? savedGames : storeGames.filter(isGameType).slice(0,6).map(g=>g.id);
@@ -3561,6 +3558,7 @@ function resetFeaturedAdmin() {
   renderFeaturedCardsList();
   notify('↩ تم إعادة الضبط التلقائي');
 }
+
 
 // ===== DOMAIN MANAGEMENT =====
 const DOMAIN_KEY = 'pantheon_domain';
